@@ -1,0 +1,21 @@
+{
+  "name": "skeleton_types",
+  "version": "1.0.0",
+  "vendor": "vmware",
+  "description": "",
+  "keywords": [
+    "vcd",
+    "extension"
+  ],
+  "scripts": {
+    "build": "vcd-ext-ts-rde build --minify"
+  },
+  "author": "vCloud Directory Extensions CLI",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "@vcd-ext/rde-faas-library": "^1.0.3"
+  },
+  "devDependencies": {
+    "@vcd-ext/ts-rde": "^1.0.7"
+  }
+}

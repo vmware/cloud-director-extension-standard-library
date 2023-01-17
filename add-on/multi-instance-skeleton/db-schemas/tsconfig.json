@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "ES6",
+        "outDir": "build",
+        "noImplicitReturns": true,
+        "strictNullChecks": false,
+        "noUnusedLocals": false,
+        "declaration": true,
+        "emitDeclarationOnly": false,
+        "sourceMap": false,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "noImplicitUseStrict": true,
+        "importHelpers": false,
+        "noEmitHelpers": true
+    },
+    "include": ["./src/**/*"],
+}

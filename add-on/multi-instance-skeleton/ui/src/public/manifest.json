@@ -1,0 +1,33 @@
+{
+    "urn": "vmware:vcloud:plugin:vmware:skeleton",
+    "name": "Skeleton Solution UI Element",
+    "containerVersion": "9.5.0",
+    "manifestVersion": "2.0.0",
+    "version": "1.0.0",
+    "scope": [
+        "service-provider",
+        "tenant"
+    ],
+    "permissions": [],
+    "description": "End-to-End Add-On UI Plugin",
+    "vendor": "vmware",
+    "license": "BSD-2-Clause",
+    "link": "http://vmware.com",
+    "module" : "SkeletonModule",
+    "extensionPoints": [
+        {
+            "urn": "urn:vmware:vcd:component-scope:primary-navigation",
+            "type": "navigation:primary",
+            "name": "%nav.label%",
+            "description": "%nav.description%",
+            "module": "SkeletonModule",
+            "route": "skeleton"
+        }
+    ],
+    "locales": {
+        "en": {
+            "nav.label": "Skeleton Solution UI Element",
+            "nav.description": "Skeleton Solution UI Element UI plugin"
+        }
+    }
+}

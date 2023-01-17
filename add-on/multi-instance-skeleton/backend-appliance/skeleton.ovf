@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Envelope vmw:buildId="build-18663434" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <References/>
+  <DiskSection>
+    <Info>Virtual disk information</Info>
+  </DiskSection>
+  <NetworkSection>
+    <Info>The list of logical networks</Info>
+    <Network ovf:name="nat">
+      <Description>The nat network</Description>
+    </Network>
+  </NetworkSection>
+  <VirtualSystem ovf:id="vm">
+    <Info>Skeleton Virtual Machine</Info>
+    <Name>skeleton-vm</Name>
+    <AnnotationSection>
+      <Info>A human-readable annotation</Info>
+      <Annotation>A small footprint applaince for testing purposes</Annotation>
+    </AnnotationSection>
+    <OperatingSystemSection ovf:id="1" vmw:osType="otherGuest">
+      <Info>The kind of installed guest operating system</Info>
+    </OperatingSystemSection>
+    <VirtualHardwareSection>
+      <Info>Virtual hardware requirements</Info>
+      <System>
+        <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+        <vssd:InstanceID>0</vssd:InstanceID>
+        <vssd:VirtualSystemIdentifier>void-vm</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemType>vmx-18</vssd:VirtualSystemType>
+      </System>
+      <Item>
+        <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+        <rasd:Description>Number of Virtual CPUs</rasd:Description>
+        <rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
+        <rasd:InstanceID>1</rasd:InstanceID>
+        <rasd:ResourceType>3</rasd:ResourceType>
+        <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+        <rasd:Description>Memory Size</rasd:Description>
+        <rasd:ElementName>256MB of memory</rasd:ElementName>
+        <rasd:InstanceID>2</rasd:InstanceID>
+        <rasd:ResourceType>4</rasd:ResourceType>
+        <rasd:VirtualQuantity>256</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:Address>1</rasd:Address>
+        <rasd:Description>IDE Controller</rasd:Description>
+        <rasd:ElementName>ideController1</rasd:ElementName>
+        <rasd:InstanceID>3</rasd:InstanceID>
+        <rasd:ResourceType>5</rasd:ResourceType>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:ElementName>cdrom0</rasd:ElementName>
+        <rasd:InstanceID>4</rasd:InstanceID>
+        <rasd:Parent>3</rasd:Parent>
+        <rasd:ResourceType>15</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="connectable.allowGuestControl" vmw:value="false"/>
+      </Item>
+      <Item>
+        <rasd:AddressOnParent>1</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:Connection>nat</rasd:Connection>
+        <rasd:Description>PCNet32 ethernet adapter on &quot;nat&quot;</rasd:Description>
+        <rasd:ElementName>ethernet0</rasd:ElementName>
+        <rasd:InstanceID>5</rasd:InstanceID>
+        <rasd:ResourceSubType>PCNet32</rasd:ResourceSubType>
+        <rasd:ResourceType>10</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="32"/>
+        <vmw:Config ovf:required="false" vmw:key="connectable.allowGuestControl" vmw:value="false"/>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:ElementName>sound</rasd:ElementName>
+        <rasd:InstanceID>6</rasd:InstanceID>
+        <rasd:ResourceSubType>vmware.soundcard.ensoniq1371</rasd:ResourceSubType>
+        <rasd:ResourceType>1</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:ElementName>video</rasd:ElementName>
+        <rasd:InstanceID>7</rasd:InstanceID>
+        <rasd:ResourceType>24</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="videoRamSizeInKB" vmw:value="262144"/>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:ElementName>vmci</rasd:ElementName>
+        <rasd:InstanceID>8</rasd:InstanceID>
+        <rasd:ResourceSubType>vmware.vmci</rasd:ResourceSubType>
+        <rasd:ResourceType>1</rasd:ResourceType>
+      </Item>
+      <vmw:Config ovf:required="false" vmw:key="tools.syncTimeWithHost" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.toolsUpgradePolicy" vmw:value="upgradeAtPowerCycle"/>
+      <vmw:Config ovf:required="false" vmw:key="powerOpInfo.powerOffType" vmw:value="soft"/>
+      <vmw:Config ovf:required="false" vmw:key="powerOpInfo.resetType" vmw:value="soft"/>
+      <vmw:Config ovf:required="false" vmw:key="powerOpInfo.suspendType" vmw:value="soft"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="nvram" vmw:value="agent.nvram"/>
+      <vmw:ExtraConfig ovf:required="false" vmw:key="virtualhw.productcompatibility" vmw:value="hosted"/>
+    </VirtualHardwareSection>
+    <ProductSection ovf:required="true">
+      <Info>VMware Skeleton Applaince</Info>
+      <Product>VMware Skeleton Applaince</Product>
+      <Vendor>VMware Inc.</Vendor>
+      <Version>1.0</Version>
+      <FullVersion>1.0.0</FullVersion>
+      <VendorUrl>http://www.vmware.com</VendorUrl>
+      <Category>Appliance Customization Fields</Category>
+      <Property ovf:key="provider-business-scope-property" ovf:type="string" ovf:userConfigurable="true" ovf:value="default value">
+        <Label>Provider Busniess Scope Property</Label>
+        <Description>This value can be accessed inside the appliance via 'vmtoolsd --cmd "info-get guestinfo.ovfenv"'</Description>
+      </Property>
+      <Property ovf:key="cloud-director-host" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+        <Label>Cloud Director Host</Label>
+        <Description>This value can be accessed inside the appliance via 'vmtoolsd --cmd "info-get guestinfo.ovfenv"'</Description>
+      </Property>
+      <Property ovf:key="cloud-director-host-certificates" ovf:type="string" ovf:userConfigurable="true" ovf:value="">
+        <Label>Cloud Director Host Certificates</Label>
+        <Description>This value can be accessed inside the appliance via 'vmtoolsd --cmd "info-get guestinfo.ovfenv"'</Description>
+      </Property>
+      <Property ovf:key="api-token" ovf:type="string" ovf:password="true" ovf:userConfigurable="true" ovf:qualifiers="MinLen(3),MaxLen(42)">
+        <Label>Cloud Director Token</Label>
+        <Description>This value can be accessed inside the appliance via 'vmtoolsd --cmd "info-get guestinfo.ovfenv"'</Description>
+      </Property>
+    </ProductSection>
+  </VirtualSystem>
+</Envelope>
