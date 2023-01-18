@@ -183,6 +183,8 @@ elements:
   - name: cloud-director-user
     description: User interacting with Cloud Director from backend
     type: user
+    policies:
+      create: always
     spec:
       username: 'sva.{{ property `provider-business-scope-property` }}'
       password: '{{ property `password` }}'
@@ -204,8 +206,9 @@ elements:
   - name: backend-appliance
     description: Backend processor of business objects
     type: vapp
+    policies:
+      create: always
     spec:
-      name: '{{ instance `name` }}'
       ovfProperties:
         - key: provider-business-scope-property
           value: '{{ property `provider-business-scope-property` }}'

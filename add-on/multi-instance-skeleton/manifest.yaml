@@ -7,22 +7,6 @@ version: 1.0.0
 vcdVersion: 10.4.1
 friendlyName: Skeleton Started
 description: This solution add-on skeleton represents a typical multi-instance solution.  
-  # - Solution instance is typically bound to a business scope that could be any of these:
-  #   - spans across multiple tenants
-  #   - bound to a tenant
-  #   - managed by single tenant
-  #   - bound to a cluster
-  #   - spans across multiple clusters
-  #   - bound to a storage
-  #   - spans across multiple storages
-  #   - bond to LDAP group
-  #   - etc.
-  # - Provider input are properties used to initialize, define or identify a business scope.
-  # - UI Plugin captures the user flow operating inside a business scope (provider/tenant(s),administrators/users).
-  # - The user flow is persisted by the UI Plugin and Cloud Director API in Runtime Defined Entities.
-  # - The user flow is processed by a backend service hosted on a virtual appliance.
-  # - The backend service use service account with associated role and rights to access Cloud Director via HTTPS and MQTT protocols and realize the user flow persisted in the Runtime Defined Entities.
-  # - All elements except the backend are shared between instances and only the virtual appliance is deployed per business scope.
 
 inputs:
   - name: provider-business-scope-property
@@ -48,7 +32,6 @@ inputs:
 # Elements shared between instances has constant value in "element.spec.name".
 policies:
   supportsMultipleInstances: true
-
 
 triggers:
   - event: PreCreate
@@ -102,6 +85,8 @@ elements:
   - name: cloud-director-user
     description: User interacting with Cloud Director from backend
     type: user
+    policies:
+      create: always
     spec:
       username: 'sva.{{ property `provider-business-scope-property` }}'
       password: '{{ property `password` }}'
@@ -118,8 +103,9 @@ elements:
   - name: backend-appliance
     description: Backend processor of business objects
     type: vapp
+    policies:
+      create: always
     spec:
-      name: '{{ instance `name` }}'
       ovfProperties:
         - key: provider-business-scope-property
           value: '{{ property `provider-business-scope-property` }}'
