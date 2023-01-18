@@ -8,7 +8,7 @@ Before you start working with cloud-director-solution-standard-library, please r
 
 ## Ways to contribute
 
-We welcome many different types of contributions and not all of them need a Pull request. Contributions may include:
+We welcome many types of contributions and not all of them need a Pull request. Contributions may include:
 
 * New features and proposals
 * Documentation
@@ -20,7 +20,7 @@ We welcome many different types of contributions and not all of them need a Pull
 
 ## Getting started
 
-Before you begin download [Cloud Director Extension SDK](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) and follow the [Setup Development Environment](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) guide. This step will give you all the tools you need to build, test, run and package solutions add-ons or ther component elements.
+Before you begin download [Cloud Director Extension SDK](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) and follow the [Setup Development Environment](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) guide. This step will give you all the tools you need to build, test, run and package solutions add-ons or their component elements.
 
 ### Enhance or fix issue for existing solution add-on
 1. Open your terminal and navigate to add-on folder.
@@ -33,14 +33,14 @@ Before you begin download [Cloud Director Extension SDK](https://developer.vmwar
 3. Follow [Building Simple Solution Add-On](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) documentation.
 
 
-### Enahance or fix issue for exisitng standalone element
+### Enhance or fix issue for existing standalone element
 1. Open your terminal and navigate to your working directory of choice.
 2. Execute `vcd-ext-shell`
 3. Create new solution add-on by follow [Building Simple Solution Add-On](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) documentation.
-   > Note the folder name should follow the *Kebab case* naming convetion (ex. word-word-work).
+   > Note the folder name should follow the *Kebab case* naming convention (ex. word-word-work).
 4. Include element into your add-on via `vcd-ext-shell # element add` command
-5. Work on the ehancement or issue.
-6. Extract the element segment from your add-on `manifest.yaml` and replace it in the `manifest.yaml` into repository elemnet subject of change.
+5. Work on the enhancement or issue.
+6. Extract the element segment from your add-on `manifest.yaml` and replace it in the `manifest.yaml` into repository element subject of change.
 7. Replace the repository element source folder with the one from the add-on.
 
 
@@ -50,9 +50,9 @@ Before you begin download [Cloud Director Extension SDK](https://developer.vmwar
 3. Create new solution add-on by follow [Building Simple Solution Add-On](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) documentation
 4. Work on the element.
 5. Create folder under repository `element` named after the element use case.
-   > Note the folder name should follow the *Kebab case* naming convetion (ex. word-word-work).
-6. Extract the element segment from your add-on `manifest.yaml` and save it in the `manifest.yaml` into the new elemnet in the repository.
-7. Copy the repository element source folder into the new elemnet in the repository.
+   > Note the folder name should follow the *Kebab case* naming convention (ex. word-word-work).
+6. Extract the element segment from your add-on `manifest.yaml` and save it in the `manifest.yaml` into the new element in the repository.
+7. Copy the repository element source folder into the new element in the repository.
 
 ## Contribution Flow
 
@@ -65,7 +65,7 @@ This is a rough outline of what a contributor's workflow looks like:
 * Push your changes to the topic branch in your fork
 * Create a pull request containing that commit
 
-We follow the GitHub workflow and you can find more details on the [GitHub flow documentation](https://docs.github.com/en/get-started/quickstart/github-flow).
+We follow the GitHub workflow, and you can find more details on the [GitHub flow documentation](https://docs.github.com/en/get-started/quickstart/github-flow).
 
 ### Pull Request Checklist
 

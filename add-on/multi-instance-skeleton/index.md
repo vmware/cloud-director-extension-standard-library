@@ -124,7 +124,7 @@ elements:
 ```
 
 Similar to UI Plugins the Runtime Defined Entities are shared between all add-on instances and follow the same installation and deletion rules.
-This `defined-entity` holds its sources under `db-schema` add-on project folder and when installed will create an Runtime Defined Interface, Runtime Defined Entity and Behavior of type built-in Function as a Service.
+This `defined-entity` holds its sources under `db-schema` add-on project folder and when installed will create a Runtime Defined Interface, Runtime Defined Entity and Behavior of type built-in Function as a Service.
 
 ```yaml
 elements:
