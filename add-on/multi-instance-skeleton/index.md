@@ -48,7 +48,7 @@ policies:
 
 > **Note**
 In multi-instance mode elements shared between instances must have constant value in `element.spec.name`.
-If the `element.spec.name` is defined with formula an instance of the element will be created for every add-on instance.
+If the `element.spec.name` is defined with formula, an instance of the element will be created for every add-on instance.
 
 Add-on defines `PreCreate` and `PostDelete` triggers which will be executed just before the first element is created during installation and after the last element is deleted on add-on delete operation. This implementation of triggers uses a switch inside the binary `actions/multiPurposeAction` to decide whether it is called for install of for delete operation. It is up to the vendor to decide whether to use multiple binaries or single one with switch.
 
@@ -219,13 +219,11 @@ elements:
         numberOfCpus: 1
         memorySize: 512
       networks:
-        - assignment: auto
-          primary: true
+        - primary: true
           capabilities: []
       readyCondition:
       # Wait for IP to be allocated.
-      # Note the example vApp does not contain real operating systems.
-      # It will be able to allocate IP only from static pool not DHCP.
+      # Note the example vApp does not contain real operating system. It will be able to allocate IP only from static pool not DHCP.
       #
       # "ip":
       timeoutMinutes: 10
