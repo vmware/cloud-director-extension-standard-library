@@ -28,7 +28,7 @@ Filesystem Layout:
 - element/<element type>/.<element centric toolchain>
 ```
 
-The templates and tools are further organized by branches. The names of the branches follow `cloud-director-X.X.X` pattern and claim that all add-ons and elements templates in that branch has been validated against an environment running Cloud Director version `X.X.X`. The `main` branch contains alpha versions of the add-ons and elements for the next upcoming release.
+The templates and tools are further organized by branches. The names of the branches follow `cloud-director-X.X.X` pattern and claim that all add-ons and elements templates in that branch have been validated against an environment running Cloud Director version `X.X.X`. The `main` branch contains alpha versions of the add-ons and elements for the next upcoming release.
 
 > **Important**
 Upon receiving a complaint from a provider running a newer version of Cloud Director `X.Y.Z`, a vendor who has bootstrapped his add-on with a minimal version of Cloud Director `X.X.X` using a starter template from `cloud-director-X.X.X` can review directly the fix made by VMware or its partners on the starter template by comparing the branches `cloud-director-X.X.X` and `cloud-director-X.Y.Z` and find out the exact line causing the issue.
