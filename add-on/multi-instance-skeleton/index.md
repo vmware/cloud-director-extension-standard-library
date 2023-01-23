@@ -48,7 +48,7 @@ policies:
 
 > **Note**
 In multi-instance mode elements shared between instances must have constant value in `element.spec.name`.
-IF the `element.spec.name` is defined with formula an instance of the element will be created for every add-on instance.
+If the `element.spec.name` is defined with formula an instance of the element will be created for every add-on instance.
 
 Add-on defines `PreCreate` and `PostDelete` triggers which will be executed just before the first element is created during installation and after the last element is deleted on add-on delete operation. This implementation of triggers uses a switch inside the binary `actions/multiPurposeAction` to decide whether it is called for install of for delete operation. It is up to the vendor to decide whether to use multiple binaries or single one with switch.
 
