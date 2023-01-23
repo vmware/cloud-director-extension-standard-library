@@ -20,7 +20,7 @@ We welcome many types of contributions and not all of them need a Pull request. 
 
 ## Getting started
 
-Before you begin download [Cloud Director Extension SDK](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) and follow the [Setup Development Environment](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) guide. This step will give you all the tools you need to build, test, run and package solutions add-ons or their component elements.
+Before you begin, download [Cloud Director Extension SDK](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) and follow the [Setup Development Environment](https://developer.vmware.com/web/sdk/1.0.0/cloud-director-extension) guide. This step will give you all the tools you need to build, test, run and package solutions add-ons or their component elements.
 
 ### Enhance or fix issue for existing solution add-on
 1. Open your terminal and navigate to add-on folder.
