@@ -133,8 +133,7 @@ elements:
         numberOfCpus: 1
         memorySize: 512
       networks:
-        - assignment: auto
-          primary: true
+        - primary: true
           capabilities: []
       readyCondition:
           # Wait for IP to be allocated.
