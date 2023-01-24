@@ -9,7 +9,7 @@
         "tenant"
     ],
     "permissions": [],
-    "description": "End-to-End Add-On UI Plugin",
+    "description": "Skeleton Add-On UI Plugin",
     "vendor": "vmware",
     "license": "BSD-2-Clause",
     "link": "http://vmware.com",
