@@ -24,6 +24,8 @@ inputs:
     title: Some Business Scope Property
     required: true
     description: This is some Business Scope Property required for every add-on instance
+    minLength: 2
+    maxLength: 24
 
     # Secure property 
   - name: password
@@ -31,13 +33,17 @@ inputs:
     required: true
     description: The password of the new local Cloud Director account about to be created and associated with a business scope
     secure: true
-
+    minLength: 8
+    maxLength: 16
+    
     # Property visible only on delete operation
   - name: justification
     title: Justification
     type: String
     description: Why do you delete this Solution instance
     delete: true
+    minLength: 5
+    maxLength: 256
 ```
 
 The add-on defines that it supports multiple instances.
@@ -48,7 +54,7 @@ policies:
 
 > **Note**
 In multi-instance mode elements shared between instances must have constant value in `element.spec.name`.
-IF the `element.spec.name` is defined with formula an instance of the element will be created for every add-on instance.
+If the `element.spec.name` is defined with formula, an instance of the element will be created for every add-on instance.
 
 Add-on defines `PreCreate` and `PostDelete` triggers which will be executed just before the first element is created during installation and after the last element is deleted on add-on delete operation. This implementation of triggers uses a switch inside the binary `actions/multiPurposeAction` to decide whether it is called for install of for delete operation. It is up to the vendor to decide whether to use multiple binaries or single one with switch.
 
@@ -124,7 +130,7 @@ elements:
 ```
 
 Similar to UI Plugins the Runtime Defined Entities are shared between all add-on instances and follow the same installation and deletion rules.
-This `defined-entity` holds its sources under `db-schema` add-on project folder and when installed will create an Runtime Defined Interface, Runtime Defined Entity and Behavior of type built-in Function as a Service.
+This `defined-entity` holds its sources under `db-schema` add-on project folder and when installed will create a Runtime Defined Interface, Runtime Defined Entity and Behavior of type built-in Function as a Service.
 
 ```yaml
 elements:
@@ -219,13 +225,11 @@ elements:
         numberOfCpus: 1
         memorySize: 512
       networks:
-        - assignment: auto
-          primary: true
+        - primary: true
           capabilities: []
       readyCondition:
       # Wait for IP to be allocated.
-      # Note the example vApp does not contain real operating systems.
-      # It will be able to allocate IP only from static pool not DHCP.
+      # Note the example vApp does not contain real operating system. It will be able to allocate IP only from static pool not DHCP.
       #
       # "ip":
       timeoutMinutes: 10
