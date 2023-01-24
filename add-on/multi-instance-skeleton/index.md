@@ -24,6 +24,8 @@ inputs:
     title: Some Business Scope Property
     required: true
     description: This is some Business Scope Property required for every add-on instance
+    minLength: 2
+    maxLength: 24
 
     # Secure property 
   - name: password
@@ -31,13 +33,17 @@ inputs:
     required: true
     description: The password of the new local Cloud Director account about to be created and associated with a business scope
     secure: true
-
+    minLength: 8
+    maxLength: 16
+    
     # Property visible only on delete operation
   - name: justification
     title: Justification
     type: String
     description: Why do you delete this Solution instance
     delete: true
+    minLength: 5
+    maxLength: 256
 ```
 
 The add-on defines that it supports multiple instances.
