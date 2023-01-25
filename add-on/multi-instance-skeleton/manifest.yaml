@@ -130,9 +130,9 @@ elements:
         - key: provider-business-scope-property
           value: '{{ property `provider-business-scope-property` }}'
         - key: cloud-director-host
-          value: '{{ property `cloudDirector.host` }}'
+          value: '{{ vcd `host` }}'
         - key: cloud-director-host-certificates
-          value: '{{ property `cloudDirector.certificates` }}'
+          value: '{{ vcd `certificates` }}'
         - key: api-token
           value: '{{ property `api-token` }}'
       hardwareCustomization:
