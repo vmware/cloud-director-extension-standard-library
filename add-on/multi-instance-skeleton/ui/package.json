@@ -14,7 +14,7 @@
   "license": "BSD-2-Clause",
   "dependencies": {},
   "devDependencies": {
-    "@angular-devkit/build-angular": "0.803.29",
+    "@angular-devkit/build-angular": "15.1.5",
     "@angular-devkit/build-webpack": "0.803.6",
     "@angular-devkit/core": "8.3.19",
     "@angular-devkit/schematics": "7.3.8",
