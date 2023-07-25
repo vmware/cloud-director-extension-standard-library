@@ -2,3 +2,5 @@ out/
 lib/
 dist/
 node_modules/
+
+.angular

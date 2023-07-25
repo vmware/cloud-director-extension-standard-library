@@ -1,8 +1,8 @@
 {
     "urn": "vmware:vcloud:plugin:vmware:skeleton",
     "name": "Skeleton Solution UI Element",
+    "manifestVersion": "3.0.0",
     "containerVersion": "9.5.0",
-    "manifestVersion": "2.0.0",
     "version": "1.0.0",
     "scope": [
         "service-provider",
@@ -10,24 +10,168 @@
     ],
     "permissions": [],
     "description": "Skeleton Add-On UI Plugin",
-    "vendor": "vmware",
+    "vendor": "VMware",
     "license": "BSD-2-Clause",
-    "link": "http://vmware.com",
-    "module" : "SkeletonModule",
-    "extensionPoints": [
+    "link": "http://www.vmware.com/support",
+    "module": "SubNavModule",
+    "route": "skeleton",
+    "extensionPoints": [{
+            "urn": "vmware:vcloud:vm-action:backup2",
+            "type": "vm-action",
+            "name": "%nav.label.vm.backup.action%",
+            "description": "%nav.description.vm.backup.action%",
+            "component": "VmBackupActionComponent"
+        },
         {
-            "urn": "urn:vmware:vcd:component-scope:primary-navigation",
+            "urn": "vmware:vcloud:vapp-action:restore2",
+            "type": "vapp-action",
+            "name": "vApp Restore Action 2",
+            "description": "Example of adding an action to vApps",
+            "component": "VappRestoreActionComponent"
+        },
+        {
+            "urn": "vmware:vcloud:datacenter:sample2",
+            "type": "datacenter-overview",
+            "name": "Custom Datacenters",
+            "description": "Display custom information in the Datacenter Overview",
+            "component": "DatacenterContainerComponent"
+        },
+        {
+            "urn": "vmware:vcloud:datacenter:sample2-module",
+            "type": "navigation:datacenter:overview",
+            "name": "Custom Datacenters with Module (New type)",
+            "description": "Display custom information in the Datacenter Overview",
+            "component": "SubnavComponent",
+			"module": "SubNavModule",
+			"route": "vdc-overview-plugin2"
+        },
+        {
+            "urn": "vmware:vcloud:datacenter:sample2",
+            "type": "navigation:datacenter:overview",
+            "name": "Custom Datacenters (New type)",
+            "description": "Display custom information in the Datacenter Overview",
+            "component": "DatacenterContainerComponent"
+        },
+        {
+            "urn": "urn:vmware:vcd:component-scope:primary-navigation2",
             "type": "navigation:primary",
-            "name": "%nav.label%",
-            "description": "%nav.description%",
-            "module": "SkeletonModule",
-            "route": "skeleton"
+            "name": "%nav.label.primary.navigation%",
+            "description": "%nav.description.primary.navigation%",
+            "module": "SubNavModule",
+            "route": "primary-plugin2"
+        },
+        {
+            "urn": "urn:vmware:vcd:component-scope:simple-navigation2",
+            "type": "navigation:primary",
+            "name": "%nav.label.primary.simple.navigation%",
+            "description": "%nav.description.primary.simple.navigation%",
+            "module": "SimpleNavModule",
+            "route": "primary-simple-plugin2"
+        }, {
+            "urn": "urn:vmware:vcd:component-scope:applications2",
+            "type": "navigation:applications",
+            "name": "Application Extension Point (New)",
+            "description": "Display custom information in the Application Tab",
+            "component": "ApplicationComponent"
+        },
+        {
+			"urn": "urn:vmware:vcd:component-scope:applications:applications-module",
+			"type": "navigation:applications",
+			"name": "Application Extension Point with Module (New)",
+			"description": "Display custom information in the Application Tab",
+			"component": "SubnavComponent",
+			"module": "SubNavModule",
+			"route": "applications-plugin2"
+		},
+        {
+            "urn": "urn:vmware:vcd:component-scope:datacenter-compute2",
+            "type": "navigation:datacenter:compute",
+            "name": "Datacenter Compute Extension Point (New)",
+            "description": "Display custom information in the Datacenter -> Compute section",
+            "component": "DatacenterComputeComponent"
+        },
+        {
+			"urn": "urn:vmware:vcd:component-scope:applications:applications-compute-module",
+			"type": "navigation:datacenter:compute",
+			"name": "Datacenter Compute Extension Point with Module (New)",
+			"description": "Display custom information in the Datacenter -> Compute section",
+			"component": "SubnavComponent",
+			"module": "SubNavModule",
+			"route": "compute-plugin2"
+		},
+        {
+            "urn": "urn:vmware:vcd:component-scope:datacenter-network2",
+            "type": "navigation:datacenter:network",
+            "name": "Datacenter Network Extension Point (New)",
+            "description": "Display custom information in the Datacenter -> Network section",
+            "component": "DatacenterNetworkComponent"
+        },
+        {
+            "urn": "urn:vmware:vcd:component-scope:datacenter-network2-module",
+            "type": "navigation:datacenter:network",
+            "name": "Datacenter Network Extension Point with Module (New)",
+            "description": "Display custom information in the Datacenter -> Network section",
+            "component": "SubnavComponent",
+			"module": "SubNavModule",
+			"route": "network-plugin2"
+        },
+        {
+            "urn": "urn:vmware:vcd:component-scope:datacenter-storage2",
+            "type": "navigation:datacenter:storage",
+            "name": "Datacenter Storage Extension Point (New)",
+            "description": "Display custom information in the Datacenter -> Storage section",
+            "component": "DatacenterStorageComponent"
+        },
+        {
+            "urn": "urn:vmware:vcd:component-scope:datacenter-storage2-module",
+            "type": "navigation:datacenter:storage",
+            "name": "Datacenter Storage Extension Point with Module (New)",
+            "description": "Display custom information in the Datacenter -> Storage section",
+            "component": "SubnavComponent",
+			"module": "SubNavModule",
+			"route": "storage-plugin2"
+        },
+        {
+            "urn": "vmware:vcloud:vapp:create2",
+            "type": "create-vapp",
+            "name": "vApp Create Extension Point",
+            "description": "Example of vApp Create Extensibility",
+            "component": "VappCreateWizardExtensionPointComponent",
+            "render": {
+                "after": ".vapp-name-extension-point"
+            }
+        },
+        {
+            "urn": "vmware:vcloud:vm:create2",
+            "type": "create-vm",
+            "name": "VM Create Extension Point",
+            "description": "Example of VM Create Extensibility",
+            "component": "VmCreateWizardExtensionPointComponent",
+            "render": {
+                "after": ".vm-description"
+            }
+        },
+        {
+            "urn": "vmware:vcloud:org:create2",
+            "type": "create-org",
+            "name": "Org Create Extension Point",
+            "description": "Example of Org Create Extensibility",
+            "component": "OrgCreateWizardExtensionPointComponent",
+            "render": {
+                "after": ".description"
+            }
         }
     ],
     "locales": {
         "en": {
-            "nav.label": "Skeleton Solution UI Element",
-            "nav.description": "Skeleton Solution UI Element UI plugin"
+            "nav.label.registered.extension": "Registered Nav Extension",
+            "nav.description.registered.extension": "Description for the Registered Nav Extension",
+            "nav.label.vm.backup.action": "VM Backup Action 2.0",
+            "nav.description.vm.backup.action": "Example of adding an action to VMs 2.0",
+            "nav.label.primary.navigation": "Primary Navigation Extension Point 2.0",
+            "nav.description.primary.navigation": "Example of adding Primary Navigation Plugin 2.0",
+            "nav.label.primary.simple.navigation": "Simple Navigation Plugin Module 2.0",
+            "nav.description.primary.simple.navigation": "Example of adding Simple Navigation Plugin 2.0"
         }
     }
 }
