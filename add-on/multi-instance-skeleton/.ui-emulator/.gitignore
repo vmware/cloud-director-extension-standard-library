@@ -1,0 +1,6 @@
+.env/environment.runtime.json
+.env/proxy.conf.runtime.json
+angular.json
+tsconfig.emulator.json
+
+node_modules

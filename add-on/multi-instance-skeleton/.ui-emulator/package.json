@@ -1,0 +1,17 @@
+{
+    "name": "emulator",
+    "version": "1.0.0",
+    "description": "This project is used to configure and serve @vcd/ui-emulator",
+    "author": "VMware Cloud Directory Extensions CLI",
+    "private": true,
+    "engines": {
+        "node": "14.20.0"
+    },
+    "license": "BSD-2-Clause",
+    "dependencies": {
+        "@vcd/ui-emulator": "15.0.0"
+    },
+    "scripts": {
+        "start": "node ./node_modules/@vcd/ui-emulator/utils/lib/emulator-start.js ./config.json"
+    }
+}
