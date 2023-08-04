@@ -8,55 +8,92 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 )
 
-type InputProperties struct {
+type Context struct {
 	Element    string         `json:"element"`
 	Event      string         `json:"event"`
 	Properties map[string]any `json:"properties"`
 }
 
-type OutputProperty struct {
+type TransactionLog map[string]any
+
+type Task struct {
+	Operation string `json:"operation"`
+}
+
+type Log struct {
+	Level string `json:"level"`
+	Msg   string `json:"msg"`
+}
+
+type Property struct {
 	Name   string `json:"name"`
 	Value  any    `json:"value"`
 	Secure bool   `json:"secure"`
 }
 
-type OutputProperties []OutputProperty
+type OutputTask struct {
+	Task Task `json:"task"`
+}
 
-func readPropertiesFromStandardInput() InputProperties {
+type OutputLog struct {
+	Log Log `json:"log"`
+}
+
+type OutputTransactionLog struct {
+	Transaction TransactionLog `json:"transaction"`
+}
+
+type OutputProperty struct {
+	Property Property `json:"property"`
+}
+
+func writeContext(contexts ...any) (err error) {
+	for _, context := range contexts {
+		var ctxJson []byte
+		if ctxJson, err = json.Marshal(context); err == nil {
+
+			var outputKey string
+
+			switch value := context.(type) {
+			case Task:
+				outputKey = "task"
+			case Log:
+				outputKey = "log"
+			case TransactionLog:
+				outputKey = "transaction"
+			case Property:
+				outputKey = "property"
+			default:
+				return fmt.Errorf("unknown type %v", value)
+			}
+
+			_, err = fmt.Printf("%s:%s\n", outputKey, string(ctxJson))
+		}
+		if err != nil {
+			break
+		}
+	}
+	return
+}
+
+func readContext() Context {
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
 		exitIfErrorExists(errors.New("no standard input"), "error reading from standard input")
 	}
 	inputJson := scanner.Text()
 
-	// DEVELOPMENT ONLY! Print standard input for examination.
+	// DEVELOPMENT ONLY! Print standard ctx for examination.
 	// Note all secrets will be visible in the standard output log.
 	fmt.Println(inputJson)
 
-	input := InputProperties{}
-	err := json.Unmarshal([]byte(inputJson), &input)
-	exitIfErrorExists(err, "error reading JSON from standard input")
-	return input
-}
-
-func (o OutputProperty) writePropertyIntoStandardOutput() error {
-	if variableJson, err := json.Marshal(o); err != nil {
-		return err
-	} else {
-		_, err = fmt.Println(fmt.Sprintf("output:%s", string(variableJson)))
-		return err
-	}
-}
-
-func (properties OutputProperties) writePropertiesIntoStandardOutput() {
-	for _, property := range properties {
-		if err := property.writePropertyIntoStandardOutput(); err != nil {
-			fmt.Errorf("failed serializing the output for variable %s:%v", property.Name, err)
-			os.Exit(1)
-		}
-	}
+	ctx := Context{}
+	err := json.Unmarshal([]byte(inputJson), &ctx)
+	exitIfErrorExists(err, "error reading JSON from standard ctx")
+	return ctx
 }
 
 func exitIfErrorExists(err error, message string) {
@@ -72,39 +109,71 @@ const eventPostDelete = "PostDelete"
 const elementNone = ""
 const elementCloudDirectorUser = "cloud-director-user"
 
-// This is the body of the multipurpose action handler. It is going to be called multiple times with for various
-// places where it is referenced by the manifest.yaml#triggers and manifest.yaml#element#triggers.
+// This is the multipurpose action handler that can be referenced multiple times
+// in the manifest.yaml under triggers and element triggers sections.
 //
-// Use multipurpose action pattern for convenience or source code size reduction and usability.
+// Utilize this pattern for code simplicity, reduced source code size, and improved usability.
 func main() {
+	// Write into action standard out put, not visible to the user, used for debugging purposes
 	fmt.Println("Solution add-on trigger has been called")
 
-	inputProperties := readPropertiesFromStandardInput()
+	// Read context from the standard input stream
+	ctx := readContext()
 
 	// Example: Handle solution add-on global triggers
-	if inputProperties.Element == elementNone && inputProperties.Event == eventPreCreate {
-		fmt.Println("solution pre-create event")
+	if ctx.Element == elementNone && ctx.Event == eventPreCreate {
+		// Example: Forward output into user log
+		writeContext(
+			Log{Level: "info", Msg: "Executing solution pre-create event"},
+		)
+
+		// Example: Write state in transaction log
+		writeContext(
+			TransactionLog{"Atomic Operation A": "Begin"},
+		)
+
+		// Example: Beginning of long-running task
+		writeContext(
+			Task{Operation: "Perform time consuming operation A"},
+		)
+
+		// Example: Long-running tasks is executing
+		time.Sleep(time.Second)
+
+		// Example: Write state in transaction log
+		writeContext(
+			TransactionLog{"Atomic Operation A": "Completed"},
+		)
+
+		// Example: Completing the previous long-running task and beginning of a new long-running task.
+		// Task B will be completed automatically on action completion.
+		writeContext(
+			Task{Operation: "Perform time consuming operation B"},
+		)
 
 		// Example: set or update multiple solution add-on global properties at once
-		OutputProperties{
-			{Name: "exampleKeyMap", Value: map[string]any{"k1": "v1", "k2": "v2"}, Secure: false},
-			{Name: "exampleKeyArrayAny", Value: []any{1, "v", true, map[string]bool{"k": true}}, Secure: false},
-		}.writePropertiesIntoStandardOutput()
-
+		writeContext(
+			Property{Name: "exampleKeyMap", Value: map[string]any{"k1": "v1", "k2": "v2"}, Secure: false},
+			Property{Name: "exampleKeyArrayAny", Value: []any{1, "v", true, map[string]bool{"k": true}}, Secure: false},
+		)
 	}
 
-	if inputProperties.Element == elementNone && inputProperties.Event == eventPostDelete {
-		fmt.Println("solution post-delete event")
+	if ctx.Element == elementNone && ctx.Event == eventPostDelete {
+		writeContext(
+			Log{Level: "info", Msg: "Executing solution post-delete event"},
+		)
 	}
 
 	// Example: Handle solution add-on trigger for specific element
-	if inputProperties.Element == elementCloudDirectorUser && inputProperties.Event == eventPostCreate {
-		fmt.Println("solution pre-create event")
+	if ctx.Element == elementCloudDirectorUser && ctx.Event == eventPostCreate {
+		writeContext(
+			Log{Level: "info", Msg: "Executing element user pre-create event"},
+		)
 
 		// Example: Set or update a solution add-on global property
-		OutputProperty{
-			Name: "api-token", Value: "XXX API Token XXX", Secure: true,
-		}.writePropertyIntoStandardOutput()
+		writeContext(
+			Property{Name: "api-token", Value: "XXX API Token XXX", Secure: true},
+		)
 	}
 
 	fmt.Println("Solution add-on trigger terminated")
