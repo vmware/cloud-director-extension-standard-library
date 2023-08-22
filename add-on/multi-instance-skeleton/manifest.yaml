@@ -1,111 +1,100 @@
 # Copyright 2023 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
 ---
-name: skeleton
+name: skeleton02
 vendor: vmware
 version: 1.0.0
 vcdVersion: 10.4.1
-friendlyName: Skeleton Started
-description: This solution add-on skeleton represents a typical multi-instance solution.  
-  # - Solution instance is typically bound to a business scope that could be any of these:
-  #   - spans across multiple tenants
-  #   - bound to a tenant
-  #   - managed by single tenant
-  #   - bound to a cluster
-  #   - spans across multiple clusters
-  #   - bound to a storage
-  #   - spans across multiple storages
-  #   - bond to LDAP group
-  #   - etc.
-  # - Provider input are properties used to initialize, define or identify a business scope.
-  # - UI Plugin captures the user flow operating inside a business scope (provider/tenant(s),administrators/users).
-  # - The user flow is persisted by the UI Plugin and Cloud Director API in Runtime Defined Entities.
-  # - The user flow is processed by a backend service hosted on a virtual appliance.
-  # - The backend service use service account with associated role and rights to access Cloud Director via HTTPS and MQTT protocols and realize the user flow persisted in the Runtime Defined Entities.
-  # - All elements except the backend are shared between instances and only the virtual appliance is deployed per business scope.
+friendlyName: Skeleton Starter Kit
+description: Showcase the multi-instance add-on flavor with unique elements for each instance
 
 inputs:
   - name: provider-business-scope-property
-    title: Some Business Scope Property
+    title: Business Scope
     required: true
-    description: This is some Business Scope Property required for every add-on instance
+    description: Define the business and operational scopes of the add-on instance
     minLength: 2
     maxLength: 24
-
-    # Secure property 
   - name: password
+    # Secure property 
     title: Password
     required: true
-    description: The password of the new local Cloud Director account about to be created and associated with a business scope
+    description: The password for the new local Cloud Director account to be created and linked to a business scope.
     secure: true
     minLength: 8
     maxLength: 16
-    
-    # Property visible only on delete operation
   - name: justification
+    # Property visible only on delete operation
     title: Justification
     type: String
-    description: Why do you delete this Solution instance
+    description: Why delete this Solution instance?
     delete: true
     minLength: 5
     maxLength: 256
 
-# This solution add-on supports multiple instances. 
-# Elements shared between instances has constant value in "element.spec.name".
+
 policies:
+  # Enable the add-on to be deployed in multiple instances
   supportsMultipleInstances: true
 
-
 triggers:
+  # Enable a single actions to be called on PreCreate and PostDelete events
   - event: PreCreate
-    action: actions/multiPurposeAction
+    action: actions/multipurposeaction
     timeout: 30
   - event: PostDelete
-    action: actions/multiPurposeAction
+    action: actions/multipurposeaction
+    timeout: 30
+  - event: PreScope
+    action: actions/multipurposeaction
     timeout: 30
 
 elements:
   - name: ui
+    # Immutable element, shared across all instances
     description: User interface
     type: ui-plugin
     spec:
       publish:
         provider: true
-
+        tenants: true
+        solutionLandingZone: true
+    triggers:
+      - event: PreScope
+        action: actions/multipurposeaction
+        timeout: 30
   - name: db-schemas
+    # Immutable element, shared across all instances
     description: Business Objects Schemas
     type: defined-entity
-    
   - name: rights
+    # Mutable element, it needs to define a unique specification for each add-on instance
     description: Business objects rights
     type: rights-bundle
     spec:
-      name: Skeleton Rights
+      name: 'Skeleton-{{ instance `name` }}'
       description: This rights bundle is created by Skeleton Add-On
       publish:
-        solution: true
+        solutionLandingZone: true
       rights:
-        - urn:vcloud:type:vmware:skeleton_database_element:full_access
-        - urn:vcloud:type:vmware:skeleton_database_element:view
-        - urn:vcloud:type:vmware:skeleton_database_element:modify
-        - urn:vcloud:type:vmware:skeleton_database_element:admin
-    
+        - urn:vcloud:type:vmware:skeleton_database_entity
+        - urn:vcloud:type:vmware:skeleton_database_entity:admin
   - name: role
+    # Mutable element, it needs to define a unique specification for each add-on instance
     description: Business objects role
     type: role
     spec:
-      name: Skeleton Role
+      name: 'Skeleton-{{ instance `name` }}'
       description: This role is created by Skeleton Add-On
       global: false
       systemScope: false
+      publish: 
+        solutionLandingZone: true
       rights:
-        - urn:vcloud:type:vmware:skeleton_database_element:full_access
-        - urn:vcloud:type:vmware:skeleton_database_element:view
-        - urn:vcloud:type:vmware:skeleton_database_element:modify
-        - urn:vcloud:type:vmware:skeleton_database_element:admin
-        
-
+        - urn:vcloud:type:vmware:skeleton_database_entity
+        - urn:vcloud:type:vmware:skeleton_database_entity:admin
   - name: cloud-director-user
+    # Mutable element, it needs to define a unique specification for each add-on instance
     description: User interacting with Cloud Director from backend
     type: user
     spec:
@@ -118,14 +107,14 @@ elements:
     triggers:
       - event: PostCreate
         # This action will output property "api-token" under the element
-        action: actions/multiPurposeAction
+        action: actions/multipurposeaction
         timeout: 30
-
-  - name: backend-appliance
+  - name: 'backend-appliance'
+    # Mutable element, it needs to define a unique specification for each add-on instance
     description: Backend processor of business objects
     type: vapp
     spec:
-      name: '{{ instance `name` }}'
+      # When the 'name' property is skipped for vApps, the SDK will generate a unique name
       ovfProperties:
         - key: provider-business-scope-property
           value: '{{ property `provider-business-scope-property` }}'
@@ -142,9 +131,11 @@ elements:
         - primary: true
           capabilities: []
       readyCondition:
-          # Wait for IP to be allocated.
-          # Note the example vApp does not contain real operating systems.
-          # It will be able to allocate IP only from static pool not DHCP.
-          # 
-          # "ip":
+        # The "Ready" condition waits for listed properties to have any value, or a specific value if defined.
+        # A property can be the "ip" of the virtual machine or any of the available ExtraConfig properties.
+        #
+        # Example: Waiting for the virtual machine to be assigned an IP address
+        # "ip":
+        #
+        # Note: This is a dummy vApp and will not allocate any IP.
       timeoutMinutes: 10
