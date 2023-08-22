@@ -57,26 +57,26 @@ policies:
 
 **Important:** In the context of the multi-instance add-on, only immutable elements are eligible for sharing across instances, as they are inherently singletons (e.g., UI Plugin, Runtime Defined Entity). When installing the first add-on instance, these elements will be created, and they will be automatically removed with the last instance's removal.
 
-The add-on includes `PreCreate` and `PostDelete` actions that execute just before the first element is created during installation and after the last element is deleted during the add-on delete operation. These actions are implemented using a switch inside the binary `actions/multiPurposeAction`, which determines whether it is called for the install or delete operation. Vendors can choose to use either multiple binaries or a single one with a switch, depending on their preference.
+The add-on includes `PreCreate` and `PostDelete` actions that execute just before the first element is created during installation and after the last element is deleted during the add-on delete operation. These actions are implemented using a switch inside the binary `actions/multipurposeaction`, which determines whether it is called for the install or delete operation. Vendors can choose to use either multiple binaries or a single one with a switch, depending on their preference.
 
 ```yaml
 triggers:
   - event: PreCreate
-    action: actions/multiPurposeAction
+    action: actions/multipurposeaction
     timeout: 30
   - event: PostDelete
-    action: actions/multiPurposeAction
+    action: actions/multipurposeaction
     timeout: 30
 ```
 
-The `multiPurposeAction` is written in Go Lang, but actions can be implemented in any language as long as they adhere to the actions specification and their build provides binaries for the three major operating systems.
+The `multipurposeaction` is written in Go Lang, but actions can be implemented in any language as long as they adhere to the actions specification and their build provides binaries for the three major operating systems.
 ```shell
-actions/multiPurposeAction/dist/windows.exe
-actions/multiPurposeAction/dist/linux
-actions/multiPurposeAction/dist/darwin
+actions/multipurposeaction/dist/windows.exe
+actions/multipurposeaction/dist/linux
+actions/multipurposeaction/dist/darwin
 ```
 
-The `multiPurposeAction` accepts the add-on execution context properties into its `standard input` and outputs properties into its `standard output` following the log line format `output:{"name": "<key>", "value": "value", "secure: true|false}`
+The `multipurposeaction` accepts the add-on execution context properties into its `standard input` and outputs properties into its `standard output` following the log line format `output:{"name": "<key>", "value": "value", "secure: true|false}`
 
 Example of [Standard Input Stream of Multi-Purpose Action](index.md#standard-input-stream-of-multi-purpose-action)
 
@@ -205,7 +205,7 @@ elements:
     triggers:
       - event: PostCreate
         # This action will output property "api-token" under the element
-        action: actions/multiPurposeAction
+        action: actions/multipurposeaction
         timeout: 30
 ```
 
@@ -429,7 +429,7 @@ The preferred method for installing and removing an instance of the Skeleton add
                 },
                 "triggers": [
                     {
-                        "action": "actions/multiPurposeAction",
+                        "action": "actions/multipurposeaction",
                         "event": "PostCreate",
                         "timeout": 30
                     }
@@ -550,12 +550,12 @@ The preferred method for installing and removing an instance of the Skeleton add
         "tags": [],
         "triggers": [
             {
-                "action": "actions/multiPurposeAction",
+                "action": "actions/multipurposeaction",
                 "event": "PreCreate",
                 "timeout": 30
             },
             {
-                "action": "actions/multiPurposeAction",
+                "action": "actions/multipurposeaction",
                 "event": "PostDelete",
                 "timeout": 30
             }

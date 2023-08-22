@@ -1,7 +1,7 @@
 # Copyright 2023 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
 ---
-name: skeleton
+name: skeleton02
 vendor: vmware
 version: 1.0.0
 vcdVersion: 10.4.1
@@ -40,10 +40,13 @@ policies:
 triggers:
   # Enable a single actions to be called on PreCreate and PostDelete events
   - event: PreCreate
-    action: actions/multiPurposeAction
+    action: actions/multipurposeaction
     timeout: 30
   - event: PostDelete
-    action: actions/multiPurposeAction
+    action: actions/multipurposeaction
+    timeout: 30
+  - event: PreScope
+    action: actions/multipurposeaction
     timeout: 30
 
 elements:
@@ -54,6 +57,12 @@ elements:
     spec:
       publish:
         provider: true
+        tenants: true
+        solutionLandingZone: true
+    triggers:
+      - event: PreScope
+        action: actions/multipurposeaction
+        timeout: 30
   - name: db-schemas
     # Immutable element, shared across all instances
     description: Business Objects Schemas
@@ -98,7 +107,7 @@ elements:
     triggers:
       - event: PostCreate
         # This action will output property "api-token" under the element
-        action: actions/multiPurposeAction
+        action: actions/multipurposeaction
         timeout: 30
   - name: 'backend-appliance'
     # Mutable element, it needs to define a unique specification for each add-on instance
