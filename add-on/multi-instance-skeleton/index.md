@@ -1,19 +1,24 @@
-# Solution Add-On Skeleton
+# Solution Multi-Instance Add-On Skeleton
 
-Multi-instance add-on feature allow vendors to design their solutions for better scalability, availability, partitioning and performance by encapsulating their minimal unit of business into a solution add-on instance. With such level of granularity providers could gain certain flexibility while designing their offerings by mixing and matching various add-ons instances to fit their scopes of business.
+The Multi-Instance Add-On is designed to be installed multiple times, creating a copy of all its elements for each instance. To ensure uniqueness between instances, vendors must guarantee unique specifications for elements, which can be achieved using template expressions in the manifest.yaml file.
 
-Examples of scopes of business:
-- span across multiple tenants
-- bound to a single tenant
-- managed by single tenant
-- bound to a cluster
-- span across multiple clusters
-- bound to a single storage profile
-- span across multiple storage profiles
-- bond to LDAP group
-- etc.
+Each add-on instance is identified by a unique name, providing the necessary level of uniqueness, as per the SDK.
 
-The Skeleton and most of the add-ons capture user input via UI Plugin and REST or MQTT APIs into a Runtime Defined Entities which later are processed by a backend service hosted on a virtual appliance under a Solution Landing Zone. The implementation of such flow further requires a right bundle with set of management rights for the created Runtime Defined Entities, a role including these rights and a Cloud Director local account assigned with the role, used back the backend virtual appliance.
+Additionally, the Multi-Instance Add-On feature allows vendors to design their solutions for better scalability, availability, partitioning, and performance. By encapsulating the minimal unit of business into a solution add-on instance, providers can gain flexibility while designing their offerings. They can mix and match various add-on instances to fit their scopes of business, offering a more tailored and versatile solution.
+
+Examples of scopes of business include:
+
+- Spanning across multiple tenants
+- Being bound to a single tenant
+- Being managed by a single tenant
+- Being bound to a cluster
+- Spanning across multiple clusters
+- Being bound to a single storage profile
+- Spanning across multiple storage profiles
+- Being bound to an LDAP group
+- And more.
+
+The Skeleton and most add-ons capture user input through UI Plugin and REST or MQTT APIs, creating Runtime Defined Entities. These entities are later processed by a backend service hosted on a virtual appliance within a Solution Landing Zone. Implementing this flow requires a proper bundle with a set of management rights for the created Runtime Defined Entities, a role that includes these rights, and a Cloud Director local account assigned with the role to interact with the backend virtual appliance.
 
 ## Skeleton Add-On Manifest
 
@@ -21,67 +26,64 @@ The add-on defines three input fields which provider could use to tailor the ins
 ```yaml
 inputs:
   - name: provider-business-scope-property
-    title: Some Business Scope Property
+    title: Business Scope
     required: true
-    description: This is some Business Scope Property required for every add-on instance
+    description: Define the business and operational scopes of the add-on instance
     minLength: 2
     maxLength: 24
-
-    # Secure property 
   - name: password
+    # Secure property 
     title: Password
     required: true
-    description: The password of the new local Cloud Director account about to be created and associated with a business scope
+    description: The password for the new local Cloud Director account to be created and linked to a business scope.
     secure: true
     minLength: 8
     maxLength: 16
-    
-    # Property visible only on delete operation
   - name: justification
+    # Property visible only on delete operation
     title: Justification
     type: String
-    description: Why do you delete this Solution instance
+    description: Why delete this Solution instance?
     delete: true
     minLength: 5
     maxLength: 256
 ```
 
-The add-on defines that it supports multiple instances.
+The add-on indicates support for multiple instances.
 ```yaml
 policies:
   supportsMultipleInstances: true
 ```
 
-> **Note**
-In multi-instance mode elements shared between instances must have constant value in `element.spec.name`.
-If the `element.spec.name` is defined with formula, an instance of the element will be created for every add-on instance.
+**Important:** In the context of the multi-instance add-on, only immutable elements are eligible for sharing across instances, as they are inherently singletons (e.g., UI Plugin, Runtime Defined Entity). When installing the first add-on instance, these elements will be created, and they will be automatically removed with the last instance's removal.
 
-Add-on defines `PreCreate` and `PostDelete` triggers which will be executed just before the first element is created during installation and after the last element is deleted on add-on delete operation. This implementation of triggers uses a switch inside the binary `actions/multiPurposeAction` to decide whether it is called for install of for delete operation. It is up to the vendor to decide whether to use multiple binaries or single one with switch.
+The add-on includes `PreCreate` and `PostDelete` actions that execute just before the first element is created during installation and after the last element is deleted during the add-on delete operation. These actions are implemented using a switch inside the binary `actions/multipurposeaction`, which determines whether it is called for the install or delete operation. Vendors can choose to use either multiple binaries or a single one with a switch, depending on their preference.
 
 ```yaml
 triggers:
   - event: PreCreate
-    action: actions/multiPurposeAction
+    action: actions/multipurposeaction
     timeout: 30
   - event: PostDelete
-    action: actions/multiPurposeAction
+    action: actions/multipurposeaction
     timeout: 30
 ```
 
-The `multiPurposeAction` is written in GoLang but triggers can be implemented on any language as long as their build provides binaries for the three major operating systems used for development.
+The `multipurposeaction` is written in Go Lang, but actions can be implemented in any language as long as they adhere to the actions specification and their build provides binaries for the three major operating systems.
 ```shell
-actions/multiPurposeAction/dist/windows.exe
-actions/multiPurposeAction/dist/linux
-actions/multiPurposeAction/dist/darwin
+actions/multipurposeaction/dist/windows.exe
+actions/multipurposeaction/dist/linux
+actions/multipurposeaction/dist/darwin
 ```
 
-The `multiPurposeAction` accepts the add-on execution context properties into its `standard input` and outputs properties into its `standard output` following the log line format `output:{"name": "<key>", "value": "value", "secure: true|false}`
+The `multipurposeaction` accepts the add-on execution context properties into its `standard input` and outputs properties into its `standard output` following the log line format `output:{"name": "<key>", "value": "value", "secure: true|false}`
+
+Example of [Standard Input Stream of Multi-Purpose Action](index.md#standard-input-stream-of-multi-purpose-action)
 
 ```go
-// This is the body of the multipurpose action handler. It is going to be called multiple times with for various
-// places where it is referenced by the manifest.yaml#triggers and manifest.yaml#element#triggers.
-//
-// Use multipurpose action pattern for convenience or source code size reduction and usability.
+// This is the body of the multipurpose action. 
+// It will be called multiple times for various places where it is referenced in the manifest.yaml#triggers and manifest.yaml#element#triggers.
+// The multipurpose action pattern is used for convenience, source code size reduction, and improved usability.
 func main() {
 	fmt.Println("Solution add-on trigger has been called")
 
@@ -117,7 +119,9 @@ func main() {
 }
 ```
 
-UI Plugins are always deployed with the first add-on instance installation and removed with the last removed instance. They are shared between all instances. This `ui-plugin` holds its sources under `ui` add-on project folder and when installed will be published by default only to the provider under the default tenant.
+UI Plugins immutable elements are automatically deployed with the installation of the first add-on instance and removed when the last instance is deleted. They are shared across all instances.
+
+The `ui-plugin` is stored under the `ui` add-on project folder and, upon installation, is published by default only to the provider under the default tenant.
 
 ```yaml
 elements:
@@ -129,8 +133,9 @@ elements:
         provider: true
 ```
 
-Similar to UI Plugins the Runtime Defined Entities are shared between all add-on instances and follow the same installation and deletion rules.
-This `defined-entity` holds its sources under `db-schema` add-on project folder and when installed will create a Runtime Defined Interface, Runtime Defined Entity and Behavior of type built-in Function as a Service.
+Similar to UI Plugins, Runtime Defined Entities are shared across all add-on instances and follow the same installation and deletion rules.
+
+The `defined-entity` is stored under the `db-schema` add-on project folder and, upon installation, it will create a Runtime Defined Interface, Runtime Defined Entity, and Behavior of type built-in Function as a Service.
 
 ```yaml
 elements:
@@ -139,54 +144,55 @@ elements:
     type: defined-entity
 ```
 
-When a Runtime Defined Entity is created the Cloud Director implicitly creates set of management rights for that entity type with the following naming convection.
-```shell
-- urn:vcloud:type:<entity vendor>:<entity nss>:full_access
-- urn:vcloud:type:<entity vendor>:<entity nss>:view
-- urn:vcloud:type:<entity vendor>:<entity nss>:modify
-- urn:vcloud:type:<entity vendor>:<entity nss>:admin
+When a Runtime Defined Entity is created, the Cloud Director implicitly creates a set of management rights for that entity type following the following naming convention.
+```yaml
+- urn:vcloud:type:vmware:skeleton_database_entity
+- urn:vcloud:type:vmware:skeleton_database_entity:admin
 ```
 
-These rights frequently are bundled in to a right bundle and can be included into multiple roles or published into one or many tenants as global rights. This right bundle will be published only in the organization linked with the Solution Landing Zone. By convention the key of this organization is constant `solution`.
+These rights are often bundled into a right bundle and can be included in multiple roles or published as global rights to one or many tenants.
+
+This right bundle will be published only in the organization linked with the Solution Landing Zone.
 ```yaml
 elements:
   - name: rights
+    # Mutable element, it needs to define a unique specification for each add-on instance
     description: Business objects rights
     type: rights-bundle
     spec:
-      name: Skeleton Rights
+      name: 'Skeleton-{{ instance `name` }}'
       description: This rights bundle is created by Skeleton Add-On
       publish:
-        solution: true
+        solutionLandingZone: true
       rights:
-        - urn:vcloud:type:vmware:skeleton_database_element:full_access
-        - urn:vcloud:type:vmware:skeleton_database_element:view
-        - urn:vcloud:type:vmware:skeleton_database_element:modify
-        - urn:vcloud:type:vmware:skeleton_database_element:admin
+        - urn:vcloud:type:vmware:skeleton_database_entity
+        - urn:vcloud:type:vmware:skeleton_database_entity:admin
 ```
 
-The rights can also be assigned directly to a role. This role will not be available neither to the global nor default(system) tenant scopes.
+The rights can also be directly assigned to a role. This role will be available within the organization associated with the Solution Landing Zone.
 ```yaml
 elements:
   - name: role
+    # Mutable element, it needs to define a unique specification for each add-on instance
     description: Business objects role
     type: role
     spec:
-      name: Skeleton Role
+      name: 'Skeleton-{{ instance `name` }}'
       description: This role is created by Skeleton Add-On
       global: false
       systemScope: false
+      publish: 
+        solutionLandingZone: true
       rights:
-        - urn:vcloud:type:vmware:skeleton_database_element:full_access
-        - urn:vcloud:type:vmware:skeleton_database_element:view
-        - urn:vcloud:type:vmware:skeleton_database_element:modify
-        - urn:vcloud:type:vmware:skeleton_database_element:admin
+        - urn:vcloud:type:vmware:skeleton_database_entity
+        - urn:vcloud:type:vmware:skeleton_database_entity:admin
 ```
 
-The role will be available only in the tenant referenced by the Solution Landing Zone. Each Skeleton add-on instance creates a local Cloud Director user with the newly defined role and uses a `PostCreate` trigger to generate an API Token.
+Each Skeleton add-on instance creates a local Cloud Director user with the newly created role. It utilizes a `PostCreate` action to generate an API Token for the newly created user.
 ```yaml
 elements:
   - name: cloud-director-user
+    # Mutable element, it needs to define a unique specification for each add-on instance
     description: User interacting with Cloud Director from backend
     type: user
     spec:
@@ -199,26 +205,28 @@ elements:
     triggers:
       - event: PostCreate
         # This action will output property "api-token" under the element
-        action: actions/multiPurposeAction
+        action: actions/multipurposeaction
         timeout: 30
 ```
 
-The API Token will be passed as OVF property alongside with the Cloud Director host and its endpoint certificates to an instance of the backend virtual appliance. The appliance will use the configuration to read and process the objects stored into the Runtime Defined Entities.
+The API Token, along with the Cloud Director host and its endpoint certificates, will be passed as OVF properties to an instance of the backend virtual appliance. 
+The appliance will then utilize this configuration to read and process the objects stored in the Runtime Defined Entities.
 
 ```yaml
 elements:
-  - name: backend-appliance
+  - name: 'backend-appliance'
+    # Mutable element, it needs to define a unique specification for each add-on instance
     description: Backend processor of business objects
     type: vapp
     spec:
-      name: '{{ instance `name` }}'
+      # When the 'name' property is skipped for vApps, the SDK will generate a unique name
       ovfProperties:
         - key: provider-business-scope-property
           value: '{{ property `provider-business-scope-property` }}'
         - key: cloud-director-host
-          value: '{{ property `cloudDirector.host` }}'
+          value: '{{ vcd `host` }}'
         - key: cloud-director-host-certificates
-          value: '{{ property `cloudDirector.certificates` }}'
+          value: '{{ vcd `certificates` }}'
         - key: api-token
           value: '{{ property `api-token` }}'
       hardwareCustomization:
@@ -228,32 +236,34 @@ elements:
         - primary: true
           capabilities: []
       readyCondition:
-      # Wait for IP to be allocated.
-      # Note the example vApp does not contain real operating system. It will be able to allocate IP only from static pool not DHCP.
-      #
-      # "ip":
+        # The "Ready" condition waits for listed properties to have any value, or a specific value if defined.
+        # A property can be the "ip" of the virtual machine or any of the available ExtraConfig properties.
+        #
+        # Example: Waiting for the virtual machine to be assigned an IP address
+        # "ip":
+        #
+        # Note: This is a dummy vApp and will not allocate any IP.
       timeoutMinutes: 10
 ```
 
 > **Note**
-The appliance is just OVF descriptor without actual operating system. It aims to showcase the end-to-end flow.
+The appliance is essentially an OVF descriptor without an actual operating system. Its purpose is to demonstrate the end-to-end flow.
 
 
 ## Skeleton ISO
-An instance of Skeleton add-on can be installed and removed with the following commands.
+The preferred method for installing and removing an instance of the Skeleton add-on is through the Cloud Director UI. However, it can also be accomplished using the following commands via the CLI.
 
-> **Important!**
-> The '--encryption-key' argument is used mainly for development purposes. If set it will instruct the add-on operation to be executed on the machine where the ISO binary was executed. If skipped that operation will be sent to an agent in the Solution Landing Zone and all activities will be performed in the Cloud Director.
+**Important!** The `--encryption-key` argument is primarily intended for development purposes. When set, it instructs the add-on operation to be executed on the machine where the ISO is mounted. If skipped, the operation will be sent to an agent in the Solution Landing Zone, and all activities will be performed within Cloud Director.
 
 ```shell
-# Inject Skeleton add-on vendor certificate in Cloud Director certificate store
+# Inject Skeleton add-on vendor certificate into the Cloud Director certificate store.
 ./darwin.run trust \
   --host <CLOUD_DIRECTOR_HOST> \
   --username administrator \
   --password 'secret' \
   --certificate "$(./darwin.run get certificate --host <CLOUD_DIRECTOR_HOST>)"
 
-# Create an instance of Skeleton add-on
+# Create an instance of the Skeleton add-on.
 ./darwin.run create instance \
   --certificate "$(./darwin.run get certificate --host <CLOUD_DIRECTOR_HOST>)" \
   --host <CLOUD_DIRECTOR_HOST> \
@@ -264,7 +274,7 @@ An instance of Skeleton add-on can be installed and removed with the following c
   --input-provider-business-scope-property prjpoc01 \
   --input-password 'We1$0me'
 
-# Delete the created instance of Skeleton add-on
+# Delete the created instance of the Skeleton add-on
 ./darwin.run delete instance \
   --certificate "$(./darwin.run get certificate --host <CLOUD_DIRECTOR_HOST>)" \
   --host <CLOUD_DIRECTOR_HOST> \
@@ -274,7 +284,7 @@ An instance of Skeleton add-on can be installed and removed with the following c
   --name prjpoc01 \
   --input-justification "cleanup by developer"
 
-# Delete the completely the Skeleton add-on and its cache
+# Completely delete the Skeleton add-on and its cache
 ./darwin.run delete solution \
   --certificate "$(./darwin.run get certificate --host <CLOUD_DIRECTOR_HOST>)" \
   --host <CLOUD_DIRECTOR_HOST> \
@@ -282,4 +292,311 @@ An instance of Skeleton add-on can be installed and removed with the following c
   --password 'secret' \
   --accept \
   --trace
+```
+
+
+## Appendix
+### Standard Input Stream of Multi-Purpose Action
+```json
+{
+    "cloudDirector": {
+        "accessToken": "eyJh...",
+        "apiVersion": "38.0",
+        "certificates": "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----",
+        "host": "cloud.director.local",
+        "port": 443,
+        "productVersion": "10.5.0.XXX",
+        "session": {
+            "org": {
+                "id": "urn:vcloud:org:XXX",
+                "name": "System"
+            },
+            "role": {
+                "id": "urn:vcloud:role:XXX",
+                "name": "System Administrator"
+            },
+            "user": {
+                "id": "urn:vcloud:user:XXX",
+                "name": "administrator"
+            }
+        },
+        "thumbprint": "F9:28:...:77"
+    },
+    "dataCenter": {
+        "capabilities": [],
+        "computePolicies": [],
+        "id": "urn:vcloud:vdc:xxx",
+        "isDefault": true,
+        "name": "OrgVdc...",
+        "networkManagerId": "",
+        "networks": [
+            {
+                "capabilities": [],
+                "id": "urn:vcloud:network:XXX",
+                "isDefault": true,
+                "name": "OrgVdcNetwork..."
+            }
+        ],
+        "storagePolicies": [
+            {
+                "capabilities": [],
+                "id": "urn:vcloud:vdcstorageProfile:XXX",
+                "isDefault": true,
+                "name": "*"
+            }
+        ]
+    },
+    "element": "cloud-director-user",
+    "event": "PostCreate",
+    "execution": {
+        "invocationId": "",
+        "owner": "",
+        "taskId": ""
+    },
+    "logging": {
+        "debug": true,
+        "format": "text",
+        "trace": true
+    },
+    "manifest": {
+        "capabilities": [],
+        "description": "This solution add-on skeleton represents a typical multi-instance solution.",
+        "elements": [
+            {
+                "description": "User interface",
+                "name": "ui",
+                "spec": {
+                    "publish": {
+                        "provider": true
+                    }
+                },
+                "triggers": null,
+                "type": "ui-plugin"
+            },
+            {
+                "description": "Business Objects Schemas",
+                "name": "db-schemas",
+                "spec": null,
+                "triggers": null,
+                "type": "defined-entity"
+            },
+            {
+                "description": "Business objects rights",
+                "name": "rights",
+                "spec": {
+                    "description": "This rights bundle is created by Skeleton Add-On",
+                    "name": "Skeleton-{{ instance `name` }}",
+                    "publish": {
+                        "solutionLandingZone": true
+                    },
+                    "rights": [
+                        "urn:vcloud:type:vmware:skeleton_database_entity",
+                        "urn:vcloud:type:vmware:skeleton_database_entity:admin"
+                    ]
+                },
+                "triggers": null,
+                "type": "rights-bundle"
+            },
+            {
+                "description": "Business objects role",
+                "name": "role",
+                "spec": {
+                    "description": "This role is created by Skeleton Add-On",
+                    "global": false,
+                    "name": "Skeleton-{{ instance `name` }}",
+                    "publish": {
+                        "solutionLandingZone": true
+                    },
+                    "rights": [
+                        "urn:vcloud:type:vmware:skeleton_database_entity",
+                        "urn:vcloud:type:vmware:skeleton_database_entity:admin"
+                    ],
+                    "systemScope": false
+                },
+                "triggers": null,
+                "type": "role"
+            },
+            {
+                "description": "User interacting with Cloud Director from backend",
+                "name": "cloud-director-user",
+                "spec": {
+                    "description": "User sva.{{ property `provider-business-scope-property` }} with role {{ property `role.name` }}",
+                    "fullName": "Skeleton backend system account",
+                    "password": "{{ property `password` }}",
+                    "roleName": "{{ property `role.name` }}",
+                    "systemScope": false,
+                    "username": "sva.{{ property `provider-business-scope-property` }}"
+                },
+                "triggers": [
+                    {
+                        "action": "actions/multipurposeaction",
+                        "event": "PostCreate",
+                        "timeout": 30
+                    }
+                ],
+                "type": "user"
+            },
+            {
+                "description": "Backend processor of business objects",
+                "name": "backend-appliance",
+                "spec": {
+                    "hardwareCustomization": {
+                        "memorySize": 512,
+                        "numberOfCpus": 1
+                    },
+                    "networks": [
+                        {
+                            "capabilities": [],
+                            "primary": true
+                        }
+                    ],
+                    "ovfProperties": [
+                        {
+                            "key": "provider-business-scope-property",
+                            "value": "{{ property `provider-business-scope-property` }}"
+                        },
+                        {
+                            "key": "cloud-director-host",
+                            "value": "{{ vcd `host` }}"
+                        },
+                        {
+                            "key": "cloud-director-host-certificates",
+                            "value": "{{ vcd `certificates` }}"
+                        },
+                        {
+                            "key": "api-token",
+                            "value": "{{ property `api-token` }}"
+                        }
+                    ],
+                    "readyCondition": null,
+                    "timeoutMinutes": 10
+                },
+                "triggers": null,
+                "type": "vapp"
+            }
+        ],
+        "friendlyName": "Skeleton Started",
+        "inputs": [
+            {
+                "default": null,
+                "delete": false,
+                "description": "This is some Business Scope Property required for every add-on instance",
+                "isArray": false,
+                "maxLength": 24,
+                "maxValue": null,
+                "minLength": 2,
+                "minValue": null,
+                "name": "provider-business-scope-property",
+                "required": true,
+                "secure": false,
+                "shared": false,
+                "title": "Some Business Scope Property",
+                "type": "String",
+                "validation": "",
+                "values": null,
+                "view": ""
+            },
+            {
+                "default": null,
+                "delete": false,
+                "description": "The password of the new local Cloud Director account about to be created and associated with a business scope",
+                "isArray": false,
+                "maxLength": 16,
+                "maxValue": null,
+                "minLength": 8,
+                "minValue": null,
+                "name": "password",
+                "required": true,
+                "secure": true,
+                "shared": false,
+                "title": "Password",
+                "type": "String",
+                "validation": "",
+                "values": null,
+                "view": ""
+            },
+            {
+                "default": null,
+                "delete": true,
+                "description": "Why do you delete this Solution instance",
+                "isArray": false,
+                "maxLength": 256,
+                "maxValue": null,
+                "minLength": 5,
+                "minValue": null,
+                "name": "justification",
+                "required": false,
+                "secure": false,
+                "shared": false,
+                "title": "Justification",
+                "type": "String",
+                "validation": "",
+                "values": null,
+                "view": ""
+            }
+        ],
+        "metadata": {},
+        "name": "skeleton",
+        "operations": [],
+        "policies": {
+            "supportsMultipleInstances": true,
+            "tenantScoped": false,
+            "upgradesFrom": ""
+        },
+        "resources": [],
+        "runtime": {
+            "sdkVersion": ""
+        },
+        "tags": [],
+        "triggers": [
+            {
+                "action": "actions/multipurposeaction",
+                "event": "PreCreate",
+                "timeout": 30
+            },
+            {
+                "action": "actions/multipurposeaction",
+                "event": "PostDelete",
+                "timeout": 30
+            }
+        ],
+        "vcdVersion": "10.4.1",
+        "vendor": "vmware",
+        "version": "1.0.0"
+    },
+    "operation": "CREATE",
+    "organization": {
+        "href": "",
+        "id": "urn:vcloud:org:XXX",
+        "name": "Organization...",
+        "type": ""
+    },
+    "properties": {
+        "cloud-director-user.password": "secret...",
+        "cloud-director-user.username": "sva.skeleton01",
+        "exampleKeyArrayAny": [
+            1,
+            "v",
+            true,
+            {
+                "k": true
+            }
+        ],
+        "exampleKeyMap": {
+            "k1": "v1",
+            "k2": "v2"
+        },
+        "password": "secret...",
+        "provider-business-scope-property": "skeleton01",
+        "rights.name": "Skeleton-skeleton01",
+        "role.name": "Skeleton-skeleton01"
+    },
+    "runtime": {
+        "sdkVersion": "1.1.0.7077883",
+        "goVersion": "go1.20.5",
+        "vcdVersion": "10.5.0.22007244",
+        "environment": "Development"
+    },
+    "transaction": {}
+}
 ```
