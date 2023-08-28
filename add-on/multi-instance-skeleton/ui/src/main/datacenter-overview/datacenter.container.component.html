@@ -1,0 +1,33 @@
+<div class="row sddcs-grid">
+    <div *ngFor="let sddc of sddcs" class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                {{sddc.name}}
+            </div>
+            <div class="card-block">
+                <div class="card-text">
+                    <table class="table table-vertical table-noborder">
+                        <tbody>
+                            <tr>
+                                <th>CPU</th>
+                                <td>{{getCpuUsage(sddc.cpu)}}</td>
+                            </tr>
+                            <tr>
+                                <th>Memory</th>
+                                <td>{{getCpuUsage(sddc.memory)}}</td>
+                            </tr>
+                            <tr>
+                                <th>Running Applications</th>
+                                <td>{{sddc.applications}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-sm btn-link">Open</button>
+                <button class="btn btn-sm btn-link">Enter Maintenance</button>
+            </div>
+        </div>
+    </div>
+</div>

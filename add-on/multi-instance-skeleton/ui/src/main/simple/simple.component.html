@@ -1,0 +1,15 @@
+<div class="simple-content">
+  <h1>{{ "simple.title" | translate }}</h1>
+
+
+  <h2>{{ "simple.login.info" | translate: [((tenant | async) || '...'), ((username | async)  || '...' )] }}</h2>
+
+  <div>
+    <h3>{{ "tos.title" | translate }}</h3>
+
+    <ul>
+      <li>{{ "tos.1" | translate }}</li>
+      <li>{{ "tos.2" | translate }}</li>
+    </ul>
+  </div>
+</div>

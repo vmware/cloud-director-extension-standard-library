@@ -1,0 +1,22 @@
+{
+    "pluginServeList": [
+        "ui"
+    ],
+    "vcdHost": "https://vcd.cell.com",
+    "jwt": "eyJhbGciOiJSUzI1NiJ9...",
+    "authtoken": "c14c79...",
+    "scope": "service-provider",
+    "orgName": "System",
+    "orgId": "",
+    "emulatorConfig": {
+        "relativePath": "./../emulator",
+        "relativePathToUIPlugins": "./..",
+        "devServerArguments": [
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "4200"
+        ]
+    }
+}
+

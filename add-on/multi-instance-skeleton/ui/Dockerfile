@@ -8,7 +8,7 @@
 # ------------------------------------------------------
 # Build element
 # ------------------------------------------------------
-FROM node:12.16.3-slim as NODE
+FROM node:14.20.0-slim as NODE
 COPY . /usr/app
 WORKDIR /usr/app
 RUN npm ci
