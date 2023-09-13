@@ -22,7 +22,7 @@ The Skeleton and most add-ons capture user input through UI Plugin and REST or M
 
 ## Skeleton Add-On Manifest
 
-The add-on defines three input fields which provider could use to tailor the instance creation.
+The add-on defines four input fields which provider could use to tailor the instance creation.
 ```yaml
 inputs:
   - name: provider-business-scope-property
@@ -39,6 +39,11 @@ inputs:
     secure: true
     minLength: 8
     maxLength: 16
+  - name: certificate
+    title: Certificate
+    type: String
+    view: multiline
+    secure: true
   - name: justification
     # Property visible only on delete operation
     title: Justification
@@ -514,6 +519,25 @@ The preferred method for installing and removing an instance of the Skeleton add
                 "validation": "",
                 "values": null,
                 "view": ""
+            },
+            {
+                "default": null,
+                "delete": false,
+                "description": "This is a Certificate that can be uploaded from file",
+                "isArray": false,
+                "maxLength": null,
+                "maxValue": null,
+                "minLength": null,
+                "minValue": null,
+                "name": "certificate",
+                "required": false,
+                "secure": true,
+                "shared": false,
+                "title": "Certificate",
+                "type": "String",
+                "validation": "",
+                "values": null,
+                "view": "multiline"
             },
             {
                 "default": null,
