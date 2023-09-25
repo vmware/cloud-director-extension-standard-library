@@ -9,7 +9,7 @@
     "orgName": "System",
     "orgId": "",
     "emulatorConfig": {
-        "relativePath": "./../emulator",
+        "relativePath": "./../.ui-emulator",
         "relativePathToUIPlugins": "./..",
         "devServerArguments": [
             "--host",
