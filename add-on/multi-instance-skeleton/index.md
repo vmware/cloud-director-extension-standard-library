@@ -22,7 +22,7 @@ The Skeleton and most add-ons capture user input through UI Plugin and REST or M
 
 ## Skeleton Add-On Manifest
 
-The add-on defines three input fields which provider could use to tailor the instance creation.
+The add-on defines four input fields which provider could use to tailor the instance creation.
 ```yaml
 inputs:
   - name: provider-business-scope-property
@@ -39,6 +39,11 @@ inputs:
     secure: true
     minLength: 8
     maxLength: 16
+  - name: certificate
+    title: Certificate
+    type: String
+    view: multiline
+    secure: true
   - name: justification
     # Property visible only on delete operation
     title: Justification

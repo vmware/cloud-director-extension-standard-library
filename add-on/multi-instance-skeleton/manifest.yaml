@@ -1,7 +1,7 @@
 # Copyright 2023 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
 ---
-name: skeleton02
+name: skeleton
 vendor: vmware
 version: 1.0.0
 vcdVersion: 10.4.1
@@ -23,6 +23,11 @@ inputs:
     secure: true
     minLength: 8
     maxLength: 16
+  - name: certificate
+    title: Certificate
+    type: String
+    view: multiline
+    secure: true
   - name: justification
     # Property visible only on delete operation
     title: Justification
