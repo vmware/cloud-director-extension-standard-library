@@ -23,6 +23,11 @@ inputs:
     secure: true
     minLength: 8
     maxLength: 16
+  - name: certificate
+    title: Certificate
+    type: String
+    view: multiline
+    secure: true
   - name: justification
     # Property visible only on delete operation
     title: Justification
