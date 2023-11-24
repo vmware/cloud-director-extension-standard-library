@@ -1,0 +1,30 @@
+{
+    "name": "e2e",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "cypress:open": "cypress open",
+        "cy:verify": "cypress verify",
+        "e2e": "cypress run"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@cypress/webpack-preprocessor": "5.8.0",
+        "@types/cypress-cucumber-preprocessor": "4.0.0",
+        "@vcd/ui-components": "2.0.0-dev.21",
+        "cypress": "7.3.0",
+        "cypress-cucumber-preprocessor": "4.1.0",
+        "mocha-junit-reporter": "2.0.0",
+        "path-browserify": "1.0.1",
+        "process": "0.11.10",
+        "ts-loader": "9.1.2",
+        "typescript": "3.6.4",
+        "webpack": "5.37.0",
+        "xml2js": "0.4.23"
+    },
+    "cypress-cucumber-preprocessor": {
+        "nonGlobalStepDefinitions": true
+    }
+}
