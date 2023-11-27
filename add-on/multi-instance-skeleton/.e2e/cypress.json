@@ -1,0 +1,11 @@
+{
+    "testFiles": "**/*.{feature,features}",
+    "reporter": "junit",
+    "reporterOptions": {
+        "mochaFile": "reports/report_[hash].xml",
+        "toConsole": false,
+        "outputs": true,
+        "antMode": false,
+        "jenkinsMode": false
+    }
+}

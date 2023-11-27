@@ -2,7 +2,8 @@
  * Copyright 2020-2023 VMware, Inc. All rights reserved. VMware Confidential
  */
 
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
+import { API_ROOT_URL } from "@vcd/sdk";
 import { Observable } from "rxjs";
 
 @Component({
@@ -13,8 +14,13 @@ import { Observable } from "rxjs";
 export class ApplicationComponent implements OnInit, OnDestroy {
     username: Observable<string>;
     tenant: Observable<string>;
+    testInjectionToken: string;
 
-    constructor() {}
+    constructor(
+        @Inject(API_ROOT_URL) API_ROOT_URL: string,
+    ) {
+        this.testInjectionToken = API_ROOT_URL;
+    }
 
     ngOnInit(): void {}
 
