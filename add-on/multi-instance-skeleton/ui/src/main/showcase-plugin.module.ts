@@ -36,6 +36,8 @@ import { VappCreateWizardExtensionPointComponent } from './create-vapp/vapp.crea
 import { VmCreateWizardExtensionPointComponent } from './create-vm/vm.create.wizard.action.component';
 import { OrgCreateWizardExtensionPointComponent } from './create-org/org.create.wizard.action.component';
 import { ModalWizardExtensionPointService } from "./services/modal-wizard-ext-point.service";
+import { NetworkingComponent } from "./networking/networking.component";
+import { IpBindingsCreateWizardExtensionPointComponent } from "./create-ip-bindings";
 // Exports
 export { SubnavComponent } from "./subnav/subnav.component";
 export { VappRestoreActionComponent, VmBackupActionComponent } from "./actions";
@@ -51,6 +53,10 @@ export {
 export {
     OrgCreateWizardExtensionPointComponent
 } from './create-org';
+export { NetworkingComponent } from './networking/networking.component';
+export {
+    IpBindingsCreateWizardExtensionPointComponent
+} from './create-ip-bindings';
 
 export * from './subnav/sub-nav.module';
 export * from './simple/simple-nav.module';
@@ -66,6 +72,8 @@ const components = [
     VappCreateWizardExtensionPointComponent,
     VmCreateWizardExtensionPointComponent,
     OrgCreateWizardExtensionPointComponent,
+    NetworkingComponent,
+    IpBindingsCreateWizardExtensionPointComponent,
 ]
 
 @NgModule({
