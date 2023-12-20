@@ -160,6 +160,58 @@
             "render": {
                 "after": ".description"
             }
+        },
+        {
+            "urn": "urn:vmware:vcd:component-scope:networking2",
+            "type": "navigation:networking",
+            "name": "Networking (New type)",
+            "description": "Display custom information in the Networking",
+            "component": "NetworkingComponent"
+        },
+        {
+            "urn": "urn:vmware:vcd:component-scope:networking-module2",
+            "type": "navigation:networking",
+            "name": "Networking with Module (New type)",
+            "description": "Display custom information in the Networking",
+            "component": "SubnavComponent",
+			"module": "SubNavModule",
+			"route": "networking2"
+        },
+        {
+            "urn": "urn:vmware:vcd:component-scope:network-details2",
+            "type": "navigation:network-details",
+            "name": "Network Details (New type)",
+            "description": "Display custom information in the Network Details",
+            "component": "NetworkingComponent"
+        },
+        {
+            "urn": "urn:vmware:vcd:component-scope:network-details-module2",
+            "type": "navigation:network-details",
+            "name": "Network Details with Module (New type)",
+            "description": "Display custom information in the Network Details",
+            "component": "SubnavComponent",
+			"module": "SubNavModule",
+			"route": "networking-details2"
+        },
+        {
+            "urn": "vmware:vcloud:ip-bindings:create-a",
+            "type": "create-ip-bindings",
+            "name": "Create IP Bindings Extension Point A",
+            "description": "Example of Create IP Bindings Extensibility",
+            "component": "IpBindingsCreateWizardExtensionPointComponent",
+            "render": {
+                "after": ".dns-servers"
+            }
+        },
+        {
+            "urn": "vmware:vcloud:ip-bindings:create-b",
+            "type": "create-ip-bindings",
+            "name": "Create IP Bindings Extension Point B",
+            "description": "Example of Create IP Bindings Extensibility",
+            "component": "IpBindingsCreateWizardExtensionPointComponent",
+            "render": {
+                "after": ".dns-servers"
+            }
         }
     ],
     "locales": {

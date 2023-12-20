@@ -11,6 +11,8 @@
     "emulatorConfig": {
         "relativePath": "./../.ui-emulator",
         "relativePathToUIPlugins": "./..",
+        "watch": true,
+        "ignoreFilesRegex": null,
         "devServerArguments": [
             "--host",
             "0.0.0.0",
