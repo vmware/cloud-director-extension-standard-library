@@ -25,7 +25,7 @@
     "@vcd/bindings": "9.1.1",
     "@vcd/i18n": "12.0.0",
     "@vcd/plugin-builders": "15.0.1",
-    "@vcd/sdk": "15.0.2",
+    "@vcd/sdk": "15.0.5",
     "rxjs": "7.8.0",
     "tslib": "2.3.0",
     "zone.js": "0.12.0"
