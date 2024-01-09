@@ -17,7 +17,7 @@
       <Info>A human-readable annotation</Info>
       <Annotation>A small footprint applaince for testing purposes</Annotation>
     </AnnotationSection>
-    <OperatingSystemSection ovf:id="1" vmw:osType="otherGuest">
+    <OperatingSystemSection ovf:id="1" vmw:osType="vmwarePhoton64Guest">
       <Info>The kind of installed guest operating system</Info>
     </OperatingSystemSection>
     <VirtualHardwareSection>
