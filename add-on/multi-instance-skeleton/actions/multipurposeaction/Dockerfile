@@ -2,13 +2,11 @@
 # Copyright 2023 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
 # ------------------------------------------------------
-
-# syntax=docker/dockerfile:1
-
-# ------------------------------------------------------
 # Build element
 # ------------------------------------------------------
-FROM golang:1.19.2-bullseye AS GOLANG
+ARG DOCKER_REPO
+
+FROM $DOCKER_REPO/golang:1.19.2-bullseye AS GOLANG
 
 ADD . /opt/src
 WORKDIR /opt/src
