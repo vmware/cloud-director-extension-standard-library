@@ -54,6 +54,25 @@ triggers:
     action: actions/multipurposeaction
     timeout: 30
 
+
+operations:
+  - name: updateCloudDirectorCertificate
+    description: Add the current Cloud Director certificate into the trusted store
+    friendlyName: Trust Current Cloud Director Certificate
+    action: actions/multipurposeaction
+    timeout: 10
+  - name: updateTrustedStore
+    description: Add a certificate into the trusted store
+    friendlyName: Trust Certificate
+    inputs:
+      - name: certificate
+        title: Certificate
+        type: String
+        view: multiline
+        secure: true
+    timeout: 10
+    action: actions/multipurposeaction
+
 elements:
   - name: ui
     # Immutable element, shared across all instances

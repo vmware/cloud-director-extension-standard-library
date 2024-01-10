@@ -12,9 +12,11 @@ import (
 )
 
 type Context struct {
-	Element    string         `json:"element"`
-	Event      string         `json:"event"`
-	Properties map[string]any `json:"properties"`
+	Element       string         `json:"element"`
+	Event         string         `json:"event"`
+	Operation     string         `json:"operation"`
+	Properties    map[string]any `json:"properties"`
+	CloudDirector map[string]any `json:"cloudDirector"`
 }
 
 type TransactionLog map[string]any
@@ -106,8 +108,12 @@ func exitIfErrorExists(err error, message string) {
 const eventPreCreate = "PreCreate"
 const eventPostCreate = "PostCreate"
 const eventPostDelete = "PostDelete"
+const eventOnOperation = "OnOperation"
 const elementNone = ""
 const elementCloudDirectorUser = "cloud-director-user"
+
+const operationUpdateCloudDirectorCertificate = "UPDATECLOUDDIRECTORCERTIFICATE"
+const operationUpdateTrustedStore = "UPDATETRUSTEDSTORE"
 
 // This is the multipurpose action handler that can be referenced multiple times
 // in the manifest.yaml under triggers and element triggers sections.
@@ -174,6 +180,27 @@ func main() {
 		writeContext(
 			Property{Name: "api-token", Value: "XXX API Token XXX", Secure: true},
 		)
+	}
+
+	if ctx.Element == elementNone && ctx.Event == eventOnOperation {
+
+		if ctx.Operation == operationUpdateCloudDirectorCertificate {
+			vcdCerts := ctx.CloudDirector["certificates"]
+
+			writeContext(
+				Log{Level: "info", Msg: "Adding the Cloud Director certificate into trusted store"},
+				Log{Level: "debug", Msg: fmt.Sprintf("Cloud Director Certificate: %v", vcdCerts)},
+			)
+
+		} else if ctx.Operation == operationUpdateTrustedStore {
+			cert := ctx.Properties["certificate"]
+			writeContext(
+				Log{Level: "info", Msg: "Adding a certificate into trusted store"},
+				Log{Level: "debug", Msg: fmt.Sprintf("Certificate: %v", cert)},
+			)
+		} else {
+			panic(fmt.Errorf("Unrecognized operation: %s", ctx.Operation))
+		}
 	}
 
 	fmt.Println("Solution add-on trigger terminated")
