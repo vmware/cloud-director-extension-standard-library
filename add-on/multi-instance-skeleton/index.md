@@ -251,6 +251,28 @@ elements:
       timeoutMinutes: 10
 ```
 
+Define two day-2 operations: the first one, without any arguments, executes the action using the latest Cloud Director configuration state (hostname, certificate, etc.), while the second one accepts an argument and sends that argument to the action.
+
+```yaml
+operations:
+  - name: updateCloudDirectorCertificate
+    description: Add the current Cloud Director certificate into the trusted store
+    friendlyName: Trust Current Cloud Director Certificate
+    action: actions/multipurposeaction
+    timeout: 10
+  - name: updateTrustedStore
+    description: Add a certificate into the trusted store
+    friendlyName: Trust Certificate
+    inputs:
+      - name: certificate
+        title: Certificate
+        type: String
+        view: multiline
+        secure: true
+    timeout: 10
+    action: actions/multipurposeaction
+```
+
 > **Note**
 The appliance is essentially an OVF descriptor without an actual operating system. Its purpose is to demonstrate the end-to-end flow.
 
@@ -297,6 +319,25 @@ The preferred method for installing and removing an instance of the Skeleton add
   --password 'secret' \
   --accept \
   --trace
+
+# Invoke day-2 operation without arguments on a Skeleton add-on instance
+./darwin.run invoke updateCloudDirectorCertificate instance \
+  --certificate "$(./darwin.run get certificate --host <CLOUD_DIRECTOR_HOST>)" \
+  --host <CLOUD_DIRECTOR_HOST> \
+  --username administrator \
+  --password 'secret' \
+  --trace \
+  --name prjpoc01
+
+# Invoke day-2 operation without arguments on a Skeleton add-on instance
+./darwin.run invoke updateTrustedStore instance \
+  --certificate "$(./darwin.run get certificate --host <CLOUD_DIRECTOR_HOST>)" \
+  --host <CLOUD_DIRECTOR_HOST> \
+  --username administrator \
+  --password 'secret' \
+  --trace \
+  --name prjpoc01 \
+  --input-certificate-file <certificate.pem>
 ```
 
 
@@ -623,4 +664,18 @@ The preferred method for installing and removing an instance of the Skeleton add
     },
     "transaction": {}
 }
+```
+
+### Logs of Multi-Purpose Action Executing Day-2 Operations
+
+solution run invoke-updateTrustedStore-instance --name teo --input-certificate-file /Users/tsimchev/.ssh/github_id_rsa.pub --trace
+
+INFO    Adding a certificate into trusted store   action=actions/multipurposeaction event=OnOperation
+DEBUG   Certificate: <PEM>                        action=actions/multipurposeaction event=OnOperation
+```
+
+solution run invoke updateCloudDirectorCertificate-instance --name teo --debug
+```
+INFO    Adding the Cloud Director certificate into trusted store  action=actions/multipurposeaction event=OnOperation
+DEBUG   Cloud Director Certificate: <PEM>  action=actions/multipurposeaction event=OnOperation```
 ```
