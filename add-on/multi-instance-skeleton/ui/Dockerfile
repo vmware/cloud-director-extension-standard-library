@@ -2,13 +2,10 @@
 # Copyright 2023 VMware, Inc.
 # SPDX-License-Identifier: BSD-2-Clause
 # ------------------------------------------------------
-
-# syntax=docker/dockerfile:1
-
-# ------------------------------------------------------
 # Build element
 # ------------------------------------------------------
-FROM node:14.20.0-slim as NODE
+ARG DOCKER_REPO
+FROM $DOCKER_REPO/node:14.20.1-slim as NODE
 COPY . /usr/app
 WORKDIR /usr/app
 RUN npm ci
