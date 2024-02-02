@@ -17,9 +17,9 @@ The Cloud Director Extensibility Development Guide is organized into two main se
 ### Cloud Director Extension SDK
 Extensions are bundled within what we refer to as Solution Add-Ons, which are installed in Cloud Director and follow a carefully defined and controlled lifecycle. These add-ons are made up of different parts that use the features of the Extensibility Platform. In this section, you will discover how to develop, construct, and deploy them.
 
-[Continue to Cloud Director Extension SDK](extension-sdk.md)
+[Continue to Cloud Director Extension SDK](extension-sdk/extension-sdk.md)
 
 ### Cloud Director Extensibility Platform
 The Extensibility Platform introduces the capabilities that enable developers and CSPs to build and offer additional cloud services. It also highlights the relationship between Solution Add-ons and the broader capabilities of the Extensibility Platform. In this section, you will access detailed technical guides that offer in-depth information on each capability.
 
-[Continue to Cloud Director Extensibility Platform](extensibility-platform.md)
+[Continue to Cloud Director Extensibility Platform](extensibility-platform/extensibility-platform.md)

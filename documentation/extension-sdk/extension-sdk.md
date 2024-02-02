@@ -1,7 +1,7 @@
 # Cloud Director Extension SDK
 Cloud Director Extension SDK provides utilities empowering the Solution Add-On Development Lifecycle. It contains tools for writing, building, testing and packaging Cloud Director UI plugins, Runtime Defined Entities, users, rights, right-bundles, roles, backend vApps, network services and policies, and their lifecycle operations into self-contained all-in-one bundle distributed under the name Cloud Director Solution Add-On.
 
-![Solution Add-On Overview](images/overview.png)
+![Solution Add-On Overview](../images/overview.png)
 
 ## Why You Need Solution Add-On
 Could Director exposes different extensibility mechanisms where each of those has its own lifecycle and management APIs, but in the real world they play together to implement more complex use cases and be used as part of a bigger solution often delivered with number of documents for manual steps. This makes building, distributing and deploying such solution a challenge. Solutions add-ons have been introduced to tackle this problem.
