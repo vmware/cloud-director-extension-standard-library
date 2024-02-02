@@ -4,21 +4,21 @@ The UI plugins are the Could Director UI extensibility mechanism. They are based
 
 A UI plugin can be a whole Solution Add-On by itself, or it can be a part of a more complex Solution Add-On, 
 which can include different supported elements in itself.
-For more information on the elements view [Elements of the Solution Add-Ons](elements.md)
+For more information on the elements view [Elements of the Solution Add-Ons](../extension-sdk/elements.md)
 
 
 ## Getting Started
 
 The initial creation of a UI plugin is done in a manner similar to any of the elements of a Solution Add-On. 
-For more details on how to create a Solution Add-On, check [Building a Simple Solution Add-On](playground.md).
+For more details on how to create a Solution Add-On, check [Building a Simple Solution Add-On](../extension-sdk/playground.md).
 
 The [Cloud Director Extension Standard Library](https://github.com/vmware/cloud-director-extension-standard-library) repository contains template for creating solution add-ons. 
 The Showcase UI plugin is part of the Skeleton template. It contains example utilization of all UI Extension points described below in the development guide. 
-To kick-start your UI Plugin development, please refer to the [Generate add-on from template](playground.md#create-and-test-solution-add-on-from-template-in-1-minute).
+To kick-start your UI Plugin development, please refer to the [Generate add-on from template](../extension-sdk/playground.md#create-and-test-solution-add-on-from-template-in-1-minute).
 
 Prerequisites:
 
-- [Setup vcd-ext-shell](setup.md#setting-up-the-development-environment)
+- [Setup vcd-ext-shell](../extension-sdk/setup.md#setting-up-the-development-environment)
 - [Node.js v14.20](https://nodejs.org)
 
 
@@ -173,7 +173,7 @@ manifest.json
     }]"
  ```
 
-![Sample Action Extension](images/sample-ext-action.png)
+![Sample Action Extension](../images/sample-ext-action.png)
 
 ### Navigation Extensions
 
@@ -204,7 +204,7 @@ manifest.json
     }]"
 ```
 
-![Sample Top Level Navigation Extension](images/sample-ext-top-level-navigation.png)
+![Sample Top Level Navigation Extension](../images/sample-ext-top-level-navigation.png)
 
 #### Sub Navigation Entity Extensions
 
@@ -232,7 +232,7 @@ manifest.json - Main Navigation extensions: Applications view
         "component": "CustomApplicationsComponent"
     }]"
 ```
-![Sample Main Navigation Extension](images/sample-ext-main-navigation.png)
+![Sample Main Navigation Extension](../images/sample-ext-main-navigation.png)
 
 ```shell
 manifest.json - Main Navigation extensions: Networking view
@@ -244,7 +244,7 @@ manifest.json - Main Navigation extensions: Networking view
         "component": "CustomNetworkingComponent"
     }]"
 ```
-![Sample Networking Navigation Extension](images/sample-ext-networking-navigation.png)
+![Sample Networking Navigation Extension](../images/sample-ext-networking-navigation.png)
 
 ```shell
 manifest.json - Side Navigation extensions: Datacenter Compute/Network/Storage view
@@ -270,7 +270,7 @@ manifest.json - Side Navigation extensions: Datacenter Compute/Network/Storage v
         "component": "DatacenterCustomStorageComponent"
     }]"
 ```
-![Sample Side Navigation Extension](images/sample-ext-side-navigation-entity.png)
+![Sample Side Navigation Extension](../images/sample-ext-side-navigation-entity.png)
 
 ```shell
 manifest.json - Side Navigation extensions: Network Details
@@ -282,7 +282,7 @@ manifest.json - Side Navigation extensions: Network Details
         "component": "DatacenterCustomComputeComponent"
     }]"
 ```
-![Sample Network Details Side Navigation Extension](images/sample-ext-network-side-navigation.png)
+![Sample Network Details Side Navigation Extension](../images/sample-ext-network-side-navigation.png)
 
 Every extension point component in the context of given object, e.g datacenter, can receive the id of that context object by implementing `EntityContextExtensionInterface` interface.
 ```typescript
@@ -333,7 +333,7 @@ manifest.json
         }
     }
 ```
-![Sample Create Entity Extension](images/sample-ext-create-entity.png)
+![Sample Create Entity Extension](../images/sample-ext-create-entity.png)
 ```shell
 manifest.json
     "extensionPoints": [{
@@ -347,7 +347,7 @@ manifest.json
         }
     }]"
 ```
-![Sample Create IP Binding Extension](images/sample-ext-create-ip-binding.png)
+![Sample Create IP Binding Extension](../images/sample-ext-create-ip-binding.png)
 
 #### Dialog/Wizard Extensions utilities
 `create-org` extension point allows the plugin author to stop Organization creation in the UI if certain validation hasn't passed.
@@ -925,7 +925,7 @@ The UI plugins are deployed using the Cloud Director UI HyperPlugin.
 Currently, we support concurrently two versions of the Hyper Plugin in order to be able to run 
 Angular v9 and Angular v15 plugins together on a single Cloud Director UI.
 
-![Plugins deployment using HyperPlugin](images/under-the-hood.png)
+![Plugins deployment using HyperPlugin](../images/under-the-hood.png)
 
 
 ## Cloud Director Releases, Angular and Clarity
