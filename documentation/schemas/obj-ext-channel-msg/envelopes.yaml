@@ -1,0 +1,57 @@
+swagger: "2.0"
+info:
+  description: Contains the schemas of the messages that are to be exchanged between Cloud Director and channel extensions
+  title: Object Extensibility Messages
+  version: "1.0"
+paths:
+definitions:
+  MessageEnvelope:
+    type: object
+    description: Self describing message containing metadata describing the invocation and payload.
+    properties:
+      clientRequestId:
+        type: string
+        description: Contains the value of the X-VMWARE-VCLOUD-CLIENT-REQUEST-ID header set on the original workflow invocation request. If provided, allows to correlate the workflow request to the message(s) sent.
+      namespace:
+        type: string
+        description: Object extension namespace. This is extracted out of the channel urn.
+      envelopeType:
+        type: string
+      payloadType:
+        type: string
+        description: An alias of the type of the payload. Possible values are the names of the top level types in the object extensibility schema xsd.
+      phase:
+        type: string
+        description: Extension point of the invocation
+      payload:
+        type: string
+        description: JSON encoded payload. This must be (de)serialized according to the payloadType on request/response.
+    discriminator: envelopeType
+    required:
+      - payloadType
+      - phase
+      - envelopeType
+      - payload
+  HalfDuplexEnvelope:
+    description: Sent in a normal request/response exchange
+    allOf:
+      - $ref: '#/definitions/MessageEnvelope'
+      - type: object
+        properties:
+          correlationId:
+            type: string
+            description: Message id
+          expectedResponsePayloadType:
+            type: string
+            description: The expected type of the returned payload
+  ErrorMessageEnvelope:
+    description: Sent only by Cloud Director when the last exchange failed. The payload is that of the original message which failed.
+    allOf:
+      - $ref: '#/definitions/MessageEnvelope'
+      - type: object
+        properties:
+          correlationIdRef:
+            type: string
+            description: The id of the message which failed.
+        required:
+          - correlationIdRef

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.vmware.com/vcloud/extensibility/v1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+           xmlns:meta="http://www.vmware.com/vcloud/meta"
+           jaxb:extensionBindingPrefixes="meta" elementFormDefault="qualified"
+           targetNamespace="http://www.vmware.com/vcloud/extensibility/v1.0"
+           version="1.0">
+
+    <xs:include schemaLocation="extensibility-core.xsd" />
+
+    <xs:annotation>
+        <xs:documentation xml:lang="en">
+            Schema for platform extensibility's pre-vCenter API Invocation extension point.
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:simpleType name="PreProvisioningCryptoOperation">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Encrypt" />
+            <xs:enumeration value="Decrypt" />
+            <xs:enumeration value="ShallowRecrypt" />
+            <xs:enumeration value="DeepRecrypt" />
+            <xs:enumeration value="NoOp" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PreProvisioningDiskOperation">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                An operation to be performed on a disk. Unknown represents types that may be added in
+                the future. Extensions must handle Unknown to prevent issues with future releases of
+                VCD where more types may be added.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Add" />
+            <xs:enumeration value="Remove" />
+            <xs:enumeration value="Edit" />
+            <xs:enumeration value="Move" />
+            <xs:enumeration value="Unknown" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PreProvisioningDiskMode">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The mode of a disk as is specified in Virtual Center Server. Please see Virtual Center
+                Server's documentation for more details. Unknown represents types that may be added in
+                the future. Extensions must handle Unknown to prevent issues with future releases of
+                VCD where more types may be added.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Persistent" />
+            <xs:enumeration value="Nonpersistent" />
+            <xs:enumeration value="Undoable" />
+            <xs:enumeration value="IndependentPersistent" />
+            <xs:enumeration value="IndependentNonpersistent" />
+            <xs:enumeration value="Append" />
+            <xs:enumeration value="Unknown" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="VmType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The type of a VM. A UserVm is one belonging to an end user, a TemplateVm is a VM that
+                is part of a VAppTemplate within a catalog, a ShellVm is a VM that holds a Named Disk
+                when said disk is not attached to a UserVm, and a ReplicationTracking VM is a VM used
+                to track the replication of a different VM. Finally, Unknown represents types that may
+                be added in  the future. Extensions must handle Unknown to prevent issues with future
+                releases of VCD where more types may be added.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="UserVm" />
+            <xs:enumeration value="TemplateVm" />
+            <xs:enumeration value="ShellVm" />
+            <xs:enumeration value="ReplicationTrackingVm" />
+            <xs:enumeration value="Unknown" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="PreProvisioningCryptoSpec">
+        <xs:sequence>
+            <xs:element name="KeyId" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The Key ID.
+                    </xs:documentation>
+                    <xs:documentation source="required">true</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="KmsId" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The KMS ID.
+                    </xs:documentation>
+                    <xs:documentation source="required">true</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xs:any>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PreProvisioningProposedCrypto">
+        <xs:sequence>
+            <xs:element name="CryptoSpec" type="PreProvisioningCryptoSpec" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The crypto information. This must be specified for encrypt or recrypt operations.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element default="NoOp" name="CryptoOperation" type ="PreProvisioningCryptoOperation" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The cryptographic operation to perform. This must be specified in response messages
+                        when a crypto spec is provided.
+                    </xs:documentation>
+                    <xs:documentation source="required">true</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xs:any>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PreProvisioningStoragePolicy">
+        <xs:sequence>
+            <xs:element name="PolicyId" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The managed object reference of the storage policy as reported by vCenter server.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="PolicyName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The name of the storage policy as seen in Cloud Director.
+                    </xs:documentation>
+                    <xs:documentation source="required">true</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PreProvisioningExistingDisk">
+        <xs:sequence>
+            <xs:element name="DiskId" type="xs:int" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The disk ID. It will be a negative value before the disk has been created. This is only
+                        guaranteed to be consistent within an operation, and not between operations.
+                    </xs:documentation>
+                    <xs:documentation source="required">true</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="DiskMode" type="PreProvisioningDiskMode" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The mode of the disk.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="NamedDiskId" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The named disk ID. This field is only specified for named disks.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="StoragePolicies" type="PreProvisioningStoragePolicy" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The storage policy associated with the disk.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="CryptoSpec" type ="PreProvisioningCryptoSpec" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The cryptography information of the disk.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PreProvisioningProposedDisk">
+        <xs:sequence>
+            <xs:element name="DiskId" type="xs:int" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The disk ID. It will be a negative value before the disk has been created. This is only
+                        guaranteed to be consistent within an operation, and not between operations.
+                    </xs:documentation>
+                    <xs:documentation source="required">true</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="DiskMode" type="PreProvisioningDiskMode" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The mode of the disk.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="NamedDiskId" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The named disk ID. This field is only specified for named disks.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="DiskOperation" type ="PreProvisioningDiskOperation" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The disk operation to perform. Valid operations include Add (adding a disk),
+                        Remove (removing a disk), Edit (changing a disk's properties), and Move
+                        (relocating or cloning the disk's virtual machine).
+                    </xs:documentation>
+                    <xs:documentation source="required">true</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="StoragePolicies" type="PreProvisioningStoragePolicy" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The storage policy to be associated with the disk. Only one is currently supported.
+                        This value is ignored if set in a response message.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ProposedCrypto" type ="PreProvisioningProposedCrypto" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The cryptography information of the disk.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PreProvisioningExistingVm">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Represents an existing virtual machine as managed by VCD.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="EntityId" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The ID associated with the Cloud Director logical entity corresponding to this VM. Based on the
+                        VmType, this can be the ID of a VM, a template VM, a Replication Tracking VM, or a Named Disk.
+                        It can also be null for things like DRS shell VMs, which are created when vm-vm affinity rules
+                        are in place.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Type" type="VmType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        Conveys the type of the VM.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="StoragePolicies" type="PreProvisioningStoragePolicy" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The storage policy associated with the virtual machine. Only one is currently supported.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="CryptoSpec" type ="PreProvisioningCryptoSpec" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The cryptography information of the virtual machine.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Disks" type="PreProvisioningExistingDisk" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The virtual machine disks.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PreProvisioningProposedChanges">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Represents changes to a virtual machine during the pre-provisioning extensibility phase.
+                More specifically, will include all the changes to be sent to vCenter along with additional
+                items (such as storage policies) that may not be changing. If a field is omitted, it
+                implies that the field is not being modified. Conversely, if a field is included, it
+                does not necessarily indicate that a change will occur to that field.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:sequence>
+            <xs:element name="EntityId" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The ID associated with the Cloud Director logical entity corresponding to this VM. Based on the
+                        VmType, this can be the ID of a VM, a template VM, a Replication Tracking VM, or a Named Disk.
+                        It can also be null for things like DRS shell VMs, which are created when vm-vm affinity rules
+                        are in place.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Type" type="VmType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        Conveys the type of the VM.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="StoragePolicies" type="PreProvisioningStoragePolicy" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The storage policy associated with the virtual machine. Only one is currently supported.
+                        This value is ignored if set in a response message.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ProposedCrypto" type ="PreProvisioningProposedCrypto" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The cryptography information of the virtual machine.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Disks" type="PreProvisioningProposedDisk" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        The virtual machine disks.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CustomizationRequest">
+        <xs:sequence>
+            <xs:element name="Context" type="ContextType" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        Zero or more context entries that will apply to all entities defined in this
+                        &lt;CustomizationRequest&gt; element.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="VmCustomizationRequest">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    A request to customize a virtual machine.
+                </xs:documentation>
+            </xs:annotation>
+
+            <xs:complexContent>
+                <xs:extension base="CustomizationRequest">
+                    <xs:sequence>
+                        <xs:element name="ExistingVm" type="PreProvisioningExistingVm" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">
+                                    Existing virtual machine state as managed by VCD.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="ProposedChanges" type="PreProvisioningProposedChanges" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">
+                                    Proposed changes to the virtual machine.
+                                </xs:documentation>
+                                <xs:documentation source="required">true</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="VmCustomizationResponse">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation xml:lang="en">
+                    A response to a customization request that includes the customized virtual machine.
+                </xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:element name="ProposedChanges" type="PreProvisioningProposedChanges" minOccurs="1" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">
+                            The virtual machine information that has been customized.
+                        </xs:documentation>
+                        <xs:documentation source="required">true</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

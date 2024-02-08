@@ -9,3 +9,6 @@
 * [Troubleshooting Solution Add-On Operations](extension-sdk/troubleshoot.md)
 * [Extensibility Platform](extensibility-platform/extensibility-platform.md)
 * [UI Plugins Development](extensibility-platform/ui-plugins.md)
+* [Message Broker](extensibility-platform/message-broker.md)
+* [Object Extensibility](extensibility-platform/object-extensibility.md)
+* [Object Metadata 2.0](extensibility-platform/object-metadata-2.md)
