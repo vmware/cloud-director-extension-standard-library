@@ -6,6 +6,7 @@ All components of this repository are validated by VMware or its partners agains
 ## Documentation
 
 Get familiar with Cloud Director Solution Add-Ons.
+* [Cloud Director Extensibility Platform](documentation/extensibility-platform/extensibility-platform.md)
 * [Cloud Director Extension SDK](https://developer.vmware.com/sdk/cloud-director-extension)
 * [Service Provider Admin Guide for Solution Add-Ons](https://docs.vmware.com/en/VMware-Cloud-Director/10.4/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-4F12C8F7-7CD3-44E8-9711-A5F43F8DCEB5.html)
 
