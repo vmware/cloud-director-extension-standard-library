@@ -31,7 +31,7 @@ Only a sub-set of core workflows are extensible and have well-defined lifecycle 
  
 Once the **ordered list** of extensions is determined, it then proceeds to invoke them one by one. It will wait for a response if the phase is selected as `phase.type=blocking`, or continue immediately(to the next extension, or phase, etc) if it is `async`. Each blocking extension influences the input of the next extension for the phase. The way it influences it is specific to the phase - sometimes it could be the output of the previous is the input of the next, or the output is overlayed in some way on the input.
 
-If any of the extension invocations ends in an _error_, including when a `blocking` extension deliberately triggers it(by returning a payload of type [`ExtensionErrorMessage`](../schemas/obj-ext-phase-payloads/extensibility-core.xsd)), Cloud Director follows the following procedure:
+If any of the extension invocations ends in an _error_, including when a `blocking` extension deliberately triggers it(by returning a payload of type `ExtensionErrorMessage`), Cloud Director follows the following procedure:
 1. It will attempt to send a message indicating that the last invocation was in error. This has two purposes:
    1. Traceability
    2. To let extensions clean up a potentially broken state.
@@ -86,7 +86,7 @@ Think of this resource as a pseudo workflow, where you can specify the `phase`, 
 
 ## Implementing an `object-extension` backend
 
-Cloud Director supports various _channels_ for the communication with the `object-extension`. Each phase has predefined request and response payload [schema](../schemas/obj-ext-phase-payloads/master.xsd) associated with it, which Cloud Director sends, and in the case of `phase.type=blocking` selections, expects to receive. For all _channel_ types, the payloads are wrapped in [envelopes](../schemas/obj-ext-channel-msg/envelopes.yaml):
+Cloud Director supports various _channels_ for the communication with the `object-extension`. Each phase has predefined request and response payload [schema](../schemas/obj-ext-phase-payloads.zip) associated with it, which Cloud Director sends, and in the case of `phase.type=blocking` selections, expects to receive. For all _channel_ types, the payloads are wrapped in [envelopes](../schemas/obj-ext-channel-msg.zip):
 * `HalfDuplexEnvelope` - used by Cloud Director when sending a request, and by the extension when sending a response
 * `ErrorMessageEnvelope` - used by Cloud Director when the last invocation ended in an error
 
