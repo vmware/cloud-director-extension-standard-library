@@ -97,7 +97,7 @@ elements:
         # tenantsAll and tenants are exclusive
         tenants: true | false
 ```
-[UI Plugins Development](../extensibility-platform/ui-plugins.md)
+[UI Plugins Development](ui-plugins.md)
 
 ### User
 
@@ -879,4 +879,4 @@ Continue exploring the Cloud Director Extension SDK
 
 Explore the Cloud Director Extensibility Platform
 
-* [Extensibility Platfrom](../extensibility-platform/extensibility-platform.md)
+* [Extensibility Platfrom](extensibility-platform.md)
