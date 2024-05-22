@@ -154,13 +154,14 @@ The file consists of an array of Dockerfile definitions and their execution cont
 ```
 
 `<element of type UI>/Dockerfile`
+
 ```Dockerfile
 # syntax=docker/dockerfile:1
 
 FROM <repository>/node:12.16.3-slim as NODE
 # Note the current folder of the NODE container points to <element>/
-COPY ./<element of type UI> /usr/app
-COPY ./<element of type RDE>/dist /usr/app/schemas
+COPY ..<element of type UI> /usr/app
+COPY ..<element of type RDE>/dist /usr/app/schemas
 WORKDIR /usr/app
 RUN npm ci
 RUN npm run build
@@ -185,6 +186,8 @@ By default, the `solution package` command will use the vendor `certificate` and
 Refer to the [Setup / Vendor](setup.md#vendor) section for details about configuring PKI with existing or self-signed generated issuer.
 
 There is also an option for remote signing. With no-sign option `solution package --no-sign` the shell will output an `*.iso` without signature and `manifest.mf`. It is up to the vendor to sign this file and distribute it alongside with the ISO.
+
+You can package for specific platform using `--platform` parameter. During packaging vcdext and  all executables defined as triggers will be filtered to the desired platform. Supported platforms are `linux,windows,darwin,darwin-arm64`.
 
 **Important** Cloud Director does not allow installation of ISOs without signature.
 
@@ -283,6 +286,24 @@ A solution add-on instance can be deleted by executing the following command.
 ```shell
 my-solution |> solution run delete-instance --name <solution instance name> [<arguments> ...]
 ```
+
+## Purge Solution
+A solution add-on instance can be purged in case of failure to delete in a regular fashion 
+Purge command can be executed in or outside the context of a solution projects.
+Purging deletes managed solution elements and does not execute triggers.
+Purging will stop in case of an error during deletion of a resource. 
+In such case the purge command can be rerun after manually fixing the blockage or "--force" flag can be used to ignore the error and continue with the purge. 
+```shell
+my-solution |> solution purge instance --instance-name myInst --force
+my-solution |> solution purge addon --force
+```
+
+Without opened solution project
+```shell
+*no solution* |> solution purge instance --vendor vmware --soluiton-name my-solution  --instance-name myInst --force
+*no solution* |> solution purge addon --vendor vmware --soluiton-name my-solution --force
+```
+
 
 ## Continuous Integration & Deployment
 
