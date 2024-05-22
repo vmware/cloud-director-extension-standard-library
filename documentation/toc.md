@@ -7,6 +7,7 @@
   * [Understanding the Solution Add-On Behavior](extension-sdk/behavior.md)
   * [Exploring Solution Add-On Elements](extension-sdk/elements.md)
   * [Troubleshooting Solution Add-On Operations](extension-sdk/troubleshoot.md)
+  * [Introduction](extension-sdk/introduction.md)
 * [Extensibility Platform](extensibility-platform/extensibility-platform.md)
   * [UI Plugins Development](extensibility-platform/ui-plugins.md)
   * [Message Broker](extensibility-platform/message-broker.md)
