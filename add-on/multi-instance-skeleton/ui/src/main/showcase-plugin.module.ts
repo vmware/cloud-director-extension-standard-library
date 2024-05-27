@@ -43,6 +43,7 @@ export { SubnavComponent } from "./subnav/subnav.component";
 export { VappRestoreActionComponent, VmBackupActionComponent } from "./actions";
 export { DatacenterContainerComponent } from './datacenter-overview/datacenter.container.component';
 export { ApplicationComponent } from './application/application.component';
+export { NetworkingComponent } from './networking/networking.component';
 export { DatacenterComputeComponent } from './datacenter-compute/datacenter-compute.component';
 export { DatacenterNetworkComponent } from './datacenter-network/datacenter-network.component';
 export { DatacenterStorageComponent } from './datacenter-storage/datacenter-storage.component';
@@ -53,7 +54,6 @@ export {
 export {
     OrgCreateWizardExtensionPointComponent
 } from './create-org';
-export { NetworkingComponent } from './networking/networking.component';
 export {
     IpBindingsCreateWizardExtensionPointComponent
 } from './create-ip-bindings';
@@ -66,13 +66,13 @@ const components = [
     VappRestoreActionComponent,
     VmBackupActionComponent,
     ApplicationComponent,
+    NetworkingComponent,
     DatacenterComputeComponent,
     DatacenterNetworkComponent,
     DatacenterStorageComponent,
     VappCreateWizardExtensionPointComponent,
     VmCreateWizardExtensionPointComponent,
     OrgCreateWizardExtensionPointComponent,
-    NetworkingComponent,
     IpBindingsCreateWizardExtensionPointComponent,
 ]
 

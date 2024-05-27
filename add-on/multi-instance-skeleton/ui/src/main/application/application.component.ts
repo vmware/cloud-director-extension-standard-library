@@ -2,7 +2,8 @@
  * Copyright 2020-2023 VMware, Inc. All rights reserved. VMware Confidential
  */
 
-import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
+import { Inject } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { API_ROOT_URL } from "@vcd/sdk";
 import { Observable } from "rxjs";
 
@@ -25,6 +26,6 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     ngOnInit(): void {}
 
     ngOnDestroy(): void {
-        console.warn("[Showcase 2.0]", `${this.constructor.name} destroyed`);
+        console.warn("[Showcase 3.0]", `${this.constructor.name} destroyed`);
     }
 }

@@ -26,6 +26,6 @@ export class NetworkingComponent implements EntityContextExtensionInterface, OnI
     ngOnInit(): void {}
 
     ngOnDestroy(): void {
-        console.warn("[Showcase 2.0]", `${this.constructor.name} destroyed`);
+        console.warn("[Showcase 3.0]", `${this.constructor.name} destroyed`);
     }
 }
