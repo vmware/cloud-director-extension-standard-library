@@ -7,6 +7,7 @@ A service provider uses the REST api to [register such extensions and _select_ t
 The following is a high level diagram of the components of the object extensibility framework\
 ![Framework](../images/object-extensions.jpg)\
 where:
+
 * [`Object Extension`](https://developer.vmware.com/apis/vmware-cloud-director/latest/data-structures/ObjectExtension/) defines an extension backend. Based on the type, the way a backend is built varies. There are two flavours:
   * the legacy AMQP based object extensions registered via `/api/admin/extension/object`. They are deprecated since Cloud Director 10.6.
   * the channel object extensions registered via [`/cloudapi/1.0.0/extensions/object-extension`](https://developer.vmware.com/apis/vmware-cloud-director/latest/object-extension/). This document describes the interaction only with this kind. The first channel type that is supported since the introduction of this kind of extensions(10.5.1), is a generic RDE standalone mqtt behavior(part of the Cloud Director RDE framework).
@@ -25,6 +26,7 @@ An object extension can participate as a peer of the system to:
 * observe without changing the outcome of workflows; typically the selection will be `phase.type=async`, but `phase.type=blocking` may also be used for such cases, where the extension has to only conditionally change the outcome
 
 Only a sub-set of core workflows are extensible and have well-defined lifecycle _phases_ and applicable _selector types_. Multiple `object-extensions` at a time can be candidates for execution for a given `phase`. When Cloud Director selects the `object-extensions` based on the `phase` and the `selector types`, it then proceeds to order them based on the `selectorExtension.priority` field and filter based on the _phase cardinality_. The _direction of the ordering_(ascending or descending) is specific to the workflow and the cardinality depends on the particular `phase`. The _cardinality_ defines the applicable `phase.type` selections and the number of extensions that may be invoked:
+
 * `ALLOW_ONE` - up to one extension, either `async` or `blocking`
 * `ALLOW_ONE_BLOCKING` - up to one `blocking` extension
 * `UNLIMITED` - any number of extensions of any `phase.type`
@@ -32,12 +34,14 @@ Only a sub-set of core workflows are extensible and have well-defined lifecycle 
 Once the **ordered list** of extensions is determined, it then proceeds to invoke them one by one. It will wait for a response if the phase is selected as `phase.type=blocking`, or continue immediately(to the next extension, or phase, etc) if it is `async`. Each blocking extension influences the input of the next extension for the phase. The way it influences it is specific to the phase - sometimes it could be the output of the previous is the input of the next, or the output is overlayed in some way on the input.
 
 If any of the extension invocations ends in an _error_, including when a `blocking` extension deliberately triggers it(by returning a payload of type `ExtensionErrorMessage`), Cloud Director follows the following procedure:
+
 1. It will attempt to send a message indicating that the last invocation was in error. This has two purposes:
    1. Traceability
    2. To let extensions clean up a potentially broken state.
 2. If the `selectorExtension.optional=true`, it will continue with the execution(invoking the next extension/phase/workflow stage, whatever the case may be). Otherwise, the workflow ends and the corresponding workflow `task` will contain details for the error(which may have been forwarded from the extension, in case it triggered it).
 
 > **Note:**
+> 
 > * It is possible for a `phase` to **not** get any extensions invoked, even though there are selector extensions on it. This can happen if its cardinality does not permit the `phase.type` of the selectors.
 > * If an `object-extension` is selected on multiple different `selector types`, it will be invoked once with a priority which is well-defined if it is the same across all `selector extensions`, or one will be chosen otherwise. It is currently undefined as to which priority will be chosen in the latter case.
 
