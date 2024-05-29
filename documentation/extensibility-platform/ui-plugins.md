@@ -19,7 +19,8 @@ To kick-start your UI Plugin development, please refer to the [Generate add-on f
 Prerequisites:
 
 - [Setup vcd-ext-shell](../extension-sdk/setup.md#setting-up-the-development-environment)
-- [Node.js v14.20](https://nodejs.org)
+- [Node.js v14.20](https://nodejs.org) for Angular 15
+- [Node.js v18](https://nodejs.org) for Angular 17
 
 
 ## UI Plugin Metadata - manifest.json
@@ -707,10 +708,16 @@ git clone https://github.com/vmware/cloud-director-extension-standard-library.gi
 ```
 1. Copy `add-on/multi-instance-skeleton/.ui-emulator` folder next to your UI plugin folder. Note, you can place the UI emulator anywhere in your file system, you must re-configure the path to UI plugins folder (`emulatorConfig.relativePath` and `emulatorConfig.relativePathToUIPlugins`, see Configuration section).
 2. Install dependencies of UI Emulator
+For Node.js v14.20
 ```bash
 cd ./add-on/multi-instance-skeleton/.ui-emulator
 npm i
 ```
+
+For Node.js v18
+```bash
+cd ./add-on/multi-instance-skeleton/.ui-emulator
+npm i --legacy-peer-deps
 
 ### Configuration
 

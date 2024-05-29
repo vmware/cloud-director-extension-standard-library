@@ -5,7 +5,7 @@
 
 <clr-vertical-nav [clrVerticalNavCollapsible]="true">
   <a *ngFor="let navItem of navItems" clrVerticalNavLink routerLink="{{navItem.routerLink}}" routerLinkActive="active">
-    <clr-icon *ngIf="navItem.iconShape" clrVerticalNavIcon [attr.shape]="navItem.iconShape" title="{{navItem.labelKey | translate}}"></clr-icon>
+    <cds-icon *ngIf="navItem.iconShape" clrVerticalNavIcon [attr.shape]="navItem.iconShape" title="{{navItem.labelKey | translate}}"></cds-icon>
     {{navItem.labelKey | translate}}
   </a>
 </clr-vertical-nav>

@@ -20,6 +20,6 @@ export class VappCreateWizardExtensionPointComponent extends WizardExtensionComp
 
     ngOnDestroy() {
         this.modalWizardExtensionPointService.exitVappContext();
-        console.warn("[Showcase 2.0]", `${this.constructor.name} destroyed`);
+        console.warn("[Showcase 3.0]", `${this.constructor.name} destroyed`);
     }
 }
