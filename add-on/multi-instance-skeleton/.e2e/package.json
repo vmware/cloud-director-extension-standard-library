@@ -21,7 +21,7 @@
         "process": "0.11.10",
         "ts-loader": "9.1.2",
         "typescript": "3.6.4",
-        "webpack": "5.37.0",
+        "webpack": "5.76.0",
         "xml2js": "0.4.23"
     },
     "cypress-cucumber-preprocessor": {
