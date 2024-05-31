@@ -1,7 +1,6 @@
+# Runtime Defined Entities Framework
 
-# Runtime Defined Entities
-
-- [Runtime Defined Entities](#runtime-defined-entities)
+- [Runtime Defined Entities Framework](#runtime-defined-entities-framework)
   - [Introduction](#introduction)
   - [Typical RDE Uses](#typical-rde-uses)
   - [Runtime Defined Entities Concepts](#runtime-defined-entities-concepts)
