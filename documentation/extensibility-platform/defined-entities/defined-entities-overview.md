@@ -4,6 +4,7 @@
   - [Introduction](#introduction)
   - [Typical RDE Uses](#typical-rde-uses)
   - [Runtime Defined Entities Concepts](#runtime-defined-entities-concepts)
+  - [REST API](#rest-api)
   - [Links to the RDE Components Documentation](#links-to-the-rde-components-documentation)
 
 ## Introduction
@@ -64,13 +65,23 @@ also define [RDE Behaviors](behaviors-general-concepts.md) that can be executed 
 
 ![Example Defined Entity Interface, Type, and instances](../../images/rde_concepts.png)
 
-[RDE Behaviors](behaviors-general-concepts.md) are custom executable operations that can be performed on a
-Runtime Defined Entity. Behaviors can by defined by clients via several
+[RDE Behaviors](behaviors-general-concepts.md) are custom executable operations that can be
+performed on a Runtime Defined Entity. Behaviors can by defined by clients via several
 different mechanisms. RDE Types can be configured to automatically
 execute specific Behaviors on certain events during the RDE lifecycle.
 
 RDE Types, their RDE instances, as well as RDE Interfaces are [versioned](rde-versions.md).
 They ensure that the schema of an RDE does not change once it is created. They also offer a path to transfer to other versions.
+
+## REST API
+
+All RDE operations are performed via the Cloud Director REST API.
+
+Note that as descirbed in the [Cloud Director API Reference](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/), the Cloud Director API supports HATEAOS and it is not
+necessary to build the REST API request URIs manually -- they can be extracted from the Links.
+
+See this [simple sequence of RDE API requests](defined-entities-simple-requests.md) for
+examples of how to perform RDE operations.
 
 ## Links to the RDE Components Documentation
 
