@@ -4,6 +4,7 @@
   - [Introduction](#introduction)
   - [Typical RDE Uses](#typical-rde-uses)
   - [Runtime Defined Entities Concepts](#runtime-defined-entities-concepts)
+    - [Strict Tenenancy](#strict-tenenancy)
   - [Links to the RDE Components Documentation](#links-to-the-rde-components-documentation)
 
 ## Introduction
@@ -71,6 +72,13 @@ execute specific Behaviors on certain events during the RDE lifecycle.
 
 RDE Types, their RDE instances, as well as RDE Interfaces are [versioned](rde-versions.md).
 They ensure that the schema of an RDE does not change once it is created. They also offer a path to transfer to other versions.
+
+### Strict Tenenancy
+
+Runtime Defined Entities follow a strict tenancy model.
+
+An RDE created in a specific tenant cannot be moved to another tenant.
+Access to the RDE cannot be shared with users outside the tenant.
 
 ## Links to the RDE Components Documentation
 
