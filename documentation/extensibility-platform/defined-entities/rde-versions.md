@@ -93,7 +93,7 @@ the same time. An extension can choose how to manage its access to these
 different RDE instance versions.
 
 It can either upgrade the existing RDE instances to a new version of the
-RDE Type, or it can request the entity and specify that that the
+RDE Type, or it can request the entity and specify that the
 contents must be converted to a specific version before they are
 returned to the client.
 
@@ -114,7 +114,7 @@ https://{{vcd_host}}:{{vcd_port}}/cloudapi/1.0.0/entities/urn:vcloud:entity:vmwa
 
 ```json
 {
-    "entityType": "urn:vcloud:type:vmware:tkgcluster:**1.1.0**",
+    "entityType": "urn:vcloud:type:vmware:tkgcluster:1.1.0",
     …
 }
 ```
@@ -138,8 +138,8 @@ are defined in the new schema.
 All instances of particular RDE Type versions can be upgraded or
 downgraded to another version using the [RDE Version Migration API](https://developer.vmware.com/apis/vmware-cloud-director/v38.1/cloudapi/1.0.0/entityTypes/typeId/migrateEntities/post/).
 
-The mass RDE upgrade is a long running process that updates the selected
-group of RDE instances using the same rules as an individual RDE
+The mass RDE upgrade is a long-running process that updates the selected
+RDE instances using the same rules as an individual RDE
 instance upgrade.
 
 #### RDE Conversion to a specific type version upon request

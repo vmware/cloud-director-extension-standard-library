@@ -7,7 +7,7 @@ can be automated by binding [behaviors](behaviors-general-concepts.md) to the li
 
 For example, an extension can define a type that has a property in its schema that describes
 the desired state of a system.
-Users can create new intances of that type and fill in that property with their desired system state.
+Users can create new instances of that type and fill in the property with their desired system state.
 
 The extension can bind behaviors to the `OnCreate` and `OnUpdate` hooks of that type to observe the
 modifications in the desired state requested by the users.
@@ -80,3 +80,19 @@ to `IN_DELETION`.
 The behavior may perform operations like releasing the external resources
 associated with the entity.
 If the behavior execution is successful, the entity will be fully removed.
+
+## Hook Execution Control
+
+The creators of the RDE Type use the hooks to specify the behavior that an entity of the RDE Type must have. 
+Thus the hook execution cannot be turned off by users of the type.
+
+Users who have Full Control access to the type definition, 
+however, can explicitly turn off the hook executions for an operation by providing the `invokeHooks=false` query parameter
+in the request. For example:
+
+```text
+POST https://{{vcd_host}}:{{vcd_port}}/cloudapi/1.0.0/entityTypes/urn:vcloud:type:clusterVendorA:basicContainerCluster:1.0.0?invokeHooks=false
+```
+
+The `invokeHooks` query parameter is accepted only if the user making the request has a Full Control ACL for the specific type. The creator of the RDE type is granted such ACL by default. An ACL can be granted to other users as well via the [Type Access
+Controls API](https://developer.vmware.com/apis/vmware-cloud-director/v38.1/type-access-controls/).
