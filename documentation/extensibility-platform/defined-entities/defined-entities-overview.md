@@ -4,10 +4,11 @@
   - [Introduction](#introduction)
   - [Typical RDE Uses](#typical-rde-uses)
   - [Runtime Defined Entities Concepts](#runtime-defined-entities-concepts)
-    - [Strict Tenenancy](#strict-tenenancy)
+    - [Strict Tenancy](#strict-tenenancy)
   - [Links to the RDE Components Documentation](#links-to-the-rde-components-documentation)
 
 ## Introduction
+Users can create new instances of that type and fill in the property with their desired system state.
 
 Cloud Director supports several pre-defined entity types – VMs, vApps,
 Networks, etc. The Runtime Defined Entities (RDE) functionality allows
@@ -66,14 +67,14 @@ also define [RDE Behaviors](behaviors-general-concepts.md) that can be executed 
 ![Example Defined Entity Interface, Type, and instances](../../images/rde_concepts.png)
 
 [RDE Behaviors](behaviors-general-concepts.md) are custom executable operations that can be performed on a
-Runtime Defined Entity. Behaviors can by defined by clients via several
+Runtime Defined Entity. Behaviors can be defined by clients via several
 different mechanisms. RDE Types can be configured to automatically
 execute specific Behaviors on certain events during the RDE lifecycle.
 
 RDE Types, their RDE instances, as well as RDE Interfaces are [versioned](rde-versions.md).
 They ensure that the schema of an RDE does not change once it is created. They also offer a path to transfer to other versions.
 
-### Strict Tenenancy
+### Strict Tenancy
 
 Runtime Defined Entities follow a strict tenancy model.
 
