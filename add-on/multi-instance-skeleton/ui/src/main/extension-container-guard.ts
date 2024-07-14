@@ -16,7 +16,7 @@ export class ExtensionContainerGuard implements CanDeactivate<any> {
         currentRoute: ActivatedRouteSnapshot,
         currentState: RouterStateSnapshot,
         nextState: RouterStateSnapshot): Promise<boolean>  | boolean {
-            console.warn("[Showcase 2.0]", "ExtensionContainerGuard called");
+            console.warn("[Showcase 3.0]", "ExtensionContainerGuard called");
         return true;
     }
 }

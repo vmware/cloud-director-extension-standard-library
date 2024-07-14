@@ -9,7 +9,7 @@
     },
     "license": "BSD-2-Clause",
     "dependencies": {
-        "@vcd/ui-emulator": "15.0.4"
+        "@vcd/ui-emulator": "15.0.7"
     },
     "scripts": {
         "start": "node ./node_modules/@vcd/ui-emulator/utils/lib/emulator-start.js ./config.json"

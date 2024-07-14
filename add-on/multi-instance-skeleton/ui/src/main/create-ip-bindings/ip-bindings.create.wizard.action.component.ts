@@ -21,6 +21,6 @@ export class IpBindingsCreateWizardExtensionPointComponent extends WizardExtensi
     }
 
     ngOnDestroy() {
-        console.warn("[Showcase 2.0]", `${this.constructor.name} destroyed`);
+        console.warn("[Showcase 3.0]", `${this.constructor.name} destroyed`);
     }
 }

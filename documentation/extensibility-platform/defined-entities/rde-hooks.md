@@ -1,37 +1,64 @@
 ## Runtime Defined Entity Lifecycle Hooks
+
+## Overview
+
+The processing of the events in the [Runtime Defined Entities lifecycle](defined-entities.md#rde-lifecycle)
+can be automated by binding [behaviors](behaviors-general-concepts.md) to the lifecycle events.
+
+For example, an extension can define a type that has a property in its schema that describes
+the desired state of a system.
+Users can create new instances of that type and fill in the property with their desired system state.
+
+The extension can bind behaviors to the `OnCreate` and `OnUpdate` hooks of that type to observe the
+modifications in the desired state requested by the users.
+The hook behaviors will be invoked upon such modifications and can initiate or perform
+processes to satisfy the modified desired state.
+
+## Example
+
+Hooks are configured at the defined entity type level as part of the type definition. The hook behaviors must be defined in one of the interfaces that the defined entity type implements. 
+
+The following REST API call creates an RDE Type that implements the interface `urn:vcloud:interface:clusterVendorA:containerCluster:1.0.0`:
+
+```text
+POST
+https://{{vcd_host}}:{{vcd_port}}/cloudapi/1.0.0/entityTypes
+```
+
+```json
+{
+    "name": "Basic Container Cluster",
+    "vendor": "clusterVendorA",
+    "nss": "basicContainerCluster",
+    "version": "1.0.0",
+    "interfaces": ["urn:vcloud:interface:clusterVendorA:containerCluster:1.0.0"],
+    ...
+    "hooks": {
+        "PostCreate": "urn:vcloud:behavior-interface:autoResolve:clusterVendorA:containerCluster:1.0.0",
+        "PostUpdate": "urn:vcloud:behavior-interface:processUpdate:clusterVendorA:containerCluster:1.0.0",
+        "PreDelete" : "urn:vcloud:behavior-interface:validateDelete:clusterVendorA:containerCluster:1.0.0",
+    }
+}
+```
+
+The type definition binds three of the interface behaviors to different lifecycle events of the entities of the type:
+
+- the `autoResolve` behavior will be invoked after the initial entity creation
+- the `processUpdate` behavior will be invoked every time the entity is modified
+- the `validateDelete` behavior will be invoked to check whether the entity can be deleted or not
+
+
+## Available RDE Lifecycle Hooks
+
 Behaviors can be configured to execute at the different lifecycle stages of a defined entity:
 - [Post Create](#post-create-behavior-hook)
 - [Post Update](#post-update-behavior-hook)
 - [Pre Delete](#pre-delete-behavior-hook)
 - [Post Delete](#post-delete-behavior-hook)
 
-Hook behaviors' executions are triggered as part of each API call on the entity leading any of the forementioned defined entity lifecycle stages (e.g. API call for creating a defined entity). 
+Hook behaviors' executions are triggered as part of each API call on the entity leading any of the aforementioned defined entity lifecycle stages (e.g. API call for creating a defined entity). 
 
-A failure in the execution of some of the hooks may cancel the requested entity operation. In this case, the operation can be forced by "turning-off" the hook execution. This is done by adding the `invokeHooks` query parameter to the request and setting its value to `false`. This query parameter can be used only bu user who have administrative rights to the defined entity type of the entity. Otherise, the request will fail with `OperationDenied` exception.
-
-Hook behaviors are configured at the defined entity type level as part of the type definition. The hook behaviors must be defined in one of the interfaces that the defined entity type implements. 
-
-Example RDE Type definition with hooks:
-```json
-{
-    "name": "testType",
-    "description": "testType",
-    "nss": "testType",
-    "version": "1.0.0",
-    "inheritedVersion": null,
-    "externalId": null,
-    "schema":  {...},
-    "interfaces" : ["urn:vcloud:interface:vmware:test:1.0.0"],
-    "hooks": {
-        "PostCreate": "urn:vcloud:behavior-interface:postCreateHook:vendorA:containerCluster:1.0.0",
-        "PostUpdate": "urn:vcloud:behavior-interface:mksPostUpdateBehavior:vendorA:containerCluster:1.0.0",
-        "PreDelete" : "urn:vcloud:behavior-interface:postUpdateBehavior:vendorA:containerCluster:1.0.0",
-        "PostDelete" : "urn:vcloud:behavior-interface:postDeleteBehavior:vendorA:containerCluster:1.0.0"
-    },
-    "vendor": "vmware",
-    "readonly": false
-}
-```
+A failure in the execution of some of the hooks may cancel the requested entity operation if they fail.
 
 Behavior executions as lifecycle hooks are not subject to any access control rules.
 
@@ -51,14 +78,16 @@ Headers:
 Location: https://<vcd-host>/api/task/<task-id>
 ...
 ```
-The RDE create operation is a long-running process in Cloud Director which is tracjed by a task. If the RDE creation triggers a post-create hook the task returned in the `Location` header of the create RDE API call response is the behavior invocation task.
+The RDE create operation is a long-running process in Cloud Director which is traced by a task. If the RDE creation triggers a post-create hook the task returned in the `Location` header of the create RDE API call response is the behavior invocation task.
 
-If the post-create behavior execution completes __successfully__, then the resolve operation is automatically invoked on the defined entity. If the execution __fails__, then the defined entity is set into an error state.
+If the post-create behavior execution completes __successfully__, then the resolve operation is automatically invoked on the defined entity. 
+
+If the execution __fails__, then the entity state is switched to the `RESOLUTION_ERROR` state.
 
 ![RDE post-create hook execution and RDE entity states](../../images/rde-post-create-hook-entity-states.png)
 
 ### Post Update Behavior Hook
-The post-update hook behavior is invoked automatically after a defined entity instance update. This hook behavior can be used to update the external resource that the RDE is backed by accordingly.
+The post-update hook behavior is invoked automatically after a defined entity instance update. This hook behavior can be used to update the external resource that the RDE represents.
 
 The post-update hook behavior execution does not affect the entity state of the RDE instance in any way.
 
@@ -83,9 +112,9 @@ The pre-delete and post-delete hook behaviors are hooked to the RDE deletion ope
 #### Pre Delete Hook Behavior
 The pre-delete hook is intended to be used as a pre-check for whether an entity can be deleted depending on the extension logic. A failure of the pre-delete hook will abort the entity deletion leaving the entity unchanged.
 
-The pre-delete hook behavior is the first executed operation when an entity is requested to be marked for deletion or requested to be deleted. 
+The pre-delete hook behavior is the first operation to be executed when an entity is requested to be marked for deletion or requested to be deleted. 
 
-An entity is requested to be marked for deletion by moving the entity to `IN_DELETION` state ([more details](#moving-entities-to-in_deletion-state)).
+An entity is requested to be marked for deletion by moving the entity to the `IN_DELETION` state ([more details](#moving-entities-to-in_deletion-state)).
 
 An entity is requested to be deleted by executing a `DELETE` entity API call:
 ```
@@ -252,3 +281,19 @@ To get all entities of a RDE Type in state `IN_DELETION`, you `GET` all entities
 ```
 GET /cloudapi/1.0.0/entities/types/vmware/testType1/1.0.0?filter=(entityState==IN_DELETION)
 ```
+
+## Hook Execution Control
+
+The creators of an RDE Type use the hooks to specify the behaviors that an entity of the RDE Type must follow.
+Thus the hook execution cannot be turned off by users of the type.
+
+Users who have Full Control access to the type definition, 
+however, can explicitly turn off the hook executions for an operation by providing the `invokeHooks=false` query parameter
+in the request. For example:
+
+```text
+POST https://{{vcd_host}}:{{vcd_port}}/cloudapi/1.0.0/entityTypes/urn:vcloud:type:clusterVendorA:basicContainerCluster:1.0.0?invokeHooks=false
+```
+
+The `invokeHooks` query parameter is accepted only if the user making the request has a Full Control ACL for the specific type. The creator of the RDE type is granted such ACL by default. An ACL can be granted to other users as well via the [Type Access
+Controls API](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/type-access-controls/).

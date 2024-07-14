@@ -28,13 +28,13 @@ export class VmBackupActionComponent extends EntityActionExtensionComponent impl
         return of({
             text: this.translationService.translate("vm.action.backup"),
             children: [{
-                urn: "vmware:vcloud:vm-action:backup2",
+                urn: "vmware:vcloud:vm-action:backup3",
                 text: "Backup",
                 busy: false,
                 enabled: true
             },
             {
-                urn: "urn:vmware:vcloud:vm:deleteBackup2",
+                urn: "urn:vmware:vcloud:vm:deleteBackup3",
                 text: "Delete Backups",
                 busy: false,
                 enabled: false
@@ -47,7 +47,7 @@ export class VmBackupActionComponent extends EntityActionExtensionComponent impl
         this.opened = true;
         this.result = new Subject<{ refreshRequested: boolean }>();
 
-        console.log("[Showcase 2.0]", "Backup");
+        console.log("[Showcase 3.0]", "Backup");
 
         return this.result.asObservable();
     }
@@ -59,6 +59,6 @@ export class VmBackupActionComponent extends EntityActionExtensionComponent impl
     }
 
     ngOnDestroy(): void {
-        console.warn("[Showcase 2.0]", `${this.constructor.name} destroyed`);
+        console.warn("[Showcase 3.0]", `${this.constructor.name} destroyed`);
     }
 }

@@ -30,7 +30,7 @@ export class OrgCreateWizardExtensionPointComponent extends WizardExtensionWithV
     }
 
     ngOnDestroy() {
-        console.warn("[Showcase 2.0]", `${this.constructor.name} destroyed`);
+        console.warn("[Showcase 3.0]", `${this.constructor.name} destroyed`);
     }
 
     performAction(payload: string, returnValue: string, error: any) {
