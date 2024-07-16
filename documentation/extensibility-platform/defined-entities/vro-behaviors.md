@@ -21,7 +21,7 @@ The VRO behavior's `executionType` is `VRO8Plus`.  It is a required field.
 
 The `id` field is the ID of the service item representing the workflow in Cloud Director. Only imported workflows can be used as VRO behaviors. It is a required field.
 
-The `workflow_execution_timeout` field states how long the Behaviors Framework will wait for a VRO workflow started by a VRO behavior invocation. If the workflow execution exceeds the stated timeout the behavior execution will fail with a timeout exception. The `workflow_execution_timeout` is an optional field. More on VRO behavior execution timeout can be found [here](#execution-timeout).
+The `workflow_execution_timeout` field states how long the Behaviors Framework will wait for a VRO workflow started by a VRO behavior invocation. If the workflow execution exceeds the stated timeout the behavior execution will fail with a timeout exception. The `workflow_execution_timeout` is an optional field. More on VRO behavior execution timeout can be found [here](#execution-timeout-and-polling-rate).
 
 ## Behavior Invocation
 A VRO behavior is invoked as any other defined entity behavior:

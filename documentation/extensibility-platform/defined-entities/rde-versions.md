@@ -15,8 +15,8 @@ can specify a different JSON Schema.
 The version mechanism preserves the consistency of the existing Runtime
 Defined Entity instances as the RDE definitions evolve.
 
-If there exist RDE instances that are based on given Type and Interface
-versions, then those versions become immutable.
+If RDE instances that are based on given Type and Interface
+versions exist, then those versions become immutable.
 
 If an extension is upgraded and needs to use enhanced functionality in
 its RDE instances, it can create a new version of its RDE Type with an
@@ -32,7 +32,7 @@ MAJOR.MINOR.PATCH, where each section is numeric, for example: 1.0.0,
 1.1.0, 2.1.1.
 
 The standard Semantic Versioning precedence is used where it is needed
-(e.g. see the section Access Control and Versioning). For example, 1.0.0
+(e.g. see the section [RDE Type Versions and RDE Access Control](#rde-type-versions-and-rde-access-control)). For example, 1.0.0
 \< 2.0.0 \< 2.1.0 \< 2.1.1 .
 
 Note: RDEs do not support additional versioning labels for pre-releases,
@@ -136,7 +136,7 @@ are defined in the new schema.
 #### Mass RDE upgrade
 
 All instances of particular RDE Type versions can be upgraded or
-downgraded to another version using the [RDE Version Migration API](https://developer.vmware.com/apis/vmware-cloud-director/v38.1/cloudapi/1.0.0/entityTypes/typeId/migrateEntities/post/).
+downgraded to another version using the [RDE Version Migration API](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/entityTypes/typeId/migrateEntities/post/).
 
 The mass RDE upgrade is a long-running process that updates the selected
 RDE instances using the same rules as an individual RDE
@@ -185,7 +185,7 @@ Control.
 Providers may sometimes want to publish new experimental RDE Type
 versions only to some organizations or users. This can be achieved by
 adjusting the ACLs of a specific RDE Type version via the [Type Access
-Controls API](https://developer.vmware.com/apis/vmware-cloud-director/v38.1/type-access-controls/).
+Controls API](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/type-access-controls/).
 
 The RDE Type ACLs control which Users or Organizations can “see” the
 Type version and perform operations with its instances based on the

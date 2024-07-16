@@ -1,5 +1,5 @@
 # Defined Interfaces
-Interfaces are collections of behaviors (or actions). A behavior is always created as part of an interface. Interfaces are implemented by [Defined Entity Types]()<!-- TODO add link to RDE Type docs -->.
+Interfaces are collections of behaviors (or actions). A behavior is always created as part of an interface. Interfaces are implemented by [Defined Entity Types](defined-entity-types.md).
 
 ## Definition
 
