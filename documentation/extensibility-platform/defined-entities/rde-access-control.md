@@ -28,7 +28,7 @@ The level of access a user has to a defined entity is determined by the type-spe
 When a defined entity type is created, a right bundle containing the 5 type-specific rights is also created - `<type vendor>:<type-nss> Entitlement`. You can use the VMware Cloud Director API or UI to publish the rights bundle to any organizations you want to manage the defined entities of this type. After publishing the rights bundle, you can assign rights from the bundle to roles within the organization.
 
 ### Access Controls
-Access Control Lists (ACLs) are part of the access control mechanisms for Defined Entity Types and Defined Entity Instances. There are separate CRUD APIs for managing [Defined Entity Type ACLs](https://developer.vmware.com/apis/vmware-cloud-director/latest/type-access-controls/) and [Defined Entity ACLs](https://developer.vmware.com/apis/vmware-cloud-director/latest/access-controls/).
+Access Control Lists (ACLs) are part of the access control mechanisms for Defined Entity Types and Defined Entity Instances. There are separate CRUD APIs for managing [Defined Entity Type ACLs](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/type-access-controls/) and [Defined Entity ACLs](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/access-controls/).
 
 An ACL entry contains the following fields:
 - `objectId` - The ID of the object this ACL refers to.
@@ -244,7 +244,7 @@ A provider admin can execute RDE operations in the context of a tenant organizat
 ### Sharing Access to Defined Entities
 You can grant access to defined entities (RDEs) by sharing them with other system administrators or tenants.
 
-To share a defined entity with a user, the rights bundle of the defined entity type (which the entity is an instance of) must be published to the organization which the user is part of. So if you wish to share a provider defined entity with a tenant user, you must first publish the rights bundle of the defined entity type to the tenant organization. See [Publish or Unpublish a Rights Bundle](https://docs.vmware.com/en/VMware-Cloud-Director/10.3/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-C331FF7E-2300-4F94-9E32-1F3323FD648E.html#GUID-C331FF7E-2300-4F94-9E32-1F3323FD648E).
+To share a defined entity with a user, the rights bundle of the defined entity type (which the entity is an instance of) must be published to the organization which the user is part of. So if you wish to share a provider defined entity with a tenant user, you must first publish the rights bundle of the defined entity type to the tenant organization. See [Publish or Unpublish a Rights Bundle](https://docs.vmware.com/en/VMware-Cloud-Director/10.5/VMware-Cloud-Director-Service-Provider-Admin-Guide/GUID-C331FF7E-2300-4F94-9E32-1F3323FD648E.html).
 
 In general there are 3 levels of access which can be granted to a defined entity - read-only (view), read-write (edit) and full control. Assign the __View: TYPE__, __Edit: TYPE__, or __Full Control: TYPE__ right from the bundle to the user roles you want to have the specific level of access to the defined entity. Also, you must grant the specific users with Access Control Lists (ACLs) with the according access level to the entities:
 ```

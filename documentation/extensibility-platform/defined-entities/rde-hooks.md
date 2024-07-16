@@ -2,7 +2,7 @@
 
 ## Overview
 
-The processing of the events in the [Runtime Defined Entities lifecycle](defined-entities.md#rde-lifecycle)
+The processing of the events in the [Runtime Defined Entities lifecycle](defined-entities-lifecycle.md#rde-lifecycle)
 can be automated by binding [behaviors](behaviors-general-concepts.md) to the lifecycle events.
 
 For example, an extension can define a type that has a property in its schema that describes
@@ -53,8 +53,8 @@ The type definition binds three of the interface behaviors to different lifecycl
 Behaviors can be configured to execute at the different lifecycle stages of a defined entity:
 - [Post Create](#post-create-behavior-hook)
 - [Post Update](#post-update-behavior-hook)
-- [Pre Delete](#pre-delete-behavior-hook)
-- [Post Delete](#post-delete-behavior-hook)
+- [Pre Delete](#pre-delete-hook-behavior)
+- [Post Delete](#post-delete-hook-behavior)
 
 Hook behaviors' executions are triggered as part of each API call on the entity leading any of the aforementioned defined entity lifecycle stages (e.g. API call for creating a defined entity). 
 

@@ -1,8 +1,7 @@
 # Runtime Defined Entity Behaviors
 
 ## Prerequisites
-It is recommended to get familiar with the concepts of [Defined Entity Types](), [Defined Entities]() and [Interfaces]() before moving on to Behaviors. 
-<!-- TODO add links to RDE documentation -->
+It is recommended to get familiar with the concepts of [Defined Entity Types](defined-entity-types.md), [Defined Entities](defined-entities-overview.md) and [Interfaces](defined-interfaces.md) before moving on to Behaviors. 
 
 ## Overview
 Runtime Defined Entity Behaviors (or just Behaviors) are operations which execute custom logic in Cloud Director. 
@@ -44,7 +43,7 @@ Response:
     }
 }
 ```
-API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-api/v38.1/cloudapi/1.0.0/interfaces/id/behaviors/post/).
+API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/interfaces/id/behaviors/post/).
 ### Type Behaviors
 Each RDE Type implements one or more interfaces. The behaviors defined in those interfaces can be executed on instances of the RDE Type.
 
@@ -87,7 +86,7 @@ Response:
     }
 }
 ```
-API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-api/v37.2/cloudapi/1.0.0/entityTypes/id/behaviors/behaviorId/put/).
+API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/entityTypes/id/behaviors/behaviorId/put/).
 ### Behavior Definition
 All types of behavior execution have a common definition structure:
 
@@ -120,7 +119,7 @@ The `ref` property always holds a reference to the interface behavior to be used
 
 #### Special execution properties
 There are some special properties which can be set in the behavior definition `execution` or `execution_properties` sections.
-- scope - `static`/`dynamic` - default is `dynamic`. This property sets the scope of the behavior. If set to `dynamic` the behavior must be invoked on a RDE instance. If set to `static` the behavior can be invoked both statically (without a RDE instance) and dynamically. More about static and dynamic behaviors can be found [here](#dynamic-vs-static-behaviors).
+- scope - `static`/`dynamic` - default is `dynamic`. This property sets the scope of the behavior. If set to `dynamic` the behavior must be invoked on a RDE instance. If set to `static` the behavior can be invoked both statically (without a RDE instance) and dynamically. More about static and dynamic behaviors can be found [here](#behavior-invocation).
 
 - Fields with the prefix `_internal_` are write-only. Once they are set, they cannot be obtained through a GET request on the behavior. The field value is saved in the DB in an encrypted form. It is only accessible to Cloud Director (e.g. the shared secret in webHook behaviors). These fields can be defined at the top level of the behavior's `execution` or `execution_properties` sections.
 
@@ -181,7 +180,7 @@ Response:
     }
 }
 ```
-API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-api/v38.1/cloudapi/1.0.0/interfaces/id/behaviors/post/).
+API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/interfaces/id/behaviors/post/).
 ## Behavior Invocation
 Behavior invocation is an asynchronous operation in Cloud Director since a behavior execution is a long running process. For each behavior invocation, a `BEHAVIOR_INVOCATION` task is created to track the execution. 
 
@@ -217,7 +216,7 @@ Response:
 Headers:
 Location: https://<vcd-host>/api/task/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
-API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-api/v38.1/cloudapi/1.0.0/entities/id/behaviors/behaviorId/invocations/post/).
+API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/entities/id/behaviors/behaviorId/invocations/post/).
 
 The `<entity-id>` represents the id of the entity which the behavior will be invoked on.
 
@@ -233,7 +232,7 @@ Response:
 Headers:
 Location: https://<vcd-host>/api/task/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
-API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-api/v38.1/cloudapi/1.0.0/interfaces/id/behaviors/behaviorId/invocations/post/).
+API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/interfaces/id/behaviors/behaviorId/invocations/post/).
 The `<interface-id>` is the id of the interface which the behavior is defined in.
 
 ### Invocation Arguments
@@ -381,7 +380,7 @@ The lifetime of log entries can be configured in the `behavior.logs.lifetime.hou
 ### Dynamic Behaviors Access Control
 Dynamic behaviors have an access control mechanism for execution based on the RDE instance which the behavior is invoked on. The access controls are defined in the defined entity type scope. They specify what minimum level of access an API user must have to a defined entity instance of that type in order to invoke a specific behavior on that defined entity instance. If no behavior access control is created for a specific RDE Type and a specific behavior, then this behavior is effectively not executable on any of the RDE instances of the type.
 
-Behavior executions are not subject to any access control rules if the execution is initiated as a [RDE lifecycle hook](#runtime-defined-entity-lifecycle-hooks) execution.
+Behavior executions are not subject to any access control rules if the execution is initiated as a [RDE lifecycle hook](rde-hooks.md) execution.
 
 Example API call to create a behavior access control:
 ```
@@ -394,14 +393,14 @@ POST /cloudapi/1.0.0/entityTypes/<entity-type-id>/behaviorAccessControls
 }
 ```
 
-API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-api/v38.1/cloudapi/1.0.0/entityTypes/id/behaviorAccessControls/post/).
+API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/entityTypes/id/behaviorAccessControls/post/).
 
 The possible access levels are:
 - `urn:vcloud:accessLevel:ReadOnly` - if `accessLevelId` is set to this value, an API user must have at least RO (read-only) access to a defined entity instance in order to invoke the behavior with id `<behavior-id>` on that defined entity instance.
 - `urn:vcloud:accessLevel:ReadWrite`- if `accessLevelId` is set to this value, an API user must have at least RW (read-write) access to a defined entity instance in order to invoke the behavior with id `<behavior-id>` on that defined entity instance.
 - `urn:vcloud:accessLevel:FullControl`- if `accessLevelId` is set to this value, an API user must have FC (full control) access to a defined entity instance in order to invoke the behavior with id `<behavior-id>` on that defined entity instance.
 
-More information on RDE access control can be found [here](). <!-- TODO add link -->
+More information on RDE access control can be found [here](rde-access-control.md).
 
 ### Static Behaviors Access Control
 Currently, static behaviors do not have an access control mechanism for execution.
@@ -413,4 +412,4 @@ Behaviors can be configured to execute at the different lifecycle stages of a de
 - [Pre Delete](#pre-delete-behavior-hook)
 - [Post Delete](#post-delete-behavior-hook)
 
-More information on RDE lifecycle hooks can be found [here]<!-- TODO add link to hooks documentation -->().
+More information on RDE lifecycle hooks can be found [here](rde-hooks.md).

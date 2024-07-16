@@ -22,7 +22,7 @@ Cloud Director allows defining custom API endpoints that integrate seamlessly in
 
 More details will be provided in a detailed guide soon.
 
-## Runtime Defined Entities and Behaviors
+## [Runtime Defined Entities and Behaviors](defined-entities/defined-entities-overview.md)
 Runtime Defined Entities (RDE) allow Extensions to create custom objects through the Cloud Director API and persist them into the Cloud Director's database. The RDEs enable use cases like managing the desired state of external resources and storing the state of an extension. In addition to extending the database, the RDE framework intoduces different types of behaviors such as Webhook, MQTT, vRO, AWS Lamba and Built-in FaaS that can be used to interact with the data stored in the Runtime Defined Entities.
 
 RDEs additionally provide advanced RBAC and Access Control for each type of object and their instances. These capabilities, combined with behaviors, are a great alternative to a traditional appliance backend that Extensions usually implement. More details for Runtime Defined Entities' management and all Behavior types will be provided in a detailed guide soon.
