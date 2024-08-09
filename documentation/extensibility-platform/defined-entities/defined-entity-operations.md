@@ -1,19 +1,5 @@
 # Runtime Defined Entities Operations
 
-- [Runtime Defined Entities Operations](#runtime-defined-entities-operations)
-  - [Entity Creation](#entity-creation)
-    - [Entity Creation Request](#entity-creation-request)
-    - [Creation Task and Entity ID](#creation-task-and-entity-id)
-    - [Immediate Entity Resolution after Creation](#immediate-entity-resolution-after-creation)
-  - [Entity Retrieval](#entity-retrieval)
-  - [Entity Resolution](#entity-resolution)
-  - [Entity Update](#entity-update)
-    - [Update the RDE `name` and `entity` properties](#update-the-rde-name-and-entity-properties)
-    - [Update the RDE `owner` property](#update-the-rde-owner-property)
-    - [Update the RDE `entityType` property](#update-the-rde-entitytype-property)
-    - [Optimistic Concurrency Control](#optimistic-concurrency-control)
-  - [Entity Deletion](#entity-deletion)
-
 ## Entity Creation
 
 ### Entity Creation Request
@@ -243,9 +229,7 @@ Similarly, a Defined Entity can be deleted with a DELETE request that contains a
 Runtime Defined Entities are deleted via the [DELETE API request](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/entities/id/delete/).
 Typically the API request deletes the entity immeidately.
 
-If the Entity Type specifies a `PreDelete` hook, however, then that hook is executed to validate
-whether the deletion can occur.
+If the Entity Type specifies a [`PreDelete` hook](rde-hooks.md#pre-delete-hook-behavior), however, then that hook is executed to validate whether the deletion can occur.
 
-If the Entity Type specifies a `PostDelete` hook, then the entity is placed in the `IN_DELETION` state
-and the `PostDelete` hook is executed to clean up the related resources.
+If the Entity Type specifies a [`PostDelete` hook](rde-hooks.md#post-delete-hook-behavior), then the entity is placed in the `IN_DELETION` state and the `PostDelete` hook is executed to clean up the related resources.
 The entity is deleted once the hook completes successfully.

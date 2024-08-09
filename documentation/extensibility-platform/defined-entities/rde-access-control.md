@@ -3,13 +3,13 @@
 ## General Concepts
 
 ### Rights vs ACLs
-Access to Runtime Defined Entities is controlled by two complimentary mechanisms - Rights and Access Control Lists (ACLs). 
+Access to Runtime Defined Entities is controlled by two complimentary mechanisms - Rights and Access Control Lists (ACLs).
 
 Rights grant the "capability" to perform a specific operation on defined entities of a specific defined entity type. For example, there could be Authors, Editors, and Users of a given defined entity type. Authors should be able to create new defined entities of that defined entity type, Editors should be able to modify defined entities of the defined entity type if they have read-write access to the defined entity, and Users should be able to view defined entities of the defined entity type if they have view access.
 
 ACLs grant users certain levels of access (__Read-Only__, __Read-Write__, __Full-Control__) to a specific defined entity. For example, an Entity Author could create a defined entity and grant a set of other users just Read-Only access to that defined entity.
 
-In order for a user to perform an operation on defined entity A, they must have both the capability to perform the operation as well as the needed level of access to defined entity A. 
+In order for a user to perform an operation on defined entity A, they must have both the capability to perform the operation as well as the needed level of access to defined entity A.
 
 Also, there are Admin Rights which grant a user the power to access all defined entities of a defined entity type (such user is an administrator of the entity type).
 
@@ -34,12 +34,12 @@ An ACL entry contains the following fields:
 - `objectId` - The ID of the object this ACL refers to.
 - `accessLevelId` - The [access level](#access-levels) that this ACL entry grants.
 - `grantType` - The [type](#types-of-acls) of the ACL entry. Possible values are `MembershipAccessControlGrant` and `RightAccessControlGrant`.
-- `tenant` - (this field is filled automatically) The ID of the object's tenant. The ACL cannot be shared outside that tenant. 
+- `tenant` - (this field is filled automatically) The ID of the object's tenant. The ACL cannot be shared outside that tenant.
 - `memberId` - (for Membership ACLs) the ID of the entity (user, organization, role) that this ACL is granted to.
 - `rightId` - (for Right ACLs) the ID of the right this ACL refers to.
 
 #### Types of ACLs
-There are two categories of ACLs - `MembershipAccessControlGrant` and `RightAccessControlGrant`. 
+There are two categories of ACLs - `MembershipAccessControlGrant` and `RightAccessControlGrant`.
 
 Membership ACLs are used to grant access to entities such as user, organization and role.
 ```json
@@ -55,7 +55,7 @@ Membership ACLs are used to grant access to entities such as user, organization 
     "memberId": "urn:vcloud:org:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }
 ```
-Right ACLs refer to a specific right in Cloud Director. They are used to associate a type-specific right with an ACL. 
+Right ACLs refer to a specific right in Cloud Director. They are used to associate a type-specific right with an ACL.
 
 #### Access Levels
 - `urn:vcloud:accessLevel:FullControl` - grants full control access to a defined entity
@@ -237,7 +237,7 @@ The following matrix shows what rights/ACLs a user needs to have in order to hav
 
 ### The Tenancy Barrier and Defined Entities
 Cloud Director is a multi-tenant platform which enables cloud service providers to host multiple independent organizations within a single instance of the platform, ensuring resource isolation, self-service provisioning, and tailored access control for each tenant.
- 
+
 The Defined Entities Framework also adheres to the multi-tenancy principles. Each defined entity is created within a specific organization in Cloud Director - either the provider organization (System) or a tenant organization. Defined entities cannot "cross" the tenancy barrier - a defined entity created in tenant A cannot be shared with tenant B and vice versa. Only defined entities created in the System organization can be shared with other tenant organizations. More than one tenant organization can have access to the same System defined entity.
 
 A provider admin can execute RDE operations in the context of a tenant organization by adding the `X-VMWARE-VCLOUD-TENANT-CONTEXT` header to such HTTP requests.
@@ -267,11 +267,11 @@ For example, if you want the users with a certain role role to view all Tanzu Ku
 Users with the __Administrator Full Control: Tanzu Kubernetes Guest Cluster__ right can grant ACL access to any VMWARE:TKGCLUSTER defined entity.
 
 #### Max Implicit Rights and RDE Access Control
-The standard workflow for creating and manipulating a RDE Type must always involve an Administrative User since the RDE type rights must be added to the appropriate roles in order for the users to be able to perform any operations on the defined entity type. 
+The standard workflow for creating and manipulating a RDE Type must always involve an Administrative User since the RDE type rights must be added to the appropriate roles in order for the users to be able to perform any operations on the defined entity type.
 
 The way to enable non-admin users to manipulate dynamically created RDE types without the involvement of an Administrative User is to set the `maxImplicitRight` section in the RDE Type. This grants implicit Defined Entity Type Rights to the users based on their Type ACLs. For example a Read-Write ACL to the Type would mean that the user would also have an implicit “Edit: Type” Right.
 
-These implicit Defined Entity Type Rights are only enabled if the Type's definition has the `maxImplicitRight` property set. The value of `maxImplicitRight` specifies the maximum Right level that can be implied from the Type ACLs.  
+These implicit Defined Entity Type Rights are only enabled if the Type's definition has the `maxImplicitRight` property set. The value of `maxImplicitRight` specifies the maximum Right level that can be implied from the Type ACLs.
 
 Accepted values for `maxImplicitRight` are:
 - `urn:vcloud:accessLevel:ReadOnly`
@@ -362,8 +362,11 @@ X-VMWARE-VCLOUD-TENANT-CONTEXT: urn:vcloud:org:bc2b700d-dd4b-4b1c-8f47-5b8010ac0
 ```
 
 ## Field-level RDE Access Contol and Encryption
+
 ### Field Access Control
-The access to a defined entity's contents can be additionally restricted by annotating certain fields (which need to be restricted) with `x-vcloud-restricted` in the Defined Entity Type's JSON schema. 
+
+The access to a defined entity's contents can be additionally restricted by annotating certain fields (which need to be restricted) with `x-vcloud-restricted` in the Defined Entity Type's JSON schema.
+
 ```json
 ...
 "clusterState" : {
@@ -372,15 +375,21 @@ The access to a defined entity's contents can be additionally restricted by anno
 }
 ...
 ```
+
 The possible values for the `x-vcloud-restricted` annotation are:
 
 - `public` - All users with any access to the defined entity can read/write this field.
 - `protected` - Only users with Full Control access to the defined entity can write this field and all users with any access to the defined entity can read this field.
 - `private` - only users with Full Control access to the defined entity can read/write this field.
 
-Field access restriction annotations can be added at any content level. However, restrictions in sub-types (i.e. under `definitions`) are currently not supported.
+Field access restriction annotations can be added at any content level.
+
+An example use of the field-level access control feature is to have an entity with a public 'desiredState' field that users can update, a protected 'currenState' field that is visible to users, but only the extension can update, and a private 'internalState' field that the extension can use to keep track of its internal information.
+
 ### Field Encryption
+
 In addition to restricting access to certain defined entity fields, users can also mark such fields as encrypted (or `secure`). The secure marker cannot be used on its own, it must be used in addition to `private`/`protected`/`public` and it does not bring any changes to the actual access restrictions which the `public`/`protected`/`private` markers impose.
+
 ```json
 ...
 "schema":   {
@@ -406,7 +415,7 @@ In addition to restricting access to certain defined entity fields, users can al
     }
 ...
 ```
-Secure fields are stored in the DB in an encrypted format (as a `base64-encoded` cipher string) and cannot be obtained via the Defined Entities API - they are either omitted or masked depending on the API version used. 
+Secure fields are stored in the DB in an encrypted format (as a `base64-encoded` cipher string) and cannot be obtained via the Defined Entities API - they are either omitted or masked depending on the API version used.
 
 When using API version `>= 38.0` secure fields are masked when returned in the API.Doing a `GET` on a defined entity with API version `38.1` for example, will return its `secure` fields masked (`******`) even if the user has Full Access Control to the defined entity instance.
 
@@ -424,7 +433,7 @@ This API is audited.
 
 ### Updating a defined entity instance with "secure" fields
 
-Updating a defined entity's secure fields is done differently depending on the API version you use. 
+Updating a defined entity's secure fields is done differently depending on the API version you use.
 
 #### API version `>= 38.0`
 Doing a `PUT` on a defined entity instance with its `secure` fields masked (`******`) in the body of the request will not delete those fields. They will not be modified.
@@ -555,7 +564,7 @@ The way to remove a secure field from a defined entity instance is to execute a 
 ## Examples
 The examples below assume there is a tenant organization named `Tenant1` created in the Cloud Director instance.
 
-Let's create a RDE type to use for the examples. 
+Let's create a RDE type to use for the examples.
 
 ```
 POST /cloudapi/1.0.0/entityTypes
@@ -618,7 +627,7 @@ Response:
     "maxImplicitRight": null
 }
 ```
-Let's create a defined entity instance of this type in the System organization. 
+Let's create a defined entity instance of this type in the System organization.
 
 ```
 POST /cloudapi/1.0.0/entityTypes/urn:vcloud:type:vmware:testType:1.0.0
@@ -748,4 +757,4 @@ Response:
 }
 ```
 Now the user can view, edit and delete the defined entity.
- 
+
