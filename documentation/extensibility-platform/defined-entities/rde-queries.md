@@ -1,15 +1,5 @@
 # RDE Queries
 
-- [RDE Queries](#rde-queries)
-  - [Query Entities by Type](#query-entities-by-type)
-    - [Query Entities by Type ID](#query-entities-by-type-id)
-    - [Query Entities by Type ID Segments](#query-entities-by-type-id-segments)
-  - [Query Entities by Interface](#query-entities-by-interface)
-    - [Query Entities by Interface ID](#query-entities-by-interface-id)
-    - [Query Entities by Interface ID Segments](#query-entities-by-interface-id-segments)
-  - [Tenancy](#tenancy)
-  - [Filtering](#filtering)
-
 Runtime Defined Entities can be queried using several REST API requests.
 
 The queries support the standart Cloud Director REST API mechanisms for paging, sorting, and filtering using the `page`, `pageSize`, `sortAsc`/`sortDesc`. and `filter` query parameters.
@@ -140,27 +130,27 @@ The examples above are based on having an entity with the following entity conte
     "properties" : {
       "cluster" : {"$ref" : "#/definitions/Cluster" },
       "clusterState" : {"$ref" : "#/definitions/ClusterState" },
-      "topProtectedAndSecureStatus" : { 
-        "type" : "string", 
-        "x-vcloud-restricted" : ["protected", "secure"] 
+      "topProtectedAndSecureStatus" : {
+        "type" : "string",
+        "x-vcloud-restricted" : ["protected", "secure"]
       },
-      "privateStatus" : { 
-        "type" : "string", 
-        "x-vcloud-restricted" : "private" 
+      "privateStatus" : {
+        "type" : "string",
+        "x-vcloud-restricted" : "private"
       },
-      "protectedStatus" : { 
-        "type" : "object", 
-        "x-vcloud-restricted" : "protected", 
+      "protectedStatus" : {
+        "type" : "object",
+        "x-vcloud-restricted" : "protected",
         "properties": {
           "phase" : {
-            "type" : "string" 
+            "type" : "string"
           },
           "privateAndSecure" : {
-            "type" : "object", 
-            "x-vcloud-restricted" : ["private", "secure"], 
+            "type" : "object",
+            "x-vcloud-restricted" : ["private", "secure"],
             "properties": {
               "token" : {
-                "type" : "string" 
+                "type" : "string"
               }
             }
           },
@@ -194,9 +184,9 @@ The examples above are based on having an entity with the following entity conte
           }
         }
       },
-      "privateState" : { 
-        "$ref" : "#/definitions/ClusterState", 
-        "x-vcloud-restricted" : "private" 
+      "privateState" : {
+        "$ref" : "#/definitions/ClusterState",
+        "x-vcloud-restricted" : "private"
       }
     },
     "definitions" : {
@@ -211,7 +201,7 @@ The examples above are based on having an entity with the following entity conte
         "type" : "object",
         "properties" : {
           "host" : { "type" : "string" },
-          "status" : { 
+          "status" : {
             "type" : "string"
           }
         }

@@ -16,7 +16,7 @@ processes to satisfy the modified desired state.
 
 ## Example
 
-Hooks are configured at the defined entity type level as part of the type definition. The hook behaviors must be defined in one of the interfaces that the defined entity type implements. 
+Hooks are configured at the defined entity type level as part of the type definition. The hook behaviors must be defined in one of the interfaces that the defined entity type implements.
 
 The following REST API call creates an RDE Type that implements the interface `urn:vcloud:interface:clusterVendorA:containerCluster:1.0.0`:
 
@@ -47,16 +47,16 @@ The type definition binds three of the interface behaviors to different lifecycl
 - the `processUpdate` behavior will be invoked every time the entity is modified
 - the `validateDelete` behavior will be invoked to check whether the entity can be deleted or not
 
-
 ## Available RDE Lifecycle Hooks
 
 Behaviors can be configured to execute at the different lifecycle stages of a defined entity:
+
 - [Post Create](#post-create-behavior-hook)
 - [Post Update](#post-update-behavior-hook)
 - [Pre Delete](#pre-delete-hook-behavior)
 - [Post Delete](#post-delete-hook-behavior)
 
-Hook behaviors' executions are triggered as part of each API call on the entity leading any of the aforementioned defined entity lifecycle stages (e.g. API call for creating a defined entity). 
+Hook behaviors' executions are triggered as part of each API call on the entity leading any of the aforementioned defined entity lifecycle stages (e.g. API call for creating a defined entity).
 
 A failure in the execution of some of the hooks may cancel the requested entity operation if they fail.
 
@@ -66,11 +66,14 @@ Behavior executions as lifecycle hooks are not subject to any access control rul
 The post-create hook behavior is invoked automatically on a defined entity instance after its creation. It can be used to create an external resource which the RDE represents, or to make some additional changes to the RDE's entity contents depending on the specific business logic.
 
 To trigger a post-create hook behavior, you need to create an RDE instance via the API:
-```
+
+```text
 POST /cloudapi/1.0.0/entityTypes/<entity-type-id>
 ```
+
 Response:
-```
+
+```text
 202 Accepted
 
 Headers:
@@ -78,9 +81,10 @@ Headers:
 Location: https://<vcd-host>/api/task/<task-id>
 ...
 ```
+
 The RDE create operation is a long-running process in Cloud Director which is traced by a task. If the RDE creation triggers a post-create hook the task returned in the `Location` header of the create RDE API call response is the behavior invocation task.
 
-If the post-create behavior execution completes __successfully__, then the resolve operation is automatically invoked on the defined entity. 
+If the post-create behavior execution completes __successfully__, then the resolve operation is automatically invoked on the defined entity.
 
 If the execution __fails__, then the entity state is switched to the `RESOLUTION_ERROR` state.
 
@@ -107,12 +111,12 @@ X-VMWARE-VCLOUD-TASK-LOCATION: https://<vcd-host>/api/task/<task-id>
 When a defined entity with a post-update hook is updated, the behavior invocation task is returned in a  `X-VMWARE-VCLOUD-TASK-LOCATION` header in the response of the update RDE API call.
 
 ### Pre Delete & Post Delete Behavior Hooks (Multi-stage RDE Deletion)
-The pre-delete and post-delete hook behaviors are hooked to the RDE deletion operation. A multi-stage entity deletion process can be achieved using these hooks. 
+The pre-delete and post-delete hook behaviors are hooked to the RDE deletion operation. A multi-stage entity deletion process can be achieved using these hooks.
 
 #### Pre Delete Hook Behavior
 The pre-delete hook is intended to be used as a pre-check for whether an entity can be deleted depending on the extension logic. A failure of the pre-delete hook will abort the entity deletion leaving the entity unchanged.
 
-The pre-delete hook behavior is the first operation to be executed when an entity is requested to be marked for deletion or requested to be deleted. 
+The pre-delete hook behavior is the first operation to be executed when an entity is requested to be marked for deletion or requested to be deleted.
 
 An entity is requested to be marked for deletion by moving the entity to the `IN_DELETION` state ([more details](#moving-entities-to-in_deletion-state)).
 
@@ -121,7 +125,7 @@ An entity is requested to be deleted by executing a `DELETE` entity API call:
 DELETE /cloudapi/1.0.0/entities/<entity-id>
 ```
 
-If the pre-delete hook execution is successful, the requested entity operation is executed (moving entity to `IN_DELETION` or deleting entity). However, if the hook execution fails, then the entity deletion is "canceled" - the entity remains unchanged. 
+If the pre-delete hook execution is successful, the requested entity operation is executed (moving entity to `IN_DELETION` or deleting entity). However, if the hook execution fails, then the entity deletion is "canceled" - the entity remains unchanged.
 
 If an entity is in an `IN_DELETION` entity state before a pre-delete hook execution, the hook is not executed. Cloud Director proceeds as if the pre-delete hook execution is successful (we assume entity can be deleted).
 
@@ -130,8 +134,8 @@ The intended use of the post-delete hook is to do any additional clean-up relate
 
 The post-delete hook behavior is invoked immediately before the entity is deleted from the DB (after pre-delete hook execution if there is one). If the hook execution is successful, the entity is permanently deleted. If the hook execution fails, the entity deletion fails and entity remains in `IN_DELETION` state.
 
-#### Multi-stage RDE Deletion 
-The multi-stage RDE deletion allows RDE instances to be deleted over several stages and the deletion process can be stopped at any of these stages. This provides an opportunity for the solution backend to release and cleanup the resources that an RDE instance represents before the instance is permanently deleted from Cloud Director. 
+#### Multi-stage RDE Deletion
+The multi-stage RDE deletion allows RDE instances to be deleted over several stages and the deletion process can be stopped at any of these stages. This provides an opportunity for the solution backend to release and cleanup the resources that an RDE instance represents before the instance is permanently deleted from Cloud Director.
 
 The multi-stage deletion can be set-up to be asynchronous or synchronous depending on they way the solution backend will get notified of an entity's deletion starting.
 
@@ -287,7 +291,7 @@ GET /cloudapi/1.0.0/entities/types/vmware/testType1/1.0.0?filter=(entityState==I
 The creators of an RDE Type use the hooks to specify the behaviors that an entity of the RDE Type must follow.
 Thus the hook execution cannot be turned off by users of the type.
 
-Users who have Full Control access to the type definition, 
+Users who have Full Control access to the type definition,
 however, can explicitly turn off the hook executions for an operation by providing the `invokeHooks=false` query parameter
 in the request. For example:
 

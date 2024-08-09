@@ -1,56 +1,70 @@
 # Defined Entity Types
 
-Defined entity types describe the structure and behaviors of defined entities.
+A Defined Entity Type describes the content structure of the defined entities that are of that type
+using a JSON schema.
 
-The behaviors of a type are specified by associating one or more interfaces with it. At least one interface must be connected with a type. 
+In addition, the interfaces the type implements define the behaviors that can be executed on its entities.
 
 ## Definition
 
-Example defined entity type definition:
+A new Defined Entity Type can be created via [an API call that specifies its definition](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/entityTypes/post/)
+
+Here is an example Defined Entity Type definition:
 
 ```json
 {
-    "name": "test",
-    "nss": "test",
+    "name": "Basic Conainer Cluster",
+    "vendor": "clusterVendorA",
+    "nss": "basicContainerCluster",
     "version": "1.0.0",
-    "vendor": "vmware",
+    "interfaces": ["urn:vcloud:interface:clusterVendorA:containerCluster:1.0.0"],
     "schema": {
-		"type" : "object",
-		"properties" : {
-			"id" : {
-                "type" : "number",
-                "readOnly" : true
-            }
-		}
-	}
+      "cluster" : {
+        "type" : "object",
+        "properties" : {
+          "name" : { "type" : "string" },
+          "nodes" : {"type" : "array", "items" : { "type" : "object" }}
+        },
+        "required": [ "name" ]
+      }
+    }
 }
 ```
 
-### Vendor
-User defined field that holds the name of the vendor.
+The properties `nss`, `vendor`, and `version` uniquely identify the type. Once the type is created, these properties cannot be modified.
+
+The key Defined Entity Type properties are the following:
 
 ### Name
-User defined field.
+
+The human-readable name of the entity type. It may contain spaces and special symbols.
+
+### Vendor
+
+The ID of the vendor providing the entity type. It must be alpha-numeric.
 
 ### NSS
-User defined field that is part of the identification.
+
+The ID of the entity type. It must be alpha-numeric.
 
 ### Version
-Once an instance of a defined entity type has been created, the type, schema, and behaviors cannot be changed anymore. This is essential because if modifications are made, entities with the prior schema would become invalid. This is why types must be versioned and versions must follow [Semantic Versioning](https://semver.org/) principles.
 
-When a defined entity instance is based on an earlier version of the entity type, you can upgrade the defined entity to use a later version of the type by setting the type property of the entity to the ID of the new type. More information on versioning can be found here: [Versioning](rde-versions.md).
+The version of the entity type. It must follow the [Semantic Versioning](https://semver.org/) format.
+See the [RDE Versioning](rde-versions.md) section for more details.
 
-### Exact and Classification IDs
-
-The tuple `vendor:nss:version` identifies a type. The Exact ID describes the entire tuple. When used in querying it (if found) results in exactly one type. Classification IDs omits the version. When used in querying it results in all versions of the type that has the same vendor and nss. More information and examples on querying can be found here: [Version Querying](rde-queries.md)
+Once an instance of a defined entity type has been created, the entity type cannot be modified anymore. This preserves the consistency of the entities in time.
+If changes are needed, [a new version](rde-versions.md) of the type must be created.
 
 ### Schema
 
-The structure is defined directly on the type as a schema that specifies  which fields and attributes must be included in a given entity, as well as the data types, cardinality, and optionality of the fields. When a defined entity is created, in the API call, the contents of the entity property must match the schema specified in the entity type. It is represented in [JSON Schema](https://semver.org/) format. We support draft-04, draft-06 and draft-07 of the JSON Schema.
+The structure of the type entities is defined via a [JSON schema](https://json-schema.org/) that specifies the fields and attributes to be included in a given entity. We support draft-04, draft-06 and draft-07 versions of the JSON Schema.
 
-### Custom additions to JSON Schema
+The contents of a newly created entity do not have to match the type schema [immediately upon the entity creation](defined-entities-lifecycle.md#creation-phase). However, the contents must match the schema for the entity to be resolved.
 
-The access to a defined entity's contents can be additionally restricted by annotating certain fields (which need to be restricted) with `x-vcloud-restricted` in the Defined Entity Type's JSON schema. In addition to restricting access to certain defined entity fields, users can also mark such fields as encrypted.
+#### Custom additions to the JSON Schema
+
+Fields defined in the JSON schema of a Defined Entity Type can be annotated with `x-vcloud-restricted` to restrict the access to the fields or to mark them as encrypted. For example:
+
 ```json
 ...
 "clusterState" : {
@@ -59,105 +73,135 @@ The access to a defined entity's contents can be additionally restricted by anno
 }
 ...
 ```
-More information about the possible restriction fields and their values can be found here: [Field-level RDE Access Contol and Encryption](rde-access-control.md#field-level-rde-access-contol-and-encryption).
+
+More information about the possible field annotations and their values can be found in the [Field-level RDE Access Contol and Encryption](rde-access-control.md#field-level-rde-access-contol-and-encryption) section.
+
+### Interfaces
+
+The list of IDs of the [interfaces](defined-interfaces.md) that the type implements.
+
+### Hooks
+
+The behaviors that must be bound to the [type lifecycle event hooks](rde-hooks.md).
 
 ## Example API calls
 
-### Create a type:
+### Create a Defined Entity Type
 
-```
+A new Defined Entity Type can be created by authorized clients via [an API call](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/entityTypes/post/). For example:
+
+```text
 POST /cloudapi/1.0.0/entityTypes
 ```
+
 ```json
 {
-    "name": "test",
-    "nss": "test",
+    "name": "Basic Conainer Cluster",
+    "vendor": "clusterVendorA",
+    "nss": "basicContainerCluster",
     "version": "1.0.0",
-    "vendor": "vmware",
     "schema": {
-		"type" : "object",
-		"properties" : {
-			"id" : {
-                "type" : "number",
-                "readOnly" : true
-            }
-		}
-	}
+      "cluster" : {
+        "type" : "object",
+        "properties" : {
+          "name" : { "type" : "string" },
+          "nodes" : {"type" : "array", "items" : { "type" : "object" }}
+        },
+        "required": [ "name" ]
+      }
+    }
 }
 ```
+
 Response:
+
 ```json
 {
-    "id": "urn:vcloud:type:vmware:test:1.0.0",
-    "name": "test",
-    "nss": "test",
+    "name": "Basic Conainer Cluster",
+    "id": "urn:vcloud:type:clusterVendorA:basicContainerCluster:1.0.0",
+    "vendor": "clusterVendorA",
+    "nss": "basicContainerCluster",
     "version": "1.0.0",
-    "inheritedVersion": null,
     "schema": {
-        "type": "object",
-        "properties": {
-            "id": {
-                "type": "number",
-                "readOnly": true
-            }
-        }
+      "cluster" : {
+        "type" : "object",
+        "properties" : {
+          "name" : { "type" : "string" },
+          "nodes" : {"type" : "array", "items" : { "type" : "object" }}
+        },
+        "required": [ "name" ]
+      }
     },
-    "vendor": "vmware",
     "interfaces": [],
     "hooks": null,
+    "inheritedVersion": null,
     "readonly": false
 }
 ```
 
-### Update a type:
-```
+### Update a Defined Entity Type
+
+A Defined Entity Type definition can be updated by authorized clients via [an API call](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/entityTypes/id/put/). For example:
+
+The `vendor`, `nss`, and `schema` cannot be changed when updating the type.
+
+A Defined Entity Type can only be updated if no entities exist that are instances of the type.
+
+```text
 PUT /cloudapi/1.0.0/entityTypes/<defined-entity-type-id>
 ```
+
 ```json
 {
-    "name": "test1",
-    "nss": "test",
+    "name": "Simple Conainer Cluster",
+    "vendor": "clusterVendorA",
+    "nss": "basicContainerCluster",
     "version": "1.0.0",
-    "vendor": "vmware",
     "schema": {
-		"type" : "object",
-		"properties" : {
-			"id" : {
-                "type" : "number",
-                "readOnly" : true
-            }
-		}
-	}
+      "cluster" : {
+        "type" : "object",
+        "properties" : {
+          "name" : { "type" : "string" },
+          "nodes" : {"type" : "array", "items" : { "type" : "object" }}
+        },
+        "required": [ "name" ]
+      }
+    }
 }
 ```
+
 Response:
+
 ```json
 {
-    "id": "urn:vcloud:type:vmware:test:1.0.0",
-    "name": "test1",
-    "nss": "test",
+    "name": "Simple Conainer Cluster",
+    "id": "urn:vcloud:type:clusterVendorA:basicContainerCluster:1.0.0",
+    "vendor": "clusterVendorA",
+    "nss": "basicContainerCluster",
     "version": "1.0.0",
-    "inheritedVersion": null,
     "schema": {
-        "type": "object",
-        "properties": {
-            "id": {
-                "type": "number",
-                "readOnly": true
-            }
-        }
+      "cluster" : {
+        "type" : "object",
+        "properties" : {
+          "name" : { "type" : "string" },
+          "nodes" : {"type" : "array", "items" : { "type" : "object" }}
+        },
+        "required": [ "name" ]
+      }
     },
-    "vendor": "vmware",
     "interfaces": [],
     "hooks": null,
+    "inheritedVersion": null,
     "readonly": false
 }
 ```
-#### Important Note: The vendor, nss and schema cannot be changed when updating the type.
 
-### Delete an interface
-```
+### Delete a Defined Entity Type
+
+A Defined Entity Type definition can be deleted by authorized clients via [an API call](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/entityTypes/id/delete/):
+
+```text
 DELETE /cloudapi/1.0.0/entityTypes/<defined-entity-type-id>
 ```
 
-#### Important Note: Defined entity type cannot be deleted if it is marked as readOnly.
+A Defined Entity Type can only be deleted if no entities exist that are instances of the type.

@@ -1,10 +1,10 @@
 # Runtime Defined Entity Behaviors
 
 ## Prerequisites
-It is recommended to get familiar with the concepts of [Defined Entity Types](defined-entity-types.md), [Defined Entities](defined-entities-overview.md) and [Interfaces](defined-interfaces.md) before moving on to Behaviors. 
+It is recommended to get familiar with the concepts of [Defined Entity Types](defined-entity-types.md), [Defined Entities](defined-entities-overview.md) and [Interfaces](defined-interfaces.md) before moving on to Behaviors.
 
 ## Overview
-Runtime Defined Entity Behaviors (or just Behaviors) are operations which execute custom logic in Cloud Director. 
+Runtime Defined Entity Behaviors (or just Behaviors) are operations which execute custom logic in Cloud Director.
 
 A number of behavior execution types are supported:
 - [Webhook behaviors](webhook-behaviors.md)
@@ -17,14 +17,14 @@ Behaviors can be executed on a defined entity via an API call if the user has th
 
 ## General concepts
 ### Interface Behaviors
-Behaviors are defined in an Interface (a collection of Behaviors). 
+Behaviors are defined in an Interface (a collection of Behaviors).
 
 ```
 POST /cloudapi/1.0.0/interfaces/<interface-id>/behaviors
 ```
 
 ```json
-{ 
+{
     "name": "noopBehavior",
     "execution" : {
         "type": "noop"
@@ -102,15 +102,16 @@ All types of behavior execution have a common definition structure:
     }
 }
 ```
-The behavior __execution type__ is set in the `type` field of the `execution` section. 
-#### Behavior id vs. ref
-A behavior has both an `id` and a `ref`. Their values can be both the same or different. This is depending on whether the behavior is overridden in a Defined Entity Type. More information on how to override a behavior can be found [here](#type-behaviors). 
+The behavior __execution type__ is set in the `type` field of the `execution` section.
 
-The `id` property holds the actual behavior id. If the behavior is not overridden, it is a `behavior-interface` id: 
+#### Behavior id vs. ref
+A behavior has both an `id` and a `ref`. Their values can be both the same or different. This is depending on whether the behavior is overridden in a Defined Entity Type. More information on how to override a behavior can be found [here](#type-behaviors).
+
+The `id` property holds the actual behavior id. If the behavior is not overridden, it is a `behavior-interface` id:
 ```
 urn:vcloud:behavior-interface:behaviorName:interfaceVendor:interfaceName:interfaceVersion
 ```
-Otherwise, it is a `behavior-type` id: 
+Otherwise, it is a `behavior-type` id:
 ```
 urn:vcloud:behavior-type:behaviorName:typeVendor:typeName:typeVersion:interfaceVendor:interfaceName:interfaceVersion
 ```
@@ -160,7 +161,7 @@ Here is a sample API call for creating a behavior:
 POST /cloudapi/1.0.0/interfaces/<interface-id>/behaviors
 ```
 ```json
-{ 
+{
     "name": "noopBehavior",
     "execution" : {
         "type": "noop"
@@ -182,7 +183,7 @@ Response:
 ```
 API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cloud-director-openapi/latest/cloudapi/1.0.0/interfaces/id/behaviors/post/).
 ## Behavior Invocation
-Behavior invocation is an asynchronous operation in Cloud Director since a behavior execution is a long running process. For each behavior invocation, a `BEHAVIOR_INVOCATION` task is created to track the execution. 
+Behavior invocation is an asynchronous operation in Cloud Director since a behavior execution is a long running process. For each behavior invocation, a `BEHAVIOR_INVOCATION` task is created to track the execution.
 
 Behaviors can be defined as either dynamic or static.
 
@@ -202,10 +203,10 @@ POST /cloudapi/1.0.0/entities/<entity-id>/behaviors/<behavior-id>/invocations
 {
     "arguments": {
         "x": 7
-    }, 
+    },
     "metadata": {
         "convert": true
-    } 
+    }
 }
 ```
 
@@ -245,11 +246,11 @@ The user defined invocation arguments are defined in the body of the behavior in
     "arguments": {
         "x": 7,
         ...
-    }, 
+    },
     "metadata": {
         "convert": true,
         ...
-    } 
+    }
 }
 ```
 #### Payload Received by the Behavior Execution Code

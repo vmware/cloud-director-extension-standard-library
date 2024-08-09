@@ -1,12 +1,5 @@
 # Runtime Defined Entities Framework
 
-- [Runtime Defined Entities Framework](#runtime-defined-entities-framework)
-  - [Introduction](#introduction)
-  - [Typical RDE Uses](#typical-rde-uses)
-  - [Runtime Defined Entities Concepts](#runtime-defined-entities-concepts)
-    - [Strict Tenancy](#strict-tenancy)
-  - [Links to the RDE Components Documentation](#links-to-the-rde-components-documentation)
-
 ## Introduction
 
 The Cloud Director extensibility framework can be used in many different
@@ -34,22 +27,19 @@ Networks, etc. The Runtime Defined Entities (RDE) functionality allows
 clients to define their own custom entity types with custom
 functionality.
 
-Users can create new instances of those types and fill in the property with their desired system state.
-
 ## Typical RDE Uses
 
 Several typical ways RDEs can be used by extensions are the following:
 
-- Represent an external resource (e.g. a Container Cluster) and keep its external references in strongly typed JSON document. (c.f. [Defined Entity Type schema](defined-entity-types.md))
-
+- Represent an external resource, for example a Container Cluster, and keep references to its resources in a strongly typed JSON document. (c.f. [Defined Entity Type schema](defined-entity-types.md))
 
 - Persist the state of an Extension without the need of an external database. (c.f. [Defined Entities](defined-entities-lifecycle.md))
 
-- Use the [RDE Access Control mechanisms](rde-access-control.md) to manage the users’ access to
-resources. (c.f. RDE Access Control)
+- Use the RDE Access Control mechanisms to manage the users’ access to
+resources. (c.f. [RDE Access Control](rde-access-control.md))
 
 - Use RDE instances as a Desired State interface to an external system.
-(c.f. Field-level Access Control)
+(c.f. [Field-level Access Control](rde-access-control.md#field-level-rde-access-contol-and-encryption))
 
 RDEs also provide a powerful [versioning mechanism](rde-versions.md), thus simplifying
 the management of the extensions’ lifecycle, especially when used in the
@@ -59,7 +49,7 @@ context of [Solution Add-Ons](../../extension-sdk/extension-sdk.md).
 
 A Runtime Defined Entity (RDE) is a package that contains a JSON payload.
 
-Each RDE is an instance of a [RDE Type](defined-entity-types.md) that specifies
+Each RDE is an instance of an [RDE Type](defined-entity-types.md) that specifies
 the format of the JSON payload using a JSON Schema.
 
 An RDE Type may implement a number of [RDE Interfaces](defined-interfaces.md) that categorize it
@@ -87,7 +77,8 @@ Access to the RDE cannot be shared with users outside the tenant.
 
 - [RDE Interfaces](defined-interfaces.md)
 - [RDE Types](defined-entity-types.md)
-- [Runtime Defined Entities](defined-entities-lifecycle.md)
+- [RDE Lifecycle](defined-entities-lifecycle.md)
+- [RDE Operations](defined-entity-operations.md)
 - [RDE Behaviors](behaviors-general-concepts.md)
 - [RDE Access Control](rde-access-control.md)
 - [RDE Versioning](rde-versions.md)
