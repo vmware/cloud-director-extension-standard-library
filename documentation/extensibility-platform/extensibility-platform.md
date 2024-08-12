@@ -14,15 +14,14 @@ Notifications and Events are mechanisms that provide real-time information about
 
 Cloud Director Notifications and Events are consumed using the MQTT protocol, and more details will be provided in a detailed guide soon.
 
-## API Extensibility
+## [API Extensibility](api-extensibility.md)
 Cloud Director allows defining custom API endpoints that integrate seamlessly into Cloud Director REST API layer. Extensions can leverage this capability to enable new services that can be consumed by either UI Plugins or API users and scripts. The additional APIs require a backend to process the request information and respond in the proper fashion. Currently there are two flavours for this:
 
 - MQTT - API extension services can integrate with Cloud Director backend via websocket connection, using MQTT protocol. Such services use 2 distinct MQTT topics for receiving incoming http requests and providing the response. These responses are then propagated back to the API caller in their original http form.
 - API Transparent Proxy - This approach allows Cloud Director to act as a transparent proxy to any REST API that the VCD appliance has network connectivity to but the API caller does not. This approach, combined with the iFrame support of UI Plugins, enables quick and low-effort integrations with other Cloud Services and Systems.
 
-More details will be provided in a detailed guide soon.
-
 ## [Runtime Defined Entities and Behaviors](defined-entities/defined-entities-overview.md)
+
 Runtime Defined Entities (RDE) allow Extensions to create custom objects through the Cloud Director API and persist them into the Cloud Director's database. The RDEs enable use cases like managing the desired state of external resources and storing the state of an extension. In addition to extending the database, the RDE framework intoduces different types of behaviors such as Webhook, MQTT, vRO, AWS Lamba and Built-in FaaS that can be used to interact with the data stored in the Runtime Defined Entities.
 
 RDEs additionally provide advanced RBAC and Access Control for each type of object and their instances. These capabilities, combined with behaviors, are a great alternative to a traditional appliance backend that Extensions usually implement. More details for Runtime Defined Entities' management and all Behavior types will be provided in a detailed guide soon.
