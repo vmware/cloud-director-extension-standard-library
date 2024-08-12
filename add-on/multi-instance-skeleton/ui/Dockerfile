@@ -5,7 +5,7 @@
 # Build element
 # ------------------------------------------------------
 ARG DOCKER_REPO
-FROM $DOCKER_REPO/node:14.20.1-slim as NODE
+FROM $DOCKER_REPO/node:18.20-slim as NODE
 COPY . /usr/app
 WORKDIR /usr/app
 RUN npm ci

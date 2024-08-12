@@ -28,19 +28,19 @@ export class VappRestoreActionComponent extends EntityActionExtensionComponent i
         return of({
             text: this.translationService.translate("vapp.action.restore"),
             children: [{
-                urn: "urn:vmware:vcloud:vapp:restore2",
+                urn: "urn:vmware:vcloud:vapp:restore3",
                 text: "Restore VMs",
                 busy: false,
                 enabled: true
             },
             {
-                urn: "urn:vmware:vcloud:vapp:restoreAll2",
+                urn: "urn:vmware:vcloud:vapp:restoreAll3",
                 text: "Restore All VMs",
                 busy: false,
                 enabled: false
             },
             {
-                urn: "urn:vmware:vcloud:vapp:viewSnaphots2",
+                urn: "urn:vmware:vcloud:vapp:viewSnaphots3",
                 text: "View Restore Points",
                 busy: false,
                 enabled: true
@@ -53,7 +53,7 @@ export class VappRestoreActionComponent extends EntityActionExtensionComponent i
         this.opened = true;
         this.result = new Subject<{ refreshRequested: boolean }>();
 
-        console.log("[Showcase 2.0]", "Restore");
+        console.log("[Showcase 3.0]", "Restore");
 
         return this.result.asObservable();
     }
@@ -65,6 +65,6 @@ export class VappRestoreActionComponent extends EntityActionExtensionComponent i
     }
 
     ngOnDestroy(): void {
-        console.warn(`[Showcase 2.0]`, `${this.constructor.name} destroyed`);
+        console.warn(`[Showcase 3.0]`, `${this.constructor.name} destroyed`);
     }
 }

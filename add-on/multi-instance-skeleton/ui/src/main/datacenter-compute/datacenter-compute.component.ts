@@ -28,6 +28,6 @@ export class DatacenterComputeComponent implements EntityContextExtensionInterfa
     ngOnInit(): void {}
 
     ngOnDestroy(): void {
-        console.warn("[Showcase 2.0]", `${this.constructor.name} destroyed`);
+        console.warn("[Showcase 3.0]", `${this.constructor.name} destroyed`);
     }
 }
