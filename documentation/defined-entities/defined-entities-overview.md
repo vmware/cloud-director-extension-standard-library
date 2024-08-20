@@ -43,7 +43,7 @@ resources. (c.f. [RDE Access Control](rde-access-control.md))
 
 RDEs also provide a powerful [versioning mechanism](rde-versions.md), thus simplifying
 the management of the extensions’ lifecycle, especially when used in the
-context of [Solution Add-Ons](../extension-sdk/extension-sdk.md).
+context of [Solution Add-Ons](../../extension-sdk/extension-sdk.md).
 
 ## Runtime Defined Entities Concepts
 
