@@ -20,7 +20,7 @@ Cloud Director allows defining custom API endpoints that integrate seamlessly in
 - MQTT - API extension services can integrate with Cloud Director backend via websocket connection, using MQTT protocol. Such services use 2 distinct MQTT topics for receiving incoming http requests and providing the response. These responses are then propagated back to the API caller in their original http form.
 - API Transparent Proxy - This approach allows Cloud Director to act as a transparent proxy to any REST API that the VCD appliance has network connectivity to but the API caller does not. This approach, combined with the iFrame support of UI Plugins, enables quick and low-effort integrations with other Cloud Services and Systems.
 
-## [Runtime Defined Entities and Behaviors](defined-entities/defined-entities-overview.md)
+## [Runtime Defined Entities and Behaviors](extensibility-platform/defined-entities/defined-entities-overview.md)
 
 Runtime Defined Entities (RDE) allow Extensions to create custom objects through the Cloud Director API and persist them into the Cloud Director's database. The RDEs enable use cases like managing the desired state of external resources and storing the state of an extension. In addition to extending the database, the RDE framework intoduces different types of behaviors such as Webhook, MQTT, vRO, AWS Lamba and Built-in FaaS that can be used to interact with the data stored in the Runtime Defined Entities.
 
