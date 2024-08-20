@@ -28,7 +28,7 @@ The possible values are the following:
 - `RESOLUTION_ERROR`
 - `IN_DELETION`
 
-![Defined Entity Lifecycle](../../images/rde_lifecycle.png)
+![Defined Entity Lifecycle](../images/rde_lifecycle.png)
 
 ### Creation Phase
 

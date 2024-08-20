@@ -56,7 +56,7 @@ An RDE Type may implement a number of [RDE Interfaces](defined-interfaces.md) th
 conceptually, for example – “Container Cluster”. An RDE Interface may
 also define [RDE Behaviors](behaviors-general-concepts.md) that can be executed on RDEs that implement it.
 
-![Example Defined Entity Interface, Type, and instances](../../images/rde_concepts.png)
+![Example Defined Entity Interface, Type, and instances](../images/rde_concepts.png)
 
 [RDE Behaviors](behaviors-general-concepts.md) are custom executable operations that can be performed on a
 Runtime Defined Entity. Behaviors can be defined by clients via several

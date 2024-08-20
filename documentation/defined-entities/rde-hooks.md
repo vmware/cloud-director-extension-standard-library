@@ -88,7 +88,7 @@ If the post-create behavior execution completes __successfully__, then the resol
 
 If the execution __fails__, then the entity state is switched to the `RESOLUTION_ERROR` state.
 
-![RDE post-create hook execution and RDE entity states](../../images/rde-post-create-hook-entity-states.png)
+![RDE post-create hook execution and RDE entity states](../images/rde-post-create-hook-entity-states.png)
 
 ### Post Update Behavior Hook
 The post-update hook behavior is invoked automatically after a defined entity instance update. This hook behavior can be used to update the external resource that the RDE represents.
@@ -149,9 +149,9 @@ To put it simply, the async multi-stage deletion involves the following steps:
 2. The solution backend polls for entities in `IN_DELETION` state and starts the deletion process for them (more info [here](#polling-for-entities-to-in_deletion-state)).
 3. Once resource clean-up is completed, solution backend can issue a `DELETE` API call for all entities, which are ready to be permanently deleted.
 
-![RDE async multi-stage delete diagram with entity in RESOLVED or RESOLUTION_ERROR state](../../images/rde-multi-stage-delete-async-1.png)
+![RDE async multi-stage delete diagram with entity in RESOLVED or RESOLUTION_ERROR state](../images/rde-multi-stage-delete-async-1.png)
 
-![RDE async multi-stage delete diagram with entity in IN_DELETION state](../../images/rde-multi-stage-delete-async-2.png)
+![RDE async multi-stage delete diagram with entity in IN_DELETION state](../images/rde-multi-stage-delete-async-2.png)
 
 __Synchronous multi-stage deletion__
 
@@ -159,9 +159,9 @@ In the synchronous scenario, the solution backend is expected to configure a pos
 
 The following diagrams shows the synchronous multi-stage deletion flow:
 
-![RDE synchrounous multi-stage delete diagram with entity in RESOLVED or RESOLUTION_ERROR state](../../images/rde-multi-stage-delete-sync-1.png)
+![RDE synchrounous multi-stage delete diagram with entity in RESOLVED or RESOLUTION_ERROR state](../images/rde-multi-stage-delete-sync-1.png)
 
-![RDE synchrounous multi-stage delete diagram with entity in IN_DELETION state](../../images/rde-multi-stage-delete-sync-2.png)
+![RDE synchrounous multi-stage delete diagram with entity in IN_DELETION state](../images/rde-multi-stage-delete-sync-2.png)
 
 The delete operation is kick-started with the `DELETE` RDE API call:
 
@@ -204,10 +204,10 @@ The `deleteDefinedEntity` task can be found in the `Location` header of the resp
 ```
 The following diagrams show what happens with the RDE's state depending on the success or failure of the hook executions:
 
-![RDE synchrounous multi-stage delete diagram for entityState 1](../../images/rde-sync-deletion-entity-states-1.png)
+![RDE synchrounous multi-stage delete diagram for entityState 1](../images/rde-sync-deletion-entity-states-1.png)
 
 
-![RDE synchrounous multi-stage delete diagram for entityState 2](../../images/rde-sync-deletion-entity-states-2.png)
+![RDE synchrounous multi-stage delete diagram for entityState 2](../images/rde-sync-deletion-entity-states-2.png)
 
 If the post-delete hook fails, the entity will remain in `IN_DELETION` state and will not be deleted.
 
