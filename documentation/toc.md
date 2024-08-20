@@ -21,5 +21,5 @@
   * [RDE Queries](defined-entities/rde-queries.md)
   * [RDE Behaviors](defined-entities/behaviors-general-concepts.md)
   * [RDE Access Control](defined-entities/rde-access-control.md)
-  * [RDE Versioning](defined-entities/rde-versions.md)
   * [RDE Hooks](defined-entities/rde-hooks.md)
+  * [RDE Versioning](defined-entities/rde-versions.md)
