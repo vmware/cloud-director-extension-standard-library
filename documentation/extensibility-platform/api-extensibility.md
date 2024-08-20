@@ -854,6 +854,7 @@ The following sample code in `JAVA` can be used to connect an MQTT client and su
         }
     }
 ```
+
 </details>
 
 #### MQTT messages format
