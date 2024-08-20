@@ -10,7 +10,7 @@
 * [Extensibility Platform](extensibility-platform/extensibility-platform.md)
   * [UI Plugins Development](extensibility-platform/ui-plugins.md)
   * [Message Broker](extensibility-platform/message-broker.md)
-  * [API Extensibility](api-extensibility.md)
+  * [API Extensibility](extensibility-platform/api-extensibility.md)
   * [Object Extensibility](extensibility-platform/object-extensibility.md)
   * [Object Metadata 2.0](extensibility-platform/object-metadata-2.md)
 * [Runtime Defined Entities](defined-entities/defined-entities-overview.md)
