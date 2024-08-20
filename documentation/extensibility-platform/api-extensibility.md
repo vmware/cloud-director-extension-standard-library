@@ -6,6 +6,7 @@ Being able to extend the standard Cloud Director API opens up a lot of use cases
 ![API extensibility Diagram 1](../images/api_extensibility_1.png)
 
 We currently have two flavours of API extensibility:
+
 - [API extensibility via MQTT](#api-extensibility-via-mqtt)
 - [API extensibility via HTTP](#api-extensibility-via-http)
 
@@ -65,6 +66,7 @@ Example `urlMatcher`:
 }
 ```
 The above `urlMatcher` will match the following URLs:
+
 - `/api/org/testOrg/currentTime`
 - `/api/org/urn:vcloud:org:5eac4ea6-11e4-4827-a249-ac8631779b92/currentTime`
 - `/api/org/testOrg/testing/currentTime`
@@ -87,7 +89,9 @@ Example `urlMatcher`:
     "urlScope": "EXT_API"
 }
 ```
+
 With the above `urlMatcher`:
+
 - `/ext-api/custom/createObject` will be redirected to `<ext-endpoint-root-url>/createObject`
 - `/ext-api/custom/get/123` will be redirected to `<ext-endpoint-root-url>/get/123`
 - `/ext-api/custom/` will be redirected to `<ext-endpoint-root-url>`
@@ -101,7 +105,9 @@ For example if we have the following `urlMatcher`:
     "urlScope": "EXT_UI_TENANT"
 }
 ```
+
 The following URLs will be matched by this `urlMatcher`:
+
 - `/ext-ui/tenant/testOrg/custom/test/createObject` will be redirected to `<ext-endpoint-root-url>/createObject`
 - `/ext-ui/tenant/simpleOrg/custom/test/` will be redirected to `<ext-endpoint-root-url>`
 
@@ -128,11 +134,11 @@ In regards to custom processing of requests, the external service can:
 We will get started with a simple example and build on top of it while going through the specifics of API extensibility via MQTT.
 
 Let us go through the main concepts first:
+
 - [External Service](#external-service)
 - [API filter](#api-filter)
 - [API Definition](#api-definition)
 - [Link](#link)
-- [Service Link](#service-link)
 - [Right](#right)
 - [Resource Class](#resource-class)
 
@@ -160,6 +166,7 @@ The external service entity has the following definition:
 ```
 
 The vendor, name and version trio is unique for each external service.
+
 - `enabled` - true/false (a user provided field) - whether the external service is enabled or not. If the external service is not enabled, requests will not be routed to it for processing. Cloud Director acts as if the service does not exist.
 - `priority` - 0-100 (a user provided field) - what is the priority of the external service when processing requests. More information on priority of external services can be found [here](#priority-of-external-services).
 - `authorizationEnabled` - true/false (a user provided field) - whether authorization is enabled for the service. More information on what authorization of external service entails can be found [here](#authorization-of-external-services).
@@ -351,7 +358,9 @@ Headers:
 Link: <https://localhost:8443/api/admin/extension/service/4c1dec82-5502-33fe-9787-0402b70e0454/resourceclasses>;rel="down";type="application/vnd.vmware.vcloud.query.records+xml application/vnd.vmware.vcloud.query.idrecords+xml application/vnd.vmware.vcloud.query.records+json application/vnd.vmware.vcloud.query.idrecords+json application/vnd.vmware.vcloud.query.references+xml application/vnd.vmware.vcloud.query.references+json"
 ...
 ```
-And now let's create a resource class:
+
+2. And now let's create a resource class:
+
 ```
 POST /api/admin/extension/service/<service-id>/resourceclasses
 
@@ -359,6 +368,7 @@ Headers:
 Content-type:application/vnd.vmware.admin.resourceClass+xml; charset=UTF-8
 Accept: application/*+xml;version=5.1
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:ResourceClass name="Backup" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
@@ -368,10 +378,13 @@ Accept: application/*+xml;version=5.1
    <vmext:UrnPattern>^myNssFoo(?&lt;id&gt;[0-9]*)</vmext:UrnPattern>
 </vmext:ResourceClass>
 ```
+
 Response:
+
 ```
 201 Created
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:ResourceClass name="Backup" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" id="urn:vcloud:resourceClass:daa16d0e-03fb-4506-9cf4-1a6f957bdf83" type="application/vnd.vmware.admin.resourceClass+xml" href="https://10.23.118.207/api/admin/extension/service/resourceclass/daa16d0e-03fb-4506-9cf4-1a6f957bdf83" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
@@ -385,7 +398,8 @@ Response:
     <vmext:UrnPattern>^myNssFoo(?&lt;id&gt;[0-9]*)</vmext:UrnPattern>
 </vmext:ResourceClass>
 ```
-2. With the created resource class, let's call the entity resolver:
+
+3. With the created resource class, let's call the entity resolver:
 
 ```
 GET api/entity/urn:nidFoo:myNssFoo17
@@ -406,6 +420,7 @@ As you can see in the response, the resulting link is `https://10.23.6.226/api/f
 Resource Class Action represents operations defined for a specific Resource Class.
 
 A Resource Class Action contains two fields:
+
 - `HttpMethod` - `GET`/`PUT`/`POST`/`DELETE`
 - `UrlPattern` - a named regular expression, where `(?<id>)` matches the resource identifier. `id` named group can be present or not in the `urlPattern`. If it is present it is matched with the url. `id` named group can be one at most.
 
@@ -414,10 +429,12 @@ When a request is made to a custom URL, all external services which match the UR
 To put it in short, a Resource Class Action says in general which HTTP methods are allowed for a certain URL. An ACL Rule holds the actual allow rules per resource - which user/org/right has access to the resource (external resource or Cloud Director core resource).
 
 Examples for a valid Resource Class Action's URL pattern:
+
 - `"/api/backup/(?<id>[-,a-g,0-9]*)"`
 - `"/api/backup/(?<id>[-,a-g,0-9]*)/list"`
 
 Examples for an invalid Resource Class Action's URL pattern:
+
 - `"/api/backup/(?<url>[-,a-g,0-9]*)"`
 - `"/api/backup/(?<id>[-,a-g,0-9]*)/list/(?<id>[-,a-g,0-9]*)"`
 
@@ -564,6 +581,7 @@ Response:
 Extensions can create and manage rights that are meaningful for them. The extension is responsible for managing its rights, Cloud Director just supplies uniform APIs for adding, tracking and updating them.
 
 The Right entity has the following fields:
+
 1. `Name` - String - the name of the right. In the case of a custom right a prefix that is added to the name that is supplied during creation and that is the namespace of the extension service that created the right. So if we have a Right that we want to add with the name of `customRight` and it is added in the context of an extension service with the namespace `com.sth.sthelse` the result for the name of the right will be `{com.sth.sthelse}:customRight`. This is the unique identifier of the right.
 2. `Type` - String - content type of the REST API resource - always `application/vnd.vmware.vcloud.admin.right+xml`
 3. `ServiceNamespace` - String - the namespace of the service this right is registered through. Should not be `com.vmware.vcloud` because this is reserved for vCloud Director and custom rihts cannot claim to be internal ones. This is readonly.
@@ -624,6 +642,7 @@ Result: 204 No Content
 API definitions provide means for end users to discover the API for a given external service.
 
 The API definition entity has the following properties:
+
 1. `Description` - String - value is anything meaningful to the specific use case
 2. `EntryPoint` - String - an entry point to reach the external service (via a custom URL)
     - a `{baseUri}` parameter is supported. When Get-ing the API definition this parameter will be replaced with Cloud Director's actual base URI.
@@ -781,81 +800,7 @@ The username in the connection options should be set to the external service tri
 
 The following sample code in `JAVA` can be used to connect an MQTT client and subscribe it to the external service topics for message processing:
 
-<details>
-<summary>Sample code in `JAVA`</summary>
-
-```java
-    public MqttClient createAndConnectMQTTClient() throws MqttException {
-        String username = "vmware/test/1.0.0"; // extension triplet
-        String password = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"; // extension token
-        String mqttEndpointUrl = "wss://<vcdHost>/messaging/mqtt";
-        final String topicToListen = "topic/extension/vmware/test/1.0.0/ext";
-        final String topicToRespond = "topic/extension/vmware/test/1.0.0/vcd";
-
-        String clientId = generateClientId();
-
-        MqttClient sampleClient = new MqttClient(mqttEndpointUrl, clientId, new MemoryPersistence());
-
-        MqttConnectOptions connOpts = createConnectOptions();
-        connOpts.setUserName(username);
-        connOpts.setPassword(password.toCharArray());
-
-        sampleClient.connect(connOpts);
-        subscribe(sampleClient);
-
-        return sampleClient;
-    }
-
-    private void subscribe(MqttClient client, String topicToListen, String topicToRespond) throws MqttException {
-        final MqttMessageListener listener = new MqttMessageListener(topicToRespond, client);
-        client.subscribe(topicToListen, listener);
-    }
-
-    private MqttConnectOptions createConnectOptions() {
-        MqttConnectOptions connOpts = new MqttConnectOptions();
-        connOpts.setKeepAliveInterval(101);
-        connOpts.setAutomaticReconnect(false);
-        connOpts.setCleanSession(true);
-        connOpts.setMqttVersion(MQTT_VERSION_3_1_1);
-        connOpts.setSocketFactory(getSocketFactory());  //this should set proper SSL
-        connOpts.setHttpsHostnameVerificationEnabled(true);  //this is based on the environment - it should be true
-        return connOpts;
-    }
-
-    private abstract String generateClientId(); // implementation depends on the business logic
-    private abstract String getSocketFactory(); // implementation depends on the business logic
-
-
-    private static class MqttMessageListener implements IMqttMessageListener {
-
-        private final String topicToRespond;
-        private final MqttClient mqttClient;
-
-        public MqttMessageListener(final String topicToRespond, final MqttClient mqttClient) {
-            this.topicToRespond = topicToRespond;
-            this.mqttClient = mqttClient;
-        }
-
-        @Override
-        public void messageArrived(final String s, final MqttMessage mqttMessage) throws Exception {
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            MqttVCDMessage request = objectMapper.readValue(mqttMessage.getPayload(), MqttVCDMessage.class);
-
-            final MqttExtensionMessage response = processRequest(request);
-
-            String responseAsJson = objectMapper.writeValueAsString(response);
-
-            mqttClient.publish(topicToRespond, new MqttMessage(responseAsJson.getBytes()));
-        }
-
-        private MqttExtensionMessage processRequest(MqttVCDMessage request) {
-            // your business logic goes here
-        }
-    }
-```
-
-</details>
+[Accessing the Messaging Bus over MQTT](#accessing-the-messaging-bus-over-mqtt-1)
 
 #### MQTT messages format
 
@@ -878,377 +823,10 @@ The following sample code in `JAVA` can be used to connect an MQTT client and su
     "linkApiBaseUrl": "url"
 }
 ```
-MQTT message from Cloud Director to external service can be deserialized to `MqttVCDMessage.java`.
-<details>
-<summary>MqttVCDMessage.java</summary>
 
-```java
-import java.util.List;
-import java.util.Map;
+MQTT message from Cloud Director to external service can be deserialized to [MqttVCDMessage.java](#mqttvcdmessagejava).
 
-public class MqttRemoteServerMessage {
-    private String type;
-    private Header headers;
-    private byte[] httpRequest;
-    private String linkApiBaseUrl;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(final String type) {
-        this.type = type;
-    }
-
-    public Header getHeaders() {
-        return headers;
-    }
-
-    public void setHeaders(final Header headers) {
-        this.headers = headers;
-    }
-
-    public byte[] getHttpRequest() {
-        return httpRequest;
-    }
-
-    public void setHttpRequest(final byte[] httpRequest) {
-        this.httpRequest = httpRequest;
-    }
-
-    public String getLinkApiBaseUrl() {
-        return linkApiBaseUrl;
-    }
-
-    public void setLinkApiBaseUrl(final String linkApiBaseUrl) {
-        this.linkApiBaseUrl = linkApiBaseUrl;
-    }
-
-    public static class Header {
-        private String requestId;
-        private HttpSecurityContext context;
-
-        public String getRequestId() {
-            return requestId;
-        }
-
-        public void setRequestId(final String requestId) {
-            this.requestId = requestId;
-        }
-
-        public HttpSecurityContext getContext() {
-            return context;
-        }
-
-        public void setContext(final HttpSecurityContext context) {
-            this.context = context;
-        }
-    }
-
-    public static class HttpSecurityContext {
-        private String apiAccessToken;
-        private String user;
-        private String org;
-        private List<String> rights;
-        private Map<String, Object> parameters;
-
-        public String getApiAccessToken() {
-            return apiAccessToken;
-        }
-
-        public void setApiAccessToken(final String apiAccessToken) {
-            this.apiAccessToken = apiAccessToken;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
-
-        public String getOrg() {
-            return org;
-        }
-
-        public void setOrg(String org) {
-            this.org = org;
-        }
-
-        public List<String> getRights() {
-            return rights;
-        }
-
-        public void setRights(List<String> rights) {
-            this.rights = rights;
-        }
-
-        public Map<String, Object> getParameters() {
-            return parameters;
-        }
-
-        public void setParameters(Map<String, Object> parameters) {
-            this.parameters = parameters;
-        }
-
-    }
-
-}
-```
-</details>
-
-The `httpRequest` byte array can be deserialized to `Payload.java`:
-<details>
-<summary>Payload.java</summary>
-
-```java
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
-
-public class Payload {
-
-    private HttpMessage message;
-    private SecurityContext securityContext;
-    private Map<String, Object> context;
-
-    public HttpMessage getMessage() {
-        return message;
-    }
-
-    public void setMessage(HttpMessage message) {
-        this.message = message;
-    }
-
-    public SecurityContext getSecurityContext() {
-        return securityContext;
-    }
-
-    public void setSecurityContext(SecurityContext securityContext) {
-        this.securityContext = securityContext;
-    }
-
-    public Map<String, Object> getContext() {
-        return context;
-    }
-
-    public void setContext(Map<String, Object> context) {
-        this.context = context;
-    }
-
-    public static class SecurityContext {
-        private String apiAccessToken;
-        private String user;
-        private String org;
-        private List<String> rights;
-        private Map<String, Object> parameters;
-
-        public String getApiAccessToken() {
-            return apiAccessToken;
-        }
-
-        public void setApiAccessToken(String apiAccessToken) {
-            this.apiAccessToken = apiAccessToken;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
-
-        public String getOrg() {
-            return org;
-        }
-
-        public void setOrg(String org) {
-            this.org = org;
-        }
-
-        public List<String> getRights() {
-            return rights;
-        }
-
-        public void setRights(List<String> rights) {
-            this.rights = rights;
-        }
-
-        public Map<String, Object> getParameters() {
-            return parameters;
-        }
-
-        public void setParameters(Map<String, Object> parameters) {
-            this.parameters = parameters;
-        }
-    }
-
-    public static class HttpMessage implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        private boolean isRequest;
-        private String id;
-        private String method;
-        private String requestUri;
-        private String queryString;
-        private String protocol;
-        private String scheme;
-        private String remoteAddr;
-        private int remotePort;
-        private String localAddr;
-        private int localPort;
-        private Map<String, String> headers;
-
-        private Map<String, String[]> formData;
-
-        private Charset formDataEncoding;
-        private byte[] body;
-        private int statusCode;
-
-        public void setRequest(final boolean isRequest) {
-            this.isRequest = isRequest;
-        }
-
-        /**
-         * Returns <code>true</code> if this is HTTP request; otherwise returns <code>false</code>
-         */
-        public boolean isRequest() {
-            return isRequest;
-        }
-
-        /**
-         * Return unique identifier which correlates a request to its response.
-         */
-        public String getId() {
-            return id;
-        }
-
-        public void setId(final String id) {
-            this.id = id;
-        }
-
-        /**
-         * Returns the HTTP method - GET, POST, PUT, etc.
-         */
-        public String getMethod() {
-            return method;
-        }
-
-        public void setMethod(final String method) {
-            this.method = method;
-        }
-
-        public String getRequestUri() {
-            return requestUri;
-        }
-
-        public void setRequestUri(final String requestUri) {
-            this.requestUri = requestUri;
-        }
-
-        public Map<String, String> getHeaders() {
-            return headers;
-        }
-
-        public void setHeaders(final Map<String, String> headers) {
-            this.headers = headers;
-        }
-
-        public byte[] getBody() {
-            return body;
-        }
-
-        public void setBody(final byte[] body) {
-            this.body = body;
-        }
-
-        public int getStatusCode() {
-            return statusCode;
-        }
-
-        public void setStatusCode(final int statusCode) {
-            this.statusCode = statusCode;
-        }
-
-        public String getQueryString() {
-            return queryString;
-        }
-
-        public void setQueryString(final String queryString) {
-            this.queryString = queryString;
-        }
-
-        public String getProtocol() {
-            return protocol;
-        }
-
-        public void setProtocol(final String protocol) {
-            this.protocol = protocol;
-        }
-
-        public String getScheme() {
-            return scheme;
-        }
-
-        public void setScheme(final String scheme) {
-            this.scheme = scheme;
-        }
-
-        public String getRemoteAddr() {
-            return remoteAddr;
-        }
-
-        public void setRemoteAddr(final String remoteAddr) {
-            this.remoteAddr = remoteAddr;
-        }
-
-        public int getRemotePort() {
-            return remotePort;
-        }
-
-        public void setRemotePort(final int remotePort) {
-            this.remotePort = remotePort;
-        }
-
-        public String getLocalAddr() {
-            return localAddr;
-        }
-
-        public void setLocalAddr(final String localAddr) {
-            this.localAddr = localAddr;
-        }
-
-        public int getLocalPort() {
-            return localPort;
-        }
-
-        public void setLocalPort(final int localPort) {
-            this.localPort = localPort;
-        }
-
-        public Map<String, String[]> getFormData() {
-            return formData;
-        }
-
-        public void setFormData(Map<String, String[]> formData) {
-            this.formData = formData;
-        }
-
-        public Charset getFormDataEncoding() {
-            return formDataEncoding;
-        }
-
-        public void setFormDataEncoding(Charset formDataEncoding) {
-            this.formDataEncoding = formDataEncoding;
-        }
-    }
-}
-```
-</details>
+The `httpRequest` byte array can be deserialized to [Payload.java](#payloadjava):
 
 2. __External service to VCD__
 
@@ -1636,6 +1214,7 @@ Request to external endpoint:
 ```
 POST https://externalHost.com/createObject/test123?param1=param1
 ```
+
 #### Sending requests to the external endpoint
 After creating an External Endpoint (enabled) and an API filter, the setup for setting up an HTTP Proxy is complete. A logged in user can start sending requests.
 
@@ -1660,5 +1239,446 @@ Headers:
 Body:
 {
 "test": "123"
+}
+```
+
+## Code Examples
+
+### Accessing the Messaging Bus over MQTT
+
+```java
+    public MqttClient createAndConnectMQTTClient() throws MqttException {
+        String username = "vmware/test/1.0.0"; // extension triplet
+        String password = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"; // extension token
+        String mqttEndpointUrl = "wss://<vcdHost>/messaging/mqtt";
+        final String topicToListen = "topic/extension/vmware/test/1.0.0/ext";
+        final String topicToRespond = "topic/extension/vmware/test/1.0.0/vcd";
+
+        String clientId = generateClientId();
+
+        MqttClient sampleClient = new MqttClient(mqttEndpointUrl, clientId, new MemoryPersistence());
+
+        MqttConnectOptions connOpts = createConnectOptions();
+        connOpts.setUserName(username);
+        connOpts.setPassword(password.toCharArray());
+
+        sampleClient.connect(connOpts);
+        subscribe(sampleClient);
+
+        return sampleClient;
+    }
+
+    private void subscribe(MqttClient client, String topicToListen, String topicToRespond) throws MqttException {
+        final MqttMessageListener listener = new MqttMessageListener(topicToRespond, client);
+        client.subscribe(topicToListen, listener);
+    }
+
+    private MqttConnectOptions createConnectOptions() {
+        MqttConnectOptions connOpts = new MqttConnectOptions();
+        connOpts.setKeepAliveInterval(101);
+        connOpts.setAutomaticReconnect(false);
+        connOpts.setCleanSession(true);
+        connOpts.setMqttVersion(MQTT_VERSION_3_1_1);
+        connOpts.setSocketFactory(getSocketFactory());  //this should set proper SSL
+        connOpts.setHttpsHostnameVerificationEnabled(true);  //this is based on the environment - it should be true
+        return connOpts;
+    }
+
+    private abstract String generateClientId(); // implementation depends on the business logic
+    private abstract String getSocketFactory(); // implementation depends on the business logic
+
+
+    private static class MqttMessageListener implements IMqttMessageListener {
+
+        private final String topicToRespond;
+        private final MqttClient mqttClient;
+
+        public MqttMessageListener(final String topicToRespond, final MqttClient mqttClient) {
+            this.topicToRespond = topicToRespond;
+            this.mqttClient = mqttClient;
+        }
+
+        @Override
+        public void messageArrived(final String s, final MqttMessage mqttMessage) throws Exception {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            MqttVCDMessage request = objectMapper.readValue(mqttMessage.getPayload(), MqttVCDMessage.class);
+
+            final MqttExtensionMessage response = processRequest(request);
+
+            String responseAsJson = objectMapper.writeValueAsString(response);
+
+            mqttClient.publish(topicToRespond, new MqttMessage(responseAsJson.getBytes()));
+        }
+
+        private MqttExtensionMessage processRequest(MqttVCDMessage request) {
+            // your business logic goes here
+        }
+    }
+```
+
+### MqttVCDMessage.java
+
+```java
+import java.util.List;
+import java.util.Map;
+
+public class MqttRemoteServerMessage {
+    private String type;
+    private Header headers;
+    private byte[] httpRequest;
+    private String linkApiBaseUrl;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
+
+    public Header getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(final Header headers) {
+        this.headers = headers;
+    }
+
+    public byte[] getHttpRequest() {
+        return httpRequest;
+    }
+
+    public void setHttpRequest(final byte[] httpRequest) {
+        this.httpRequest = httpRequest;
+    }
+
+    public String getLinkApiBaseUrl() {
+        return linkApiBaseUrl;
+    }
+
+    public void setLinkApiBaseUrl(final String linkApiBaseUrl) {
+        this.linkApiBaseUrl = linkApiBaseUrl;
+    }
+
+    public static class Header {
+        private String requestId;
+        private HttpSecurityContext context;
+
+        public String getRequestId() {
+            return requestId;
+        }
+
+        public void setRequestId(final String requestId) {
+            this.requestId = requestId;
+        }
+
+        public HttpSecurityContext getContext() {
+            return context;
+        }
+
+        public void setContext(final HttpSecurityContext context) {
+            this.context = context;
+        }
+    }
+
+    public static class HttpSecurityContext {
+        private String apiAccessToken;
+        private String user;
+        private String org;
+        private List<String> rights;
+        private Map<String, Object> parameters;
+
+        public String getApiAccessToken() {
+            return apiAccessToken;
+        }
+
+        public void setApiAccessToken(final String apiAccessToken) {
+            this.apiAccessToken = apiAccessToken;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
+
+        public String getOrg() {
+            return org;
+        }
+
+        public void setOrg(String org) {
+            this.org = org;
+        }
+
+        public List<String> getRights() {
+            return rights;
+        }
+
+        public void setRights(List<String> rights) {
+            this.rights = rights;
+        }
+
+        public Map<String, Object> getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Map<String, Object> parameters) {
+            this.parameters = parameters;
+        }
+
+    }
+
+}
+```
+
+### Payload.java
+
+```java
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
+
+public class Payload {
+
+    private HttpMessage message;
+    private SecurityContext securityContext;
+    private Map<String, Object> context;
+
+    public HttpMessage getMessage() {
+        return message;
+    }
+
+    public void setMessage(HttpMessage message) {
+        this.message = message;
+    }
+
+    public SecurityContext getSecurityContext() {
+        return securityContext;
+    }
+
+    public void setSecurityContext(SecurityContext securityContext) {
+        this.securityContext = securityContext;
+    }
+
+    public Map<String, Object> getContext() {
+        return context;
+    }
+
+    public void setContext(Map<String, Object> context) {
+        this.context = context;
+    }
+
+    public static class SecurityContext {
+        private String apiAccessToken;
+        private String user;
+        private String org;
+        private List<String> rights;
+        private Map<String, Object> parameters;
+
+        public String getApiAccessToken() {
+            return apiAccessToken;
+        }
+
+        public void setApiAccessToken(String apiAccessToken) {
+            this.apiAccessToken = apiAccessToken;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
+
+        public String getOrg() {
+            return org;
+        }
+
+        public void setOrg(String org) {
+            this.org = org;
+        }
+
+        public List<String> getRights() {
+            return rights;
+        }
+
+        public void setRights(List<String> rights) {
+            this.rights = rights;
+        }
+
+        public Map<String, Object> getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Map<String, Object> parameters) {
+            this.parameters = parameters;
+        }
+    }
+
+    public static class HttpMessage implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        private boolean isRequest;
+        private String id;
+        private String method;
+        private String requestUri;
+        private String queryString;
+        private String protocol;
+        private String scheme;
+        private String remoteAddr;
+        private int remotePort;
+        private String localAddr;
+        private int localPort;
+        private Map<String, String> headers;
+
+        private Map<String, String[]> formData;
+
+        private Charset formDataEncoding;
+        private byte[] body;
+        private int statusCode;
+
+        public void setRequest(final boolean isRequest) {
+            this.isRequest = isRequest;
+        }
+
+        /**
+         * Returns <code>true</code> if this is HTTP request; otherwise returns <code>false</code>
+         */
+        public boolean isRequest() {
+            return isRequest;
+        }
+
+        /**
+         * Return unique identifier which correlates a request to its response.
+         */
+        public String getId() {
+            return id;
+        }
+
+        public void setId(final String id) {
+            this.id = id;
+        }
+
+        /**
+         * Returns the HTTP method - GET, POST, PUT, etc.
+         */
+        public String getMethod() {
+            return method;
+        }
+
+        public void setMethod(final String method) {
+            this.method = method;
+        }
+
+        public String getRequestUri() {
+            return requestUri;
+        }
+
+        public void setRequestUri(final String requestUri) {
+            this.requestUri = requestUri;
+        }
+
+        public Map<String, String> getHeaders() {
+            return headers;
+        }
+
+        public void setHeaders(final Map<String, String> headers) {
+            this.headers = headers;
+        }
+
+        public byte[] getBody() {
+            return body;
+        }
+
+        public void setBody(final byte[] body) {
+            this.body = body;
+        }
+
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public void setStatusCode(final int statusCode) {
+            this.statusCode = statusCode;
+        }
+
+        public String getQueryString() {
+            return queryString;
+        }
+
+        public void setQueryString(final String queryString) {
+            this.queryString = queryString;
+        }
+
+        public String getProtocol() {
+            return protocol;
+        }
+
+        public void setProtocol(final String protocol) {
+            this.protocol = protocol;
+        }
+
+        public String getScheme() {
+            return scheme;
+        }
+
+        public void setScheme(final String scheme) {
+            this.scheme = scheme;
+        }
+
+        public String getRemoteAddr() {
+            return remoteAddr;
+        }
+
+        public void setRemoteAddr(final String remoteAddr) {
+            this.remoteAddr = remoteAddr;
+        }
+
+        public int getRemotePort() {
+            return remotePort;
+        }
+
+        public void setRemotePort(final int remotePort) {
+            this.remotePort = remotePort;
+        }
+
+        public String getLocalAddr() {
+            return localAddr;
+        }
+
+        public void setLocalAddr(final String localAddr) {
+            this.localAddr = localAddr;
+        }
+
+        public int getLocalPort() {
+            return localPort;
+        }
+
+        public void setLocalPort(final int localPort) {
+            this.localPort = localPort;
+        }
+
+        public Map<String, String[]> getFormData() {
+            return formData;
+        }
+
+        public void setFormData(Map<String, String[]> formData) {
+            this.formData = formData;
+        }
+
+        public Charset getFormDataEncoding() {
+            return formDataEncoding;
+        }
+
+        public void setFormDataEncoding(Charset formDataEncoding) {
+            this.formDataEncoding = formDataEncoding;
+        }
+    }
 }
 ```
