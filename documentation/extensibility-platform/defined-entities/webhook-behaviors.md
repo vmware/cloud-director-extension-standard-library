@@ -4,7 +4,7 @@ WebHook behaviors provide webHook functionality in the context of Cloud Director
 ## Prerequisites
 A webHook server must be set-up to process requests from webHook behavior invocations before creating any webHook behaviors. The webHook server must support HTTPs and its SSL certificate must be trusted in the organization of the user invoking the webHook behavior in order for the connection to be successful ([how to trust a certificate in Cloud Director](https://docs.vmware.com/en/VMware-Cloud-Director/10.4/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-80B4CB1C-9353-4EB9-8557-4F6705949D0F.html)).
 
-For testing purposes you can use [webhooks.site](https://webhook.site/). It provides a random URL which canbe used as a webHook server URL. The response sent back from webhooks.site to each request can be customized.
+For testing purposes you can use [webhooks.site](https://webhook.site/). It provides a random URL which canbe used as a webHook server URL. The response sent back from webhooks.site to each request can be customized. 
 
 ## Behavior Definition
 WebHook behavior example definition:
@@ -22,7 +22,7 @@ WebHook behavior example definition:
                     "content": "<#assign header_Authorization = \"${_execution_properties._secure_token}\" />{\"text\": \"Behavior with id ${_metadata.behaviorId} was executed on entity with id ${entityId}\"   }"
                  },
                  "_secure_token": "secureToken"
-             }
+             }   
     }
 }
 ```
@@ -32,14 +32,14 @@ The webHook behavior's execution `type` is `WebHook`. It is a required field.
 The `id` is a user-defined string. It is a required field.
 
 
-The `href` holds the URL of the webHook server which will be processing the webHook requests. The value must be a valid URL of `https` protocol. It is a required field.
+The `href` holds the URL of the webHook server which will be processing the webHook requests. The value must be a valid URL of `https` protocol. It is a required field. 
 
 The `_internal_key` holds a shared secret string which is only known to Cloud Director and the webHook server. This shared secret will be used to generate the signature header of the request which is part of the [HMAC authentication](#authentication-of-webhook-behavior-requests). It is a required field.
 
 The `template` field in the execution can be used to set-up a custom payload for the requests sent to the webHook server. More information can be found [here](#custom-request-payload).
 
 ## WebHook Request Payload (Cloud Director -> WebHook Server)
-The default payload sent to webHook servers is a JSON containing information about the actual behavior invocation (behavior information, entity information, and some metadata). However, you can also customize this payload by setting a template in the behavior definition. <a href="https://freemarker.apache.org/docs/dgui_quickstart_template.html" target="_blank">FreeMarker template engine</a> is used to render the payload from the provided template and the data model.
+The default payload sent to webHook servers is a JSON containing information about the actual behavior invocation (behavior information, entity information, and some metadata). However, you can also customize this payload by setting a template in the behavior definition. <a href="https://freemarker.apache.org/docs/dgui_quickstart_template.html" target="_blank">FreeMarker template engine</a> is used to render the payload from the provided template and the data model. 
 
 ### Default Request Payload
 
@@ -294,13 +294,13 @@ The data model represents all the data that was prepared for the template. Or in
 + - entityId
 |
 + - typeId
-|
+|   
 + - arguments
-|
+|  
 + - arguments_string
 |
 + - _execution_properties
-|
+|                      
 + - _metadata
 |   |
 |   + - executionId
@@ -314,7 +314,7 @@ The data model represents all the data that was prepared for the template. Or in
 |   + - invocationId
 	|   + - requestId
 |   + - apiVersion
-|
+|  
 + -  entity
 |
 + - entity_string
@@ -343,7 +343,7 @@ More details on how to build a template can be found in the <a href="https://fre
 }
 ```
 #### Setting Custom Request Headers
-Custom headers can be set in the webHook reques by using the template. Each header can be set as a variable in the template with the prefix `header_`.
+Custom headers can be set in the webHook reques by using the template. Each header can be set as a variable in the template with the prefix `header_`. 
 
 Examples:
 ```
@@ -436,8 +436,8 @@ Content-Type: multipart/form-data; boundary=<boundary_string>
 ```
 --<boundary_string>
 Content-Type: application/vnd.vmware.vcloud.task+json
-{
-    "details": "example details",
+{                                                       
+    "details": "example details",                      
     "operation": "example operation",
     "progress": 50
 }
@@ -818,10 +818,10 @@ public class HMACRequestVerificator {
 
 ## Example Slack integration with webHook behaviors
 
-Slack has a functionality for creating incoming webHooks which can be used for posting messages to Slack channels. WebHook behaviors can be used to integrate Slack incoming webHooks with Cloud Director, allowing Cloud Director to post messages directly to a slack channel.
+Slack has a functionality for creating incoming webHooks which can be used for posting messages to Slack channels. WebHook behaviors can be used to integrate Slack incoming webHooks with Cloud Director, allowing Cloud Director to post messages directly to a slack channel. 
 More information on how to create a Slack incoming webHook for a channel can be found [here]( https://api.slack.com/messaging/webhooks).
 
-Once a Slack webHook is configured, messages to it can be sent via a POST request to the webHook URL - `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX`. The request payload has to be of a specific format in order for it to be recognized by the Slack webHook and the `Content-Type` header must be set to `application/json`.
+Once a Slack webHook is configured, messages to it can be sent via a POST request to the webHook URL - `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX`. The request payload has to be of a specific format in order for it to be recognized by the Slack webHook and the `Content-Type` header must be set to `application/json`. 
 
 In order to use Cloud Director's webHook behaviors to send messages to slack webHooks, the following steps must be followed:
 
@@ -853,9 +853,9 @@ Response:
 2. Create a template for the payload sent to the webHook server
 ```
 <#assign header_Content\-Type= "application/json" />
-
+ 
 {
-
+     
     "blocks": [
         {
             "type": "section",
@@ -886,7 +886,7 @@ POST /cloudapi/1.0.0/interfaces/urn:vcloud:interface:vmware:test:1.0.0/behaviors
                     "content": "    \n    \"blocks\": [\n        {\n            \"type\": \"section\",\n            \"text\": {\n\"type\": \"mrkdwn\",\n\"text\": \"*BEHAVIOR_EXECUTION*:vcda:\\n Behavior with id \\n_${_metadata.behaviorId}_\\n was executed on entity with id \\n_${entityId}_\\n ${arguments.greeting}\"\n}\n        }\n    ]\n}"
                  }
              }
-
+ 
     }
 }
 ```
@@ -916,7 +916,7 @@ The template configures the payload to be alligned with what the Slack server ex
 <#assign header_Content\-Type= "application/json" />
 
 {
-
+     
     "blocks": [
         {
             "type": "section",
@@ -1084,5 +1084,5 @@ POST /cloudapi/1.0.0/entities/urn:vcloud:entity:vmware:testType:14f02e11-d8e1-4c
 ```
 And in Slack the following message is posted:
 
-![WebHook behavior invocation's Slack message](../images/webHook-behavior-slack-example.png)
+![WebHook behavior invocation's Slack message](../../images/webHook-behavior-slack-example.png)
 

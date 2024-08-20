@@ -43,7 +43,7 @@ resources. (c.f. [RDE Access Control](rde-access-control.md))
 
 RDEs also provide a powerful [versioning mechanism](rde-versions.md), thus simplifying
 the management of the extensions’ lifecycle, especially when used in the
-context of [Solution Add-Ons](../extension-sdk/extension-sdk.md).
+context of [Solution Add-Ons](../../extension-sdk/extension-sdk.md).
 
 ## Runtime Defined Entities Concepts
 
@@ -56,7 +56,7 @@ An RDE Type may implement a number of [RDE Interfaces](defined-interfaces.md) th
 conceptually, for example – “Container Cluster”. An RDE Interface may
 also define [RDE Behaviors](behaviors-general-concepts.md) that can be executed on RDEs that implement it.
 
-![Example Defined Entity Interface, Type, and instances](../images/rde_concepts.png)
+![Example Defined Entity Interface, Type, and instances](../../images/rde_concepts.png)
 
 [RDE Behaviors](behaviors-general-concepts.md) are custom executable operations that can be performed on a
 Runtime Defined Entity. Behaviors can be defined by clients via several
@@ -79,6 +79,8 @@ Access to the RDE cannot be shared with users outside the tenant.
 - [RDE Types](defined-entity-types.md)
 - [RDE Lifecycle](defined-entities-lifecycle.md)
 - [RDE Operations](defined-entity-operations.md)
+- [RDE Queries](rde-queries.md)
 - [RDE Behaviors](behaviors-general-concepts.md)
 - [RDE Access Control](rde-access-control.md)
+- [RDE Hooks](rde-hooks.md)
 - [RDE Versioning](rde-versions.md)
