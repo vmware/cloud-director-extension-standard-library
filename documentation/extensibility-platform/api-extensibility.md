@@ -890,7 +890,7 @@ The following sample code in `JAVA` can be used to connect an MQTT client and su
     }
     ```
 
-    MQTT message from Cloud Director to external service can be deserialized to [MqttVCDMessage.java](extensibility-platform.md#mqttvcdmessagejava).
+    MQTT message from Cloud Director to external service can be deserialized to [MqttVCDMessage.java](api-extensibility.md#mqttvcdmessagejava).
 
     The `httpRequest` byte array can be deserialized to [Payload.java](#payloadjava):
 
