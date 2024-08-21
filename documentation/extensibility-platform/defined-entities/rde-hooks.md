@@ -63,6 +63,7 @@ A failure in the execution of some of the hooks may cancel the requested entity 
 Behavior executions as lifecycle hooks are not subject to any access control rules.
 
 ### Post Create Behavior Hook
+
 The post-create hook behavior is invoked automatically on a defined entity instance after its creation. It can be used to create an external resource which the RDE represents, or to make some additional changes to the RDE's entity contents depending on the specific business logic.
 
 To trigger a post-create hook behavior, you need to create an RDE instance via the API:
@@ -91,16 +92,20 @@ If the execution __fails__, then the entity state is switched to the `RESOLUTION
 ![RDE post-create hook execution and RDE entity states](../../images/rde-post-create-hook-entity-states.png)
 
 ### Post Update Behavior Hook
+
 The post-update hook behavior is invoked automatically after a defined entity instance update. This hook behavior can be used to update the external resource that the RDE represents.
 
 The post-update hook behavior execution does not affect the entity state of the RDE instance in any way.
 
 To trigger a post-update hook behavior, you need to update an RDE instance via the API:
-```
+
+```text
 PUT /cloudapi/1.0.0/entities/<entity-id>
 ```
+
 Response:
-```
+
+```text
 200 OK
 
 Headers:
@@ -108,12 +113,15 @@ Headers:
 X-VMWARE-VCLOUD-TASK-LOCATION: https://<vcd-host>/api/task/<task-id>
 ...
 ```
+
 When a defined entity with a post-update hook is updated, the behavior invocation task is returned in a  `X-VMWARE-VCLOUD-TASK-LOCATION` header in the response of the update RDE API call.
 
 ### Pre Delete & Post Delete Behavior Hooks (Multi-stage RDE Deletion)
+
 The pre-delete and post-delete hook behaviors are hooked to the RDE deletion operation. A multi-stage entity deletion process can be achieved using these hooks.
 
 #### Pre Delete Hook Behavior
+
 The pre-delete hook is intended to be used as a pre-check for whether an entity can be deleted depending on the extension logic. A failure of the pre-delete hook will abort the entity deletion leaving the entity unchanged.
 
 The pre-delete hook behavior is the first operation to be executed when an entity is requested to be marked for deletion or requested to be deleted.
@@ -121,7 +129,8 @@ The pre-delete hook behavior is the first operation to be executed when an entit
 An entity is requested to be marked for deletion by moving the entity to the `IN_DELETION` state ([more details](#moving-entities-to-in_deletion-state)).
 
 An entity is requested to be deleted by executing a `DELETE` entity API call:
-```
+
+```text
 DELETE /cloudapi/1.0.0/entities/<entity-id>
 ```
 
@@ -130,11 +139,13 @@ If the pre-delete hook execution is successful, the requested entity operation i
 If an entity is in an `IN_DELETION` entity state before a pre-delete hook execution, the hook is not executed. Cloud Director proceeds as if the pre-delete hook execution is successful (we assume entity can be deleted).
 
 #### Post Delete Hook Behavior
+
 The intended use of the post-delete hook is to do any additional clean-up related to the entity deletion - e.g clean-up any external resources which this entity represents. A failure of the post-delete hook will abort the entity deletion leaving the entity as marked for deletion (in `IN_DELETION` state).
 
 The post-delete hook behavior is invoked immediately before the entity is deleted from the DB (after pre-delete hook execution if there is one). If the hook execution is successful, the entity is permanently deleted. If the hook execution fails, the entity deletion fails and entity remains in `IN_DELETION` state.
 
 #### Multi-stage RDE Deletion
+
 The multi-stage RDE deletion allows RDE instances to be deleted over several stages and the deletion process can be stopped at any of these stages. This provides an opportunity for the solution backend to release and cleanup the resources that an RDE instance represents before the instance is permanently deleted from Cloud Director.
 
 The multi-stage deletion can be set-up to be asynchronous or synchronous depending on they way the solution backend will get notified of an entity's deletion starting.
@@ -165,11 +176,13 @@ The following diagrams shows the synchronous multi-stage deletion flow:
 
 The delete operation is kick-started with the `DELETE` RDE API call:
 
-```
+```text
 DELETE /cloudapi/1.0.0/entities/<entity-id>
 ```
+
 Response:
-```
+
+```text
 202 Accepted
 
 Headers:
@@ -202,10 +215,10 @@ The `deleteDefinedEntity` task can be found in the `Location` header of the resp
     ...
 }
 ```
+
 The following diagrams show what happens with the RDE's state depending on the success or failure of the hook executions:
 
 ![RDE synchrounous multi-stage delete diagram for entityState 1](../../images/rde-sync-deletion-entity-states-1.png)
-
 
 ![RDE synchrounous multi-stage delete diagram for entityState 2](../../images/rde-sync-deletion-entity-states-2.png)
 
@@ -215,7 +228,7 @@ If the post-delete hook fails, the entity will remain in `IN_DELETION` state and
 
 A RDE instance can be moved to `IN_DELETION` state by issuing a `PUT` API call on the defined entity setting the `entityState` field to `IN_DELETION`:
 
-```
+```text
 PUT /cloudapi/1.0.0/entities/<entity_id>
 ```
 
@@ -234,16 +247,19 @@ PUT /cloudapi/1.0.0/entities/<entity_id>
     ...
 }
 ```
+
 Response:
 
-```
+```text
 200 OK
 ```
+
 If there is a pre-delete hook defined in the RDE type of the entity, the hook will be executed prior to moving the entity into `IN_DELETION` state. If the hook execution succeeds, the entity is moved into `IN_DELETION` state. Otherwise, the entity remains unchanged.
 
 In the case of pre-delete hook existing, the `PUT` call will respond with `202 Accepted` and a task will be returned in the `Location` header of the response:
 Response:
-```
+
+```text
 202 ACCEPTED
 
 Headers:
@@ -251,6 +267,7 @@ Location: https://localhost:8443/api/task/06533e8a-e3a0-4502-9cb7-5c758e6da815
 ```
 
 And the Update RDE task holds a reference to the actual pre-delete hook invocation task:
+
 ```json
  {
     ...
@@ -282,7 +299,7 @@ And the Update RDE task holds a reference to the actual pre-delete hook invocati
 
 To get all entities of a RDE Type in state `IN_DELETION`, you `GET` all entities of the RDE Type filtered by `entityState`:
 
-```
+```text
 GET /cloudapi/1.0.0/entities/types/vmware/testType1/1.0.0?filter=(entityState==IN_DELETION)
 ```
 

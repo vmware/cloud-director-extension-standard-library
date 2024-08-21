@@ -1,4 +1,5 @@
 # API extensibility
+
 The API extensibility framework gives providers the ability to extend the standard API included with Cloud Director through a set of well established rules that allow the registration of external systems with the platform and the association of those systems with URLs which are serviced by Cloud Director. Requests made to such URLs are routed to the corresponding external system (API extension) for processing. What is more, the API extensibility framework also allows to configure additional processing of responses with a specific content type by an external system.
 
 Being able to extend the standard Cloud Director API opens up a lot of use cases for extension authors. The main one is making it possible for a client to access an extension (through Cloud Director) even if it is located behind a firewall. What is more, Cloud Director can act as an identity provider for extensions via the API extensibility via HTTP (transparent proxy).
@@ -19,16 +20,19 @@ The two main concepts in the API extensibility framework are the [External Syste
 ***API Filter*** = a rule for which requests go where
 
 ## External System
+
 The external system represents an external to Cloud Director system which processes API extensibility requests by communicating with Cloud Director either via MQTT or HTTP. External system is the broader term. It encapsulates the more specific terms - [External Service](#external-service) (API extensibility via MQTT) and [External Endpoint](#external-endpoint) (API extensibility via HTTP).
 
-```
+```text
 External System = { External Service, External Endpoint }
 ```
 
 ## API Filter
+
 API filters allow external systems (external services and external endpoints) to extend the standard API included with Cloud Director with custom URLs or custom processing of request's responses.
 
 The API filter entity has the following definition:
+
 ```json
 {
     "externalSystem": {
@@ -43,15 +47,17 @@ The API filter entity has the following definition:
 
 }
 ```
+
 - externalSystem - an entity reference to an external endpoint (external service or external endpoint)
 - urlMatcher - used to set a custom URL which when requested, will be processed by the external system. More details [here](#the-urlmatcher).
-- responseContentType - response Content-Type, expressed as a MIME Content-Type string. Responses whose Content-Type attribute has a value that matches this string are routed to this external service. `responseContentType` is mutually exclusive with `urlPattern`. The `responseContentType` property is __only__ applicable for external services.
+- responseContentType - response Content-Type, expressed as a MIME Content-Type string. Responses whose Content-Type attribute has a value that matches this string are routed to this external service. `responseContentType` is mutually exclusive with `urlPattern`. The `responseContentType` property is **only** applicable for external services.
 
 ### The urlMatcher
 
 The `urlMatcher` consists of `urlPattern` and `urlScope` which together identify a URL which will be serviced by an external system. The `urlMatcher` holds different information when working with extenral services and external endpoints.
 
 #### External Services and the urlMatcher
+
 In the case of external services, the `urlMatcher` will match requests under `/api`.
 
 Only allowed value for `urlScope` is `API`.
@@ -59,12 +65,14 @@ Only allowed value for `urlScope` is `API`.
 The `urlPattern` holds the request URL pattern, written as a regular expression pattern. Element content cannot exceed 1024 characters.
 
 Example `urlMatcher`:
+
 ```json
 {
     "urlPattern": "/api/org/.*/currentTime",
     "urlScope": "API"
 }
 ```
+
 The above `urlMatcher` will match the following URLs:
 
 - `/api/org/testOrg/currentTime`
@@ -74,6 +82,7 @@ The above `urlMatcher` will match the following URLs:
 #### External Endpoints and the urlMatcher
 
 In the case of external endpoints, the `urlMatcher` will match requests under the extensibility API endpoints:
+
 - `/ext-api`
 - `/ext-ui/provider`
 - `/ext-ui/tenant/<tenant-name>`
@@ -83,6 +92,7 @@ The allowed values for `urlScope` are `EXT_API`, `EXT_UI_PROVIDER`, `EXT_UI_TENA
 The `urlPattern` is a regular expression pattern. Element content cannot exceed 1024 characters. The urlPattern must end with `.*` which specifies that the part of the URL coming after will be redirected to an external endpoint.
 
 Example `urlMatcher`:
+
 ```json
 {
     "urlPattern": "/custom/.*",
@@ -99,6 +109,7 @@ With the above `urlMatcher`:
 It is important to note that in the case of `TENANT` urlScope, the tenant name is not part of the `urlPattern`. The `urlPattern` will match the request after the tenant name.
 
 For example if we have the following `urlMatcher`:
+
 ```json
 {
     "urlPattern": "/custom/test/.*",
@@ -114,17 +125,21 @@ The following URLs will be matched by this `urlMatcher`:
 ## API extensibility via MQTT
 
 ### Overview
-As the name suggests, the API extensibility via MQTT framework allows providers to extend the Cloud Director standard API with API extensions which use __MQTT__ as a form of communication with Cloud Director. We call such external systems (API extensions) which communicate with Cloud Director over MQTT __external services__.
+
+As the name suggests, the API extensibility via MQTT framework allows providers to extend the Cloud Director standard API with API extensions which use **MQTT** as a form of communication with Cloud Director. We call such external systems (API extensions) which communicate with Cloud Director over MQTT **external services**.
 
 The two approaches we have for "extending the Cloud Director standard API" with custom request processing by an external service are:
-- [Register a __custom URL__](#registering-custom-urls-to-be-serviced-by-the-external-service) to be serviced by an external service. All requests made to this URL will be routed to the external service for processing and the response will be propagated back to the caller.
+
+- [Register a **custom URL**](#registering-custom-urls-to-be-serviced-by-the-external-service) to be serviced by an external service. All requests made to this URL will be routed to the external service for processing and the response will be propagated back to the caller.
 
 ![API extensibility Diagram 2](../images/api_extensibility_2.png)
-- [Register a __response content type__](#custom-processing-of-specific-response-content-types) for processing by an external service. All requests made to Cloud Director which result in a response with the specific content type will be routed to the external service for further processing before the response being returned back to the caller.
+
+- [Register a **response content type**](#custom-processing-of-specific-response-content-types) for processing by an external service. All requests made to Cloud Director which result in a response with the specific content type will be routed to the external service for further processing before the response being returned back to the caller.
 
 ![API extensibility Diagram 3](../images/api_extensibility_3.png)
 
 In regards to custom processing of requests, the external service can:
+
 - modify the initial API request received by Cloud Director from the client
 - modify the response to an API request returned by Cloud Director
 - generate a completely new response message for the request, and return it to the client via Cloud Director
@@ -145,9 +160,11 @@ Let us go through the main concepts first:
 If instead you wish to start with a basic example and build on top of it, skip to [here](#building-an-api-extension-via-mqtt).
 
 ### External Service
-Any external to Cloud Director system which needs to be able to process custom API requests via MQTT needs to be registered as an __external service__ in Cloud Director.
+
+Any external to Cloud Director system which needs to be able to process custom API requests via MQTT needs to be registered as an **external service** in Cloud Director.
 
 The external service entity has the following definition:
+
 ```json
 {
     "id": "urn:vcloud:extension-api:testVendor:testName:1.0.0",
@@ -173,11 +190,12 @@ The vendor, name and version trio is unique for each external service.
 - `mqttTopics` - (generated by Cloud Director per external service) - contains the MQTT topics which the external service will use to communicate with Cloud Director - the `monitor` topic is the one the external service will receive messages from Cloud Director on, and the `respond` topic is the one the external service will use to send responses.
 
 #### Priority of external services
+
 More than one external service can be configured to process the same requests. If there are multiple external services processing the same request, the external services are chained. The priority field is used to set what priority an external service will have when processing requests. 100 is the most priority, 0 is the least priority.
 
 #### Authorization of external services
 
-1. __Overview__
+1. **Overview**
 
     The `authorizationEnabled` flag in the external service definition, as the name suggests, sets whether authorization is enabled for the service.
 
@@ -186,15 +204,15 @@ More than one external service can be configured to process the same requests. I
     There are some prerequisites to make authorization work: [ResourceClasses](#resource-class), [ResourceClassActions](#resource-class-action), [AclRules](#acl-rule) and optionally [ServiceResources](#service-resource) have to be created in Cloud Director.
     If service authorization is enabled and there isn't any of the mentioned entities created, each call to this service's URL/URLs will be always rejected as not authorized.
 
-    A __Resource Class__ entity represents an external entity type defined for an external service. More information can be found [here](#resource-class).
+    A **Resource Class** entity represents an external entity type defined for an external service. More information can be found [here](#resource-class).
 
-    A __Resource Class Action__ represents an operation on a Resource Class. More information can be found [here](#resource-class-action).
+    A **Resource Class Action** represents an operation on a Resource Class. More information can be found [here](#resource-class-action).
 
-    An __Acl Rule__ is a condition which, if met, grants permissions. More information can be found [here](#acl-rule).
+    An **Acl Rule** is a condition which, if met, grants permissions. More information can be found [here](#acl-rule).
 
-    And a __Service Resource__ represents a resource/entity/service exposed by a service. Each Service Resource is registered for only one Resource Class that defines the type of this resource. More information can be found [here](#service-resource).
+    And a **Service Resource** represents a resource/entity/service exposed by a service. Each Service Resource is registered for only one Resource Class that defines the type of this resource. More information can be found [here](#service-resource).
 
-2. __Authorization mechanism explained__
+2. **Authorization mechanism explained**
 
     When a request is made to a custom URL, all external services which are enabled to process requests on this URL are found. All of these services are authorized first before letting them process the request. One service can have authorization enabled and another service can have authorization disabled. If authorization fails for one of the services, then the whole request is rejected and status code 403 (Access Denied) is returned.
 
@@ -209,13 +227,16 @@ More than one external service can be configured to process the same requests. I
     So in order to configure external service authorization, you need to defined at least one Resource, one Resource Class Action and one ACL Rule.
 
 ### Link
+
 A `Link` is a Cloud Director entity which allows extension authors to configure links to external services to be returned as part of the response of native Cloud Director APIs - i.e. returning a link to an external service in the response of `GET /api/org/<org-id>`.
 In order to find the link for creating a `Link` for an external service, you need to perform a GET on the external service and the link will be part of the response.
 
-```
+```text
 GET /cloudapi/extensions/api/<externa-service-id>
 ```
+
 Response:
+
 ```json
 Headers:
 ...
@@ -238,16 +259,19 @@ Body:
     }
 }
 ```
+
 The link for creating a service `Link` is in the response headers.
 Let's say we have an external service registered and an API filter with the following urlPattern - `/api/org/.*/currentTime`. If we want a link to this custom URL to be returned each time a GET is executed on an organization, we must create a `Link`:
 
 Creating a link is done with the following API call:
-```
+
+```text
 POST /api/admin/extension/service/4c1dec82-5502-33fe-9787-0402b70e0454/links
 
 Headers:
 Content-Type: application/vnd.vmware.admin.serviceLink+xml;version=38.0
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ns2:ServiceLink xmlns="http://www.vmware.com/vcloud/v1.5"
@@ -266,7 +290,9 @@ Content-Type: application/vnd.vmware.admin.serviceLink+xml;version=38.0
     <ns2:ResourceType>application/vnd.vmware.vcloud.org+xml</ns2:ResourceType>
 </ns2:ServiceLink>
 ```
+
 Response:
+
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <vmext:ServiceLink xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:ns9="http://www.vmware.com/vcloud/versions" id="urn:vcloud:serviceLink:eb12aa7e-a63b-4f3d-90e4-8469f8e2f175" href="https://localhost:8443/api/admin/extension/service/link/eb12aa7e-a63b-4f3d-90e4-8469f8e2f175" type="application/vnd.vmware.admin.serviceLink+xml">
@@ -279,13 +305,15 @@ Response:
     <vmext:ResourceType>application/vnd.vmware.vcloud.org+xml</vmext:ResourceType>
 </vmext:ServiceLink>
 ```
+
 Now that we have created this `Link`, we can see that it is returned when GET-ing an organization:
 
-```
+```text
 GET /api/org/<orgId>
 ```
 
 Response:
+
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Org xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ovfenv="http://schemas.dmtf.org/ovf/environment/1" xmlns:ns9="http://www.vmware.com/vcloud/versions" name="STFTestOrg" id="urn:vcloud:org:5eac4ea6-11e4-4827-a249-ac8631779b92" href="https://localhost:8443/api/org/5eac4ea6-11e4-4827-a249-ac8631779b92" type="application/vnd.vmware.vcloud.org+xml">
@@ -322,7 +350,9 @@ Response:
     <FullName>Test Org 1</FullName>
 </Org>
 ```
+
 We can see the newly created custom link is part of the response:
+
 ```xml
 <Link rel="down:currentTime" href="https://localhost:8443/api/org/5eac4ea6-11e4-4827-a249-ac8631779b92/currentTime" type="text/plain"/>
 ```
@@ -333,12 +363,12 @@ A Resource Class entity represents an external entity type defined for an extern
 
 Part of the responsibility of the external services' authors is to supply the necessary information in the Resource Class definition for the functionality to work properly. Necessary information includes mime type, url template, nid and urn pattern. These properties should be supplied for every external service entity type (or resource class). They are part of registering external services resource classes to Cloud Director:
 
-- __nid__ - String - the Namespace Identifier for resources of this type, as specified in (as defined in http://www.ietf.org/rfc/rfc2141.txt)
-- __mimeType__ - String - mime type of the service resources which are part of this resource class
-- __urnPattern__ - String - should match entity's urn NSS part (as defined in http://www.ietf.org/rfc/rfc2141.txt). Supports `id` parameter - value is used to set the entity's id in the resulting URL.
-- __urlTemplate__ - String - the value of href attribute for resources of this class.  Supports following parameters:
-    - `{baseUri}` - "Domain" part of the URL. Value set is Cloud Director REST API's baseUri.
-    - `{resourceId}` - 	Entity's id. Value set is to the `{id}` matched from the URN pattern (the UUID portion of the `id` attribute value of the resource).
+- **nid** - String - the Namespace Identifier for resources of this type, as specified in (as defined in <http://www.ietf.org/rfc/rfc2141.txt>)
+- **mimeType** - String - mime type of the service resources which are part of this resource class
+- **urnPattern** - String - should match entity's urn NSS part (as defined in <http://www.ietf.org/rfc/rfc2141.txt>). Supports `id` parameter - value is used to set the entity's id in the resulting URL.
+- **urlTemplate** - String - the value of href attribute for resources of this class.  Supports following parameters:
+  - `{baseUri}` - "Domain" part of the URL. Value set is Cloud Director REST API's baseUri.
+  - `{resourceId}` -  Entity's id. Value set is to the `{id}` matched from the URN pattern (the UUID portion of the `id` attribute value of the resource).
 
 During the process of entity resolving and building proper entity links URN is split into 3 parts -  `urn:<nid>:<nss>`. All resource classes with the specified NID and urnPattern matching the specified URN are found. Then a URL is constructed for each of them based on the URL template and returned as links by the entity resolver. `ResourceId` value is evaluated from the `id` named pattern in URN pattern and its value is used to replace `resourceId` URL template parameter.
 
@@ -346,66 +376,69 @@ Example:
 
 1. Create a Resource Class:
 
-In order to find the link for creating a Resource Class for an external service, you need to perform a GET on the external service and the link will be part of the response.
+    In order to find the link for creating a Resource Class for an external service, you need to perform a GET on the external service and the link will be part of the response.
 
-```
-GET /cloudapi/extensions/api/<externa-service-id>
-```
-Response:
-```json
-Headers:
-...
-Link: <https://localhost:8443/api/admin/extension/service/4c1dec82-5502-33fe-9787-0402b70e0454/resourceclasses>;rel="down";type="application/vnd.vmware.vcloud.query.records+xml application/vnd.vmware.vcloud.query.idrecords+xml application/vnd.vmware.vcloud.query.records+json application/vnd.vmware.vcloud.query.idrecords+json application/vnd.vmware.vcloud.query.references+xml application/vnd.vmware.vcloud.query.references+json"
-...
-```
+    ```text
+    GET /cloudapi/extensions/api/<externa-service-id>
+    ```
+
+    Response:
+
+    ```json
+    Headers:
+    ...
+    Link: <https://localhost:8443/api/admin/extension/service/4c1dec82-5502-33fe-9787-0402b70e0454/resourceclasses>;rel="down";type="application/vnd.vmware.vcloud.query.records+xml application/vnd.vmware.vcloud.query.idrecords+xml application/vnd.vmware.vcloud.query.records+json application/vnd.vmware.vcloud.query.idrecords+json application/vnd.vmware.vcloud.query.references+xml application/vnd.vmware.vcloud.query.references+json"
+    ...
+    ```
 
 2. And now let's create a resource class:
 
-```
-POST /api/admin/extension/service/<service-id>/resourceclasses
+    ```text
+    POST /api/admin/extension/service/<service-id>/resourceclasses
 
-Headers:
-Content-type:application/vnd.vmware.admin.resourceClass+xml; charset=UTF-8
-Accept: application/*+xml;version=5.1
-```
+    Headers:
+    Content-type:application/vnd.vmware.admin.resourceClass+xml; charset=UTF-8
+    Accept: application/*+xml;version=5.1
+    ```
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<vmext:ResourceClass name="Backup" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
-   <vmext:MimeType>mimeTypeFoo+xml</vmext:MimeType>
-   <vmext:UrlTemplate>{baseUri}foo/fooType/{resourceId}</vmext:UrlTemplate>
-   <vmext:Nid>nidFoo</vmext:Nid>
-   <vmext:UrnPattern>^myNssFoo(?&lt;id&gt;[0-9]*)</vmext:UrnPattern>
-</vmext:ResourceClass>
-```
-
-Response:
-
-```
-201 Created
-```
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<vmext:ResourceClass name="Backup" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" id="urn:vcloud:resourceClass:daa16d0e-03fb-4506-9cf4-1a6f957bdf83" type="application/vnd.vmware.admin.resourceClass+xml" href="https://10.23.118.207/api/admin/extension/service/resourceclass/daa16d0e-03fb-4506-9cf4-1a6f957bdf83" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
-    <vcloud:Link rel="remove" href="https://10.23.118.207/api/admin/extension/service/resourceclass/daa16d0e-03fb-4506-9cf4-1a6f957bdf83"/>
-    <vcloud:Link rel="up" type="application/vnd.vmware.admin.service+xml" href="https://10.23.118.207/api/admin/extension/service/4f71a94c-b13b-460f-866f-0394088da992"/>
-    <vcloud:Link rel="down:resourceClassActions" type="application/vnd.vmware.vcloud.query.records+xml" href="https://10.23.118.207/api/admin/extension/service/resourceclass/daa16d0e-03fb-4506-9cf4-1a6f957bdf83/resourceclassactions"/>
-    <vcloud:Link rel="down:serviceResources" type="application/vnd.vmware.vcloud.query.records+xml" href="https://10.23.118.207/api/admin/extension/service/resourceclass/daa16d0e-03fb-4506-9cf4-1a6f957bdf83/serviceresources"/>
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <vmext:ResourceClass name="Backup" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
     <vmext:MimeType>mimeTypeFoo+xml</vmext:MimeType>
     <vmext:UrlTemplate>{baseUri}foo/fooType/{resourceId}</vmext:UrlTemplate>
     <vmext:Nid>nidFoo</vmext:Nid>
     <vmext:UrnPattern>^myNssFoo(?&lt;id&gt;[0-9]*)</vmext:UrnPattern>
-</vmext:ResourceClass>
-```
+    </vmext:ResourceClass>
+    ```
+
+    Response:
+
+    ```text
+    201 Created
+    ```
+
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <vmext:ResourceClass name="Backup" xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" id="urn:vcloud:resourceClass:daa16d0e-03fb-4506-9cf4-1a6f957bdf83" type="application/vnd.vmware.admin.resourceClass+xml" href="https://10.23.118.207/api/admin/extension/service/resourceclass/daa16d0e-03fb-4506-9cf4-1a6f957bdf83" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
+        <vcloud:Link rel="remove" href="https://10.23.118.207/api/admin/extension/service/resourceclass/daa16d0e-03fb-4506-9cf4-1a6f957bdf83"/>
+        <vcloud:Link rel="up" type="application/vnd.vmware.admin.service+xml" href="https://10.23.118.207/api/admin/extension/service/4f71a94c-b13b-460f-866f-0394088da992"/>
+        <vcloud:Link rel="down:resourceClassActions" type="application/vnd.vmware.vcloud.query.records+xml" href="https://10.23.118.207/api/admin/extension/service/resourceclass/daa16d0e-03fb-4506-9cf4-1a6f957bdf83/resourceclassactions"/>
+        <vcloud:Link rel="down:serviceResources" type="application/vnd.vmware.vcloud.query.records+xml" href="https://10.23.118.207/api/admin/extension/service/resourceclass/daa16d0e-03fb-4506-9cf4-1a6f957bdf83/serviceresources"/>
+        <vmext:MimeType>mimeTypeFoo+xml</vmext:MimeType>
+        <vmext:UrlTemplate>{baseUri}foo/fooType/{resourceId}</vmext:UrlTemplate>
+        <vmext:Nid>nidFoo</vmext:Nid>
+        <vmext:UrnPattern>^myNssFoo(?&lt;id&gt;[0-9]*)</vmext:UrnPattern>
+    </vmext:ResourceClass>
+    ```
 
 3. With the created resource class, let's call the entity resolver:
 
-```
+```text
 GET api/entity/urn:nidFoo:myNssFoo17
 ```
 
 Response:
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Entity xmlns="http://www.vmware.com/vcloud/v1.5" name="urn:nidFoo:myNssFoo17" id="urn:nidFoo:myNssFoo17" type="application/vnd.vmware.vcloud.entity+xml"
@@ -414,9 +447,11 @@ xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.23.6.226/api/v1.
    <Link rel="alternate" type="mimeTypeFoo+xml" href="https://10.23.6.226/api/foo/fooType/17"/>
 </Entity>
 ```
+
 As you can see in the response, the resulting link is `https://10.23.6.226/api/foo/fooType/17`.
 
 #### Resource Class Action
+
 Resource Class Action represents operations defined for a specific Resource Class.
 
 A Resource Class Action contains two fields:
@@ -441,13 +476,15 @@ Examples for an invalid Resource Class Action's URL pattern:
 In order to find the link for creating a Resource Class Action for a Resource Class, you need to perform a GET on the resource class and the link will be part of the response.
 
 Example API call for creating a Resource Class Action:
-```
+
+```text
 POST /api/admin/extension/service/resourceclass/<service-id>/resourceclassactions
 
 Headers:
 Content-type:application/vnd.vmware.admin.resourceClassAction+xml; charset=UTF-8
 Accept: application/*+xml;version=5.1
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:ResourceClassAction xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" name="Read backups" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
@@ -455,10 +492,13 @@ Accept: application/*+xml;version=5.1
     <vmext:UrlPattern>/api/backup/(?&lt;id&gt;[-,a-g,0-9]*)</vmext:UrlPattern>
 </vmext:ResourceClassAction>
 ```
+
 Response:
-```
+
+```text
 201
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:ResourceClassAction xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" name="Read backups" id="urn:vcloud:resourceClassAction:268bd365-75bc-4132-b020-90975c788dbf" type="application/vnd.vmware.admin.resourceClassAction+xml" href="https://10.23.118.207/api/admin/extension/service/resourceclassaction/268bd365-75bc-4132-b020-90975c788dbf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
@@ -471,8 +511,10 @@ Response:
 ```
 
 #### ACL Rule
+
 Each ACL Rule belongs to a Resource Class Action. The ACL Rules are allow rules, they hold information about which user/org/right has access to the resource (external resource or Cloud Director core resource).
 An ACL Rule has the following properties:
+
 1. `ServiceResourceAccess` (optional)
 
     The `ServiceResourceAccess` property tells us which Service Resource/Resources of the Resource Class this ACL Rule is for.
@@ -491,17 +533,18 @@ An ACL Rule has the following properties:
     - Access - String - `Shared`/`Entity` - Value `Shared` means that the action is authorized for all users in the organization (specified by OrganizationAccess). Value `Entity` means that the action is authorized for only one specific user or Cloud Director right and a reference to that user or right must be provided in the Entity property.
     - Entity - a reference to a specific user or specific Cloud Director right (right can be predefined or custom).  The value is used only when Access is set to `Entity`.
 
-
 In order to find the link for creating an ACL Rule for a Resource Class Action, you need to perform a GET on the resource class action and the link will be part of the response.
 
 Example API Call for creating an ACL Rule:
-```
+
+```text
 POST https://10.23.118.207/api/admin/extension/service/resourceclassaction/<resource-class-id>/aclrules
 
 Headers:
 Content-type: application/vnd.vmware.admin.aclRule+xml; charset=UTF-8
 Accept: application/*+xml;version=38.0
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:AclRule xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Acl for the resource Type Backup and shared Org"  xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
@@ -517,10 +560,13 @@ Accept: application/*+xml;version=38.0
     </vmext:PrincipalAccess>
 </vmext:AclRule>
 ```
+
 Response:
-```
+
+```text
 201 Created
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:AclRule xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Acl for the resource Type Backup and shared Org" id="urn:vcloud:aclRule:55f5f088-3ee9-44c8-a58a-59e5102f44ba" type="application/vnd.vmware.admin.aclRule+xml" href="https://10.23.118.207/api/admin/extension/service/aclrule/55f5f088-3ee9-44c8-a58a-59e5102f44ba" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
@@ -541,21 +587,23 @@ Response:
 
 #### Service Resource
 
-A __Service Resource__ represents a resource exposed by a service. Each Service Resource is registered for only one Resource Class that defines the type of this resource.
+A **Service Resource** represents a resource exposed by a service. Each Service Resource is registered for only one Resource Class that defines the type of this resource.
 
 The Service Resource has the following properties:
+
 1. ExternalObjectId - String - a unique identifier for this resource (e.g. 123-456).
 2. Organization - an entity reference to a Cloud Director organization which this resource belongs to.
 
 Example API call for creating a Service Resource:
 
-```
+```text
 POST https://10.23.118.207/api/admin/extension/service/resourceclass/<resource-class-id>/serviceresources
 
 Headers:
 Content-type:application/vnd.vmware.admin.serviceResource+xml; charset=UTF-8
 Accept: application/*+xml;version=38.0
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:ServiceResource xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" name="res-backup-1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
@@ -563,10 +611,13 @@ Accept: application/*+xml;version=38.0
     <vmext:ExternalObjectId>123-456</vmext:ExternalObjectId>
 </vmext:ServiceResource>
 ```
+
 Response:
-```
+
+```text
 201 Created
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:ServiceResource xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" name="res-backup-1" id="urn:vcloud:serviceResource:78809fcd-5df8-4a8f-9827-7cc7582c7191" type="application/vnd.vmware.admin.serviceResource+xml" href="https://10.23.118.207/api/admin/extension/service/serviceresource/78809fcd-5df8-4a8f-9827-7cc7582c7191" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/extension/v1.5 http://10.23.118.207/api/v1.5/schema/vmwextensions.xsd http://www.vmware.com/vcloud/v1.5 http://10.23.118.207/api/v1.5/schema/master.xsd">
@@ -576,6 +627,7 @@ Response:
     <vmext:ExternalObjectId>123-456</vmext:ExternalObjectId>
 </vmext:ServiceResource>
 ```
+
 ### Right
 
 Extensions can create and manage rights that are meaningful for them. The extension is responsible for managing its rights, Cloud Director just supplies uniform APIs for adding, tracking and updating them.
@@ -591,10 +643,12 @@ The Right entity has the following fields:
 
 In order to find the link for creating a Right for an external service, you need to perform a GET on the external service and the link will be part of the response.
 
-```
+```text
 GET /cloudapi/extensions/api/<externa-service-id>
 ```
+
 Response:
+
 ```json
 Headers:
 ...
@@ -604,12 +658,13 @@ Link: <https://localhost:8443/api/admin/extension/service/4c1dec82-5502-33fe-978
 
 Example API call for creating a custom Right:
 
-```
+```text
 POST /api/admin/extension/service/<serviceId>/rights
 
 Headers:
 Content-type: application/vnd.vmware.admin.right+xml
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?><vcloud:Right
     xmlns:vcloud="http://www.vmware.com/vcloud/v1.5"
@@ -621,17 +676,18 @@ Content-type: application/vnd.vmware.admin.right+xml
 ```
 
 Example API call for deleting a custom Right:
-```
+
+```text
 DELETE: https://person/api/admin/right/<right-id>
 
 Result: 204 No Content
 ```
-Note that this operation is not possible on built-in rights nor rights associated with a non-system-administrator role or rights associated with some ACL rule.
 
+Note that this operation is not possible on built-in rights nor rights associated with a non-system-administrator role or rights associated with some ACL rule.
 
 Example API call for cleaning up extension custom rights which are already deleted and are not associated with a Role or ACL Rule:
 
-```
+```text
 POST https://person/api/admin/extension/service/action/clearUnusedRights
 
 Result: 204 No Content
@@ -653,17 +709,21 @@ The API definition entity has the following properties:
     - a File Descriptor contains the following properties
         1. `Description` - String
         2. A File object containing file name, href to access the file and contant-type - e.g.
-        ```
+
+        ```text
         <vmext:File name="descriptors" type="application/zip" href="{baseUri}/loadBalancerDescriptors/descriptors.zip"/>
         ```
+
         The href property also supports the `{baseUri}` parameter.
 
 In order to find the link for creating an API definiton for an external service, you need to perform a GET on the external service and the link will be part of the response.
 
-```
+```text
 GET /cloudapi/extensions/api/<externa-service-id>
 ```
+
 Response:
+
 ```json
 Headers:
 ...
@@ -672,13 +732,15 @@ Link: <https://localhost:8443/api/admin/extension/service/4c1dec82-5502-33fe-978
 ```
 
 Example API call for creating an API definition:
-```
+
+```text
 POST api/admin/extension/service/<service_id>/definitions
 
 Headers:
 Content-type:application/vnd.vmware.admin.apiDefinition+xml;
 Accept: application/*+xml;version=38.0
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:ApiDefinition xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5"
@@ -706,13 +768,14 @@ name="loadBalancerApi" operationKey="apiDef:loadBalancer">
 
 As mentioned above, file descriptors can be created as a part of an API definition creation process. A single file descriptor can also be created with a separate API call:
 
-```
+```text
 POST api/admin/extension/service/definition/<apidefinition_id>/files
 
 Headers:
 Content-type:application/vnd.vmware.admin.fileDescriptor+xml; charset=UTF-8
 Accept: application/*+xml;version=38.0
 ```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <vmext:FileDescriptor xmlns:vmext="http://www.vmware.com/vcloud/extension/v1.5" xmlns:vcloud="http://www.vmware.com/vcloud/v1.5"
@@ -728,6 +791,7 @@ http://www.vmware.com/vcloud/v1.5 http://10.23.6.94/api/v1.5/schema/master.xsd">
 ### Building an API extension via MQTT
 
 #### Registering a new external service
+
 The first thing you need to do to build an API extension is to register the extension in Cloud Director. By creating a new external service Cloud Director will create exclusive MQTT topics for your extension to use during MQTT communication.
 
 Registering an external service is done with the following API call ([more info](#external-service)):
@@ -763,6 +827,7 @@ Response:
 ```
 
 #### Obtaining an extension access token
+
 We need to do one more thing to be able to connect to the external service MQTT topics - we need a way for our MQTT client to authenticate with Cloud Director for MQTT communication. The way to do this is by creating an long live token for the external service, which the MQTT client will use for authentication when connecting:
 
 ```json
@@ -794,61 +859,62 @@ Response:
 ```
 
 #### Accessing the Messaging Bus over MQTT
+
 Now that we have dedicated MQTT topics for communication and a token to authenticate with, we can connect an MQTT client.
 
 The username in the connection options should be set to the external service triplet - `vendor/name/version` and the password should be the long-live token we just created.
 
 The following sample code in `JAVA` can be used to connect an MQTT client and subscribe it to the external service topics for message processing:
 
-[Accessing the Messaging Bus over MQTT](#accessing-the-messaging-bus-over-mqtt-1)
+[Accessing the Messaging Bus over MQTT](#example-accessing-the-messaging-bus-over-mqtt)
 
 #### MQTT messages format
 
-1. __VCD to external service__
+1. **VCD to external service**
 
-```json
-{
-    "type": "API_REQUEST",
-    "headers": {
-        "requestId": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-        "context": {
-            "apiAccessToken": "...",
-            "user": "urn:vcloud:user:xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-            "org": "urn:vcloud:org:xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-            "rights": null,
-            "parameters": null
-        }
-    },
-    "httpRequest": [ <byte array of HTTP request> ]
-    "linkApiBaseUrl": "url"
-}
-```
-
-MQTT message from Cloud Director to external service can be deserialized to [MqttVCDMessage.java](#mqttvcdmessagejava).
-
-The `httpRequest` byte array can be deserialized to [Payload.java](#payloadjava):
-
-2. __External service to VCD__
-
-```json
-{
-    "type": "API_RESPONSE",
-    "headers": {
-        "requestId": "21c9ed76-036d-45c4-a122-ca2f623dca2a",
-    },
-    "httpResponse": {
-        "statusCode": xxx,
+    ```json
+    {
+        "type": "API_REQUEST",
         "headers": {
-             "Content-Type": "application/vnd.vmware.organization+xml",
-             "Content-Encoding": "gzip",
-             "Content-Language": "en-US,en"
-             "Content-Location": "",
-             ...
+            "requestId": "xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "context": {
+                "apiAccessToken": "...",
+                "user": "urn:vcloud:user:xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "org": "urn:vcloud:org:xxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+                "rights": null,
+                "parameters": null
+            }
         },
-        "body": [ <byte array of original payload> ]
+        "httpRequest": [ <byte array of HTTP request> ]
+        "linkApiBaseUrl": "url"
     }
-}
-```
+    ```
+
+    MQTT message from Cloud Director to external service can be deserialized to [MqttVCDMessage.java](#mqttvcdmessagejava).
+
+    The `httpRequest` byte array can be deserialized to [Payload.java](#payloadjava):
+
+2. **External service to VCD**
+
+    ```json
+    {
+        "type": "API_RESPONSE",
+        "headers": {
+            "requestId": "21c9ed76-036d-45c4-a122-ca2f623dca2a",
+        },
+        "httpResponse": {
+            "statusCode": xxx,
+            "headers": {
+                "Content-Type": "application/vnd.vmware.organization+xml",
+                "Content-Encoding": "gzip",
+                "Content-Language": "en-US,en"
+                "Content-Location": "",
+                ...
+            },
+            "body": [ <byte array of original payload> ]
+        }
+    }
+    ```
 
 ```java
 public class MqttRemoteServerResponseMessage {
@@ -892,6 +958,7 @@ public class MqttRemoteServerResponseMessage {
 <!-- // Vary - remove from list. Will be re-added by response filter per Cloud Director policy -->
 
 #### Registering custom URLs to be serviced by the external service
+
 Now that we have registered an external service and connected our MQTT client, we can create custom URLs in Cloud Director to be serviced by this external service. To put it in other words, we need to create a rule in Cloud Director for which requests will be proxied to the external service for processing. And the way to do that is to create an API filter in Cloud Director.
 
 Creating an API filter is done with the following API call ([more info](#api-filter)):
@@ -911,6 +978,7 @@ POST /cloudapi/1.0.0/apiFilters
 }
 
 ```
+
 And now since we have set the external service to enabled, you can start sending requests to `/api/org/<orgId>/test/...` and they will be forwarded to your external service.
 
 #### Custom processing of specific response content types
@@ -929,9 +997,11 @@ POST /cloudapi/1.0.0/apiFilters
 }
 
 ```
+
 And now since we have set the external service to enabled, all HTTP responses coming from Cloud Director with `Content-Type: application/vnd.vmware.admin.organization+xml;version=38.0` will be forwarded to your external service for further processing.
 
 #### Setting up authorization of external service custom URL requests
+
 The external service, which we registered in the previous steps, has authorization disabled. This means that any Cloud Director user can access the custom URLs serviced by the external service. However, you can limit who can access these URLs. But before we enabled the external service authorisation, we need to set up the rules for it.
 
 The quickest way to configure external service authorisation, is to create an External Service Resource and at least one External Service Action in it with at least one ACL Rule. The External Service Action holds information about what HTTP method is allowed to be used when requesting a certain URL (URL matching a URL pattern). The ACL Rule holds information about which user/org has the right to invoke the action, or which Cloud Director Right implies the right to invoke the action.
@@ -943,6 +1013,7 @@ The first example for setting up authorization is with using a core Cloud Direct
     This is an optional step - you can create custom rights in Cloud Director for a specific external service.
 
     Let's create a Custom Right:
+
     ```xml
     POST /api/admin/extension/service/<service-id>/rights
 
@@ -955,6 +1026,7 @@ The first example for setting up authorization is with using a core Cloud Direct
     <vcloud:ServiceNamespace>ServiceNamespace</vcloud:ServiceNamespace>
     </vcloud:Right>
     ```
+
 2. Create a resource class
 
     ```xml
@@ -968,6 +1040,7 @@ The first example for setting up authorization is with using a core Cloud Direct
 
     </vmext:ResourceClass>
     ```
+
 3. Create resource class action/actions
 
     ```xml
@@ -981,6 +1054,7 @@ The first example for setting up authorization is with using a core Cloud Direct
 
     </vmext:ResourceClassAction>
     ```
+
 4. Create ACL Rule/Rules
 
     ```xml
@@ -1000,6 +1074,7 @@ The first example for setting up authorization is with using a core Cloud Direct
     </vmext:PrincipalAccess>
     </vmext:AclRule>
     ```
+
 5. Enable service authorization
 
     ```json
@@ -1023,9 +1098,10 @@ The first example for setting up authorization is with using a core Cloud Direct
 
 And now a user who holds the newly created `TestExtensionRight` right can make the following request:
 
-```
+```text
 GET /api/org/a93c9db9-7471-3192-8d09-a8f7eeda85f9/currentTime
 ```
+
 Where the id in the URL is an id of a Cloud Director org.
 
 Now let's see an example of how to set-up authorization based on a custom service resource.
@@ -1060,6 +1136,7 @@ Now let's see an example of how to set-up authorization based on a custom servic
 
     </vmext:ResourceClass>
     ```
+
 3. Create resource class action/actions
 
     ```xml
@@ -1073,6 +1150,7 @@ Now let's see an example of how to set-up authorization based on a custom servic
 
     </vmext:ResourceClassAction>
     ```
+
 4. Create ACL Rule/Rules
 
     ```xml
@@ -1103,31 +1181,37 @@ Now let's see an example of how to set-up authorization based on a custom servic
         <vmext:ExternalObjectId>123-456-ab</vmext:ExternalObjectId>
     </vmext:ServiceResource>
     ```
+
 Now any user authenticated user from any org can make the following request:
 
-```
+```text
 GET /api/customResource1/123-456-ab/getResource
 ```
 
 ## API extensibility via HTTP
 
-### Overview
-As the name suggests, the API extensibility via HTTP framework uses __HTTP__ as a form of communication between Cloud Director and the external systems. We call such external systems which communicate with Cloud Director over HTTP [External Endpoints](#external-endpoint).
+### HTTP Extensibility Overview
 
-"Extending the Cloud Director standard API" with custom request processing by an external endpoint can be achieved by [Registering a __custom URL__](#custom-urls) to be serviced by an external endpoint. All requests made to this URL will be routed to the external endpoint for processing and the response will be propagated back to the caller.
+As the name suggests, the API extensibility via HTTP framework uses **HTTP** as a form of communication between Cloud Director and the external systems. We call such external systems which communicate with Cloud Director over HTTP [External Endpoints](#external-endpoint).
 
-### Get started
+"Extending the Cloud Director standard API" with custom request processing by an external endpoint can be achieved by [Registering a **custom URL**](#registering-custom-urls-to-be-serviced-by-the-external-endpoint) to be serviced by an external endpoint. All requests made to this URL will be routed to the external endpoint for processing and the response will be propagated back to the caller.
+
+### Get started with HTTP Extensibility
 
 We will get started with a simple example and build on top of it while going through the specifics of API extensibility via HTTP.
 
 Let us go through the main concepts first:
+
 - [External Endpoint](#external-service)
 
-If instead you wish to start with the basic example, skip to [here](#building-an-api-extension-via-http-http-proxy).
+If instead you wish to start with the basic example, skip to [here](#building-an-api-extension-via-http-http-transparent-proxy).
+
 ### External Endpoint
-Any external to Cloud Director system which needs to be able to process custom API requests via HTTP needs to be registered as an __external endpoint__ in Cloud Director.
+
+Any external to Cloud Director system which needs to be able to process custom API requests via HTTP needs to be registered as an **external endpoint** in Cloud Director.
 
 The external endpoint entity has the following definition:
+
 ```json
 {
     "name": "endpointName",
@@ -1139,13 +1223,16 @@ The external endpoint entity has the following definition:
 ```
 
 The vendor, name and version trio is unique for each external endpoint.
-- __enabled__ - true/false (a user provided field) - whether the external endpoint is enabled or not
-- __rootUrl__ - String - the external endpoint which requests will be redirected to. The rootUrl must be a valid URL of https protocol. In order for Cloud Director to be able to connect to the external endpoint its server certificate has to be trusted in Cloud Director's system organization.
+
+- **enabled** - true/false (a user provided field) - whether the external endpoint is enabled or not
+- **rootUrl** - String - the external endpoint which requests will be redirected to. The rootUrl must be a valid URL of https protocol. In order for Cloud Director to be able to connect to the external endpoint its server certificate has to be trusted in Cloud Director's system organization.
 
 #### Enabled vs disabled external endpoints
+
 If the external endpoint is not enabled, requests will not be routed to it for processing. Cloud Director acts as if the endpoint does not exist. An external endpoint must be disabled before being deleted.
 
 ### Authorization of custom URL requests
+
 Requests made to custom URL requests in Cloud Director which proxy requests to an external endpoint can be made by any valid Cloud Director user.
 
 Requests made to `/ext-api` based custom URLs will use the `Authorization` header of the request to authenticate the user in Cloud Director.
@@ -1153,16 +1240,19 @@ Requests made to `/ext-api` based custom URLs will use the `Authorization` heade
 Requests made to `/ext-ui` based custom URLs will use the `vcloud_jwt` Cookie of the request to authenticate the user in Cloud Director.
 
 ### Building an API extension via HTTP (HTTP Transparent Proxy)
+
 #### Registering a new external endpoint
+
 The first thing you need to do to build an API extension via HTTP is to register the extension in Cloud Director by registering an external endpoint.
 
 Registering an external endpoint is done with the following API call ([more info](#external-endpoint)):
 
-```
+```text
 POST /cloudapi/1.0.0/externalEndpoints
 Accept: application/json;version=39.0.0-alpha
 Content-Type: application/json;version=39.0.0-alpha
 ```
+
 ```json
 {
     "name": "endpointName",
@@ -1172,6 +1262,7 @@ Content-Type: application/json;version=39.0.0-alpha
     "enabled": true
 }
   ```
+
 Response:
 
 ```json
@@ -1184,7 +1275,9 @@ Response:
     "enabled": true
 }
 ```
+
 #### Registering custom URLs to be serviced by the external endpoint
+
 Now that we have registered an external endpoint, we can create custom URLs in Cloud Director to be serviced by this external endpoint. To put it in other words, we need to create a rule in Cloud Director for which requests will be proxied to the external endpoint for processing. And the way to do that is to create an API filter in Cloud Director.
 
 Creating an API filter is done with the following API call ([more info](#api-filter)):
@@ -1204,18 +1297,23 @@ POST /cloudapi/1.0.0/apiFilters
 }
 
 ```
+
 The above created API filter says that all requests which have a URL with prefix `/ext-api/custom/` will be redirected to the external endpoint with id `urn:vcloud:extensionEndpoint:vmware:endpointName:1.0.0`. If we use the example above with urlPattern `/custom/.*`:
 
 Request to Cloud Director:
-```
+
+```text
 POST https://<Cloud Director-host>/ext-api/custom/createObject/test123?param1=param1
 ```
+
 Request to external endpoint:
-```
+
+```text
 POST https://externalHost.com/createObject/test123?param1=param1
 ```
 
 #### Sending requests to the external endpoint
+
 After creating an External Endpoint (enabled) and an API filter, the setup for setting up an HTTP Proxy is complete. A logged in user can start sending requests.
 
 Example with the above configurations:
@@ -1244,7 +1342,7 @@ Body:
 
 ## Code Examples
 
-### Accessing the Messaging Bus over MQTT
+### Example: Accessing the Messaging Bus over MQTT
 
 ```java
     public MqttClient createAndConnectMQTTClient() throws MqttException {

@@ -1,13 +1,17 @@
 # MQTT Behaviors
-MQTT behaviors in Cloud Director are based on MQTT API extensions (in the context of [API extensibility]()) <!--TODO add link to API extensibility docs-->. Invocation of a MQTT behavior is another way to trigger a MQTT extension (send a message to the extension for processing). When invoked MQTT behaviors essentially post a message to an extension topic and listen for a response to that message.
+
+MQTT behaviors in Cloud Director are based on MQTT API extensions (in the context of [API extensibility](../api-extensibility.md)). Invocation of a MQTT behavior is another way to trigger a MQTT extension (send a message to the extension for processing). When invoked MQTT behaviors essentially post a message to an extension topic and listen for a response to that message.
 
 ## Prerequisites
+
 In order to create a MQTT behavior an MQTT API extension must be registered in Cloud Director first.
 
-Please familiarize yourself with [MQTT API extensibility]()<!--TODO add link to API extensibility docs--> and how to register such an extension.
+Please familiarize yourself with [MQTT API extensibility](../api-extensibility.md) and how to register such an extension.
 
 ## Behavior Definition
+
 MQTT behavior example definition:
+
 ```json
 {
     "name": "mqtt_behavior_test",
@@ -18,25 +22,31 @@ MQTT behavior example definition:
             "serviceId": "urn:vcloud:extension-api:VMWare_TEST:MqttExtension_TEST:1.2.3",
             "invocation_timeout": 15
         }
- 
+
      }
 }
 ```
+
 The MQTT behavior's execution `type` is `MQTT`.  It is a required field.
 
 The `id` is a user-defined string. It is a required field.
 
 The `serviceId` from the `execution_properties` section holds the ID of the MQTT API extension which will be consuming the messages of this behavior. It is a required field.
 
-The `invocation_timeout` field is used to specify a timeout in seconds for the response received from the MQTT extension. If not set, there is a system parameter `extensibility.timeout` which will be used as timeout (default is 10 seconds). 
+The `invocation_timeout` field is used to specify a timeout in seconds for the response received from the MQTT extension. If not set, there is a system parameter `extensibility.timeout` which will be used as timeout (default is 10 seconds).
 
 ## MQTT Behavior Message Format
+
 ### Cloud Director to Extension
+
 Messages from Cloud Director to Extension are sent on the extension's monitor topic:
-```
+
+```text
 topic/extension/<vendor>/<name>/<version>/ext
 ```
+
 The messages have the following format:
+
 ```json
 {
     "type":"BEHAVIOR_INVOCATION",
@@ -53,7 +63,7 @@ The messages have the following format:
             ]
         },
         "payload": " <a JSON string of the invocation arguments> "
- 
+
     }
 }
 ```
@@ -213,9 +223,11 @@ public class MqttRemoteServerMessage {
 
 }
 ```
+
 </details>
 
 The payload holds the invocation arguments from the MQTT behavior invocation:
+
 ```json
 {
     "_execution_properties":{
@@ -239,6 +251,7 @@ The payload holds the invocation arguments from the MQTT behavior invocation:
     }
 }
 ```
+
 <details>
     <summary>Java Class to deserialize payload to InvocationArguments</summary>
 
@@ -421,11 +434,15 @@ public class InvocationArguments {
 </details>
 
 ### Extension to Cloud Director
+
 Response messages from Cloud Director to extension must be sent on the extension's respond topic:
-```
+
+```text
 topic/extension/<vendor>/<name>/<version>/vcd
 ```
+
 The messages must have the following format:
+
 ```json
 {
     "type": "BEHAVIOR_RESPONSE",
@@ -434,7 +451,7 @@ The messages must have the following format:
         "entityId": "urn:vcloud:entity:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     },
     "payload": "<a string>"
- 
+
 }
 ```
 
@@ -550,6 +567,7 @@ public class MqttRemoteServerResponseMessage {
     }
 }
 ```
+
 </details>
 There are two types of responses an extension can send back to Cloud Director - a simple response and a task update response.
 
@@ -574,8 +592,9 @@ Example success task update payload:
 ```
 
 Example error task update payload:
+
 ```json
-{   
+{
     "status": "error",
     "operation": "test-operation",
     "details": "test details",
@@ -588,6 +607,7 @@ Example error task update payload:
 ```
 
 Example aborted task update payload
+
 ```json
 {
     "status": "aborted",
@@ -596,6 +616,7 @@ Example aborted task update payload
     "progress": 50
 }
 ```
+
 <details>
     <summary>Java class representing a Task</summary>
 
@@ -718,6 +739,7 @@ public class TaskType {
     }
 }
 ```
+
 </details>
 
 ## Example `IMqttMessageListener` implementation for processing MQTT messages
@@ -743,7 +765,7 @@ public class MqttListener implements IMqttMessageListener {
     @Override
     public void messageArrived(final String s, final MqttMessage mqttMessage) throws Exception {
         // Message from VCD received
- 
+
         MqttRemoteServerMessage request = objectMapper.readValue(mqttMessage.getPayload(), MqttRemoteServerMessage.class);
 
         if (NotificationType.BEHAVIOR_INVOCATION != request.getType()) {
@@ -752,17 +774,17 @@ public class MqttListener implements IMqttMessageListener {
         }
         //parse the request payload to a Map
         InvocationArguments invocationArguments = objectMapper.readValue(request.getPayload(), InvocationArguments.class);
- 
+
         //now the information can be accessed
         Map<String, Object> executionProperties = invocationArguments.getExecutionProperties();
         InvocationArguments.InvocationArgumentsMetadata metadata = invocationArguments.getMetadata();
         Map<String, Object> arguments = invocationArguments.getArguments();
         String typeId = invocationArguments.getTypeId();
- 
+
         final MqttRemoteServerResponseMessage response = createResponse(request);
- 
+
         String responseAsJson = objectMapper.writeValueAsString(response);
- 
+
         mqttClient.publish(topicToRespond, new MqttMessage(responseAsJson.getBytes()));
     }
 
@@ -773,4 +795,3 @@ public class MqttListener implements IMqttMessageListener {
 }
 
 ```
-

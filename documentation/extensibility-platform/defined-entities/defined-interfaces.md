@@ -92,7 +92,7 @@ Response:
 
 An interface cannot be updated if it is in use. An interface is in use if there is at least one RDE instance created in any of the RDE Types which implement the interface.
 
-### Add a behavior to an interface:
+### Add a behavior to an interface
 
 Intefaces can define a set of [RDE Behaviors](behaviors-general-concepts.md).
 Behaviors are typically specified as part of the interface definition.

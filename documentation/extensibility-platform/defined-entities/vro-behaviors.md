@@ -1,11 +1,14 @@
 # VRO Behaviors
+
 VRO behaviors allow the integration of VRO workflows with the RDE framework. Essentially, а VRO behavior represents one VRO workflow and upon invoking the behavior, the workflow gets executed. Once the workflow execution completes, the associated behavior execution task completes accordingly as well.
 
 ## Prerequisites
+
 In order to use VRO behaviors in Cloud Director there needs to be a [registered vRealize Orchestrator in Cloud Director](https://docs.vmware.com/en/VMware-Cloud-Director/10.5/VMware-Cloud-Director-Service-Provider-Admin-Guide/GUID-BEE4297F-8353-4DE3-8E86-DB2B511CAC77.html). The VRO workflows which will be exposed as behaviors need to be imported in Cloud Director as well.
 
 ## Behavior Definition
-```
+
+```text
 {
     "name": "vroBehavior",
     "execution": {
@@ -13,10 +16,11 @@ In order to use VRO behaviors in Cloud Director there needs to be a [registered 
              "id": "urn:vcloud:serviceItem:08392368-366a-46f0-93ed-b97464366375",
              "execution_properties": {
                 "workflow_execution_timeout": 10
-            }   
+            }
     }
 }
 ```
+
 The VRO behavior's `executionType` is `VRO8Plus`.  It is a required field.
 
 The `id` field is the ID of the service item representing the workflow in Cloud Director. Only imported workflows can be used as VRO behaviors. It is a required field.
@@ -24,10 +28,13 @@ The `id` field is the ID of the service item representing the workflow in Cloud 
 The `workflow_execution_timeout` field states how long the Behaviors Framework will wait for a VRO workflow started by a VRO behavior invocation. If the workflow execution exceeds the stated timeout the behavior execution will fail with a timeout exception. The `workflow_execution_timeout` is an optional field. More on VRO behavior execution timeout can be found [here](#execution-timeout-and-polling-rate).
 
 ## Behavior Invocation
+
 A VRO behavior is invoked as any other defined entity behavior:
-```
+
+```text
 POST /cloudapi/1.0.0/entities/<entity_id>/behaviors/<behavior_id>/invocations
 ```
+
 ```json
 {
     "arguments": {
@@ -142,18 +149,22 @@ POST /cloudapi/1.0.0/entities/<entity_id>/behaviors/<behavior_id>/invocations
 
 }
 ```
+
 Response:
-```
+
+```text
 202 Accepted
 
 Headers:
-Location: https://127.0.0.1:8443/api/task/5f852482-d412-43df-90da-d47c4bf265ab 
+Location: https://127.0.0.1:8443/api/task/5f852482-d412-43df-90da-d47c4bf265ab
 ```
+
 The result of the execution is in the `result` field of the behavior execution task.
 
+```text
+GET /api/task/5f852482-d412-43df-90da-d47c4bf265ab
 ```
-GET /api/task/5f852482-d412-43df-90da-d47c4bf265ab 
-```
+
 ```json
 {
     ...
@@ -314,6 +325,7 @@ public class InvocationResult {
     }
 }
 ```
+
 </details>
 
 ### VRO Behavior Payload
@@ -321,13 +333,15 @@ public class InvocationResult {
 When a VRO behavior is executed, the payload which the corresponding VRO workflow receives is constructed from the behavior invovation call `arguments`.
 
 In order to receive the entity contents of the RDE instance which the behavior was invoked on, a `String` input parameter of name `entity` must be defined in the workflow. Upon the VRO behavior invocation that parameter is populated by Cloud Director with a JSON-encoded string of the entity contents before sending the payload to VRO.
+
 ### Execution Timeout and Polling Rate
 
-When a VRO workflow is triggered by a VRO behavior, Cloud Director will wait for the workflow completion for a set amount of time before failing the behavior execution with a `Timeout` exception. 
+When a VRO workflow is triggered by a VRO behavior, Cloud Director will wait for the workflow completion for a set amount of time before failing the behavior execution with a `Timeout` exception.
 
-The amount of seconds to wait for completion before timeout can be set globally for all VRO behavior executions with the `workflow_execution_timeout` configuration property. The default is 300 seconds. 
+The amount of seconds to wait for completion before timeout can be set globally for all VRO behavior executions with the `workflow_execution_timeout` configuration property. The default is 300 seconds.
 
 The `workflow_execution_timeout` can also be set to a different value for each VRO behavior in the definition of the behavior.
+
 ```json
 {
     "name": "test",
@@ -336,7 +350,7 @@ The `workflow_execution_timeout` can also be set to a different value for each V
              "id": "urn:vcloud:serviceItem:08392368-366a-46f0-93ed-b97464366375",
              "execution_properties": {
                 "workflow_execution_timeout": 10 // this sets the timeout value to 10s
-            }   
+            }
     }
 }
 ```
