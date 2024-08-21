@@ -226,8 +226,40 @@ GET /api/task/5f852482-d412-43df-90da-d47c4bf265ab
 
 The invocation's `arguments` must contain the payload which the VRO execute workflow API expects. More details on VRO's API can be found [here](https://developer.vmware.com/apis/1174/).
 
-<details>
-    <summary>Java Class to deserialize execution result from the behavior execution task to</summary>
+See the [Java Class to deserialize execution result from the behavior execution task to](#java-class-to-deserialize-execution-result-from-the-behavior-execution-task-to) in the `Code Examples` section.
+
+### VRO Behavior Payload
+
+When a VRO behavior is executed, the payload which the corresponding VRO workflow receives is constructed from the behavior invovation call `arguments`.
+
+In order to receive the entity contents of the RDE instance which the behavior was invoked on, a `String` input parameter of name `entity` must be defined in the workflow. Upon the VRO behavior invocation that parameter is populated by Cloud Director with a JSON-encoded string of the entity contents before sending the payload to VRO.
+
+### Execution Timeout and Polling Rate
+
+When a VRO workflow is triggered by a VRO behavior, Cloud Director will wait for the workflow completion for a set amount of time before failing the behavior execution with a `Timeout` exception.
+
+The amount of seconds to wait for completion before timeout can be set globally for all VRO behavior executions with the `workflow_execution_timeout` configuration property. The default is 300 seconds.
+
+The `workflow_execution_timeout` can also be set to a different value for each VRO behavior in the definition of the behavior.
+
+```json
+{
+    "name": "test",
+    "execution": {
+             "type": "VRO8Plus",
+             "id": "urn:vcloud:serviceItem:08392368-366a-46f0-93ed-b97464366375",
+             "execution_properties": {
+                "workflow_execution_timeout": 10 // this sets the timeout value to 10s
+            }
+    }
+}
+```
+
+The polling interval (in seconds) at which the Behaviors Framework will check for a VRO workflow completion is controlled by a configuration property as well - `workflow_execution_polling_rate`. The default value is 10 seconds.
+
+## Code Examples
+
+### Java Class to deserialize execution result from the behavior execution task to
 
 ```java
 import java.util.ArrayList;
@@ -325,34 +357,3 @@ public class InvocationResult {
     }
 }
 ```
-
-</details>
-
-### VRO Behavior Payload
-
-When a VRO behavior is executed, the payload which the corresponding VRO workflow receives is constructed from the behavior invovation call `arguments`.
-
-In order to receive the entity contents of the RDE instance which the behavior was invoked on, a `String` input parameter of name `entity` must be defined in the workflow. Upon the VRO behavior invocation that parameter is populated by Cloud Director with a JSON-encoded string of the entity contents before sending the payload to VRO.
-
-### Execution Timeout and Polling Rate
-
-When a VRO workflow is triggered by a VRO behavior, Cloud Director will wait for the workflow completion for a set amount of time before failing the behavior execution with a `Timeout` exception.
-
-The amount of seconds to wait for completion before timeout can be set globally for all VRO behavior executions with the `workflow_execution_timeout` configuration property. The default is 300 seconds.
-
-The `workflow_execution_timeout` can also be set to a different value for each VRO behavior in the definition of the behavior.
-
-```json
-{
-    "name": "test",
-    "execution": {
-             "type": "VRO8Plus",
-             "id": "urn:vcloud:serviceItem:08392368-366a-46f0-93ed-b97464366375",
-             "execution_properties": {
-                "workflow_execution_timeout": 10 // this sets the timeout value to 10s
-            }
-    }
-}
-```
-
-The polling interval (in seconds) at which the Behaviors Framework will check for a VRO workflow completion is controlled by a configuration property as well - `workflow_execution_polling_rate`. The default value is 10 seconds.

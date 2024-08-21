@@ -109,186 +109,7 @@ Default payload:
 }
 ```
 
-<details>
-    <summary>Java Class representing the InvocationArguments</summary>
-
-```java
-import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-public class InvocationArguments {
-    private String entityId;
-    private String typeId;
-    @JsonProperty("_metadata")
-    private InvocationArgumentsMetadata metadata;
-    private Map<String, Object> entity;
-    private Map<String, Object> arguments;
-    @JsonProperty("_execution_properties")
-    private Map<String, Object> executionProperties;
-    private Map<String, Object> additionalArguments;
-
-    /**
-     * @return the id of the RDE which the behavior was invoked on
-     */
-    public String getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(String entityId) {
-        this.entityId = entityId;
-    }
-
-    /**
-     * @return The id of the RDE Type of the entity which the behavior was invoked in
-     */
-    public String getTypeId() {
-        return typeId;
-    }
-
-    public void setTypeId(String typeId) {
-        this.typeId = typeId;
-    }
-
-    /**
-     * @return The invocation {@link InvocationArgumentsMetadata}
-     */
-    public InvocationArgumentsMetadata getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(InvocationArgumentsMetadata metadata) {
-        this.metadata = metadata;
-    }
-
-    /**
-     * @return the entity contents of the RDE which the behavior was invoked on
-     */
-    public Map<String, Object> getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Map<String, Object> entity) {
-        this.entity = entity;
-    }
-
-    /**
-     * @return the user-provided arguments upon invocation
-     */
-    public Map<String, Object> getArguments() {
-        return arguments;
-    }
-
-    public void setArguments(Map<String, Object> arguments) {
-        this.arguments = arguments;
-    }
-
-    /**
-     * @return the behavior's execution_properties
-     */
-    public Map<String, Object> getExecutionProperties() {
-        return executionProperties;
-    }
-
-    public void setExecutionProperties(Map<String, Object> executionProperties) {
-        this.executionProperties = executionProperties;
-    }
-
-    /**
-     * @return additional_arguments from the behavior's execution
-     */
-    public Map<String, Object> getAdditionalArguments() {
-        return additionalArguments;
-    }
-
-    public void setAdditionalArguments(Map<String, Object> additionalArguments) {
-        this.additionalArguments = additionalArguments;
-    }
-
-
-    /**
-     * The behavior invocation metadata
-     */
-    public static class InvocationArgumentsMetadata {
-        private String behaviorId;
-        private String taskId;
-        private String executionId;
-        private String executionType;
-        private String actAsToken;
-        private Map<String, Object> invocation;
-
-
-        /**
-         * @return the id of the invoked behavior
-         */
-        public String getBehaviorId() {
-            return behaviorId;
-        }
-
-        public void setBehaviorId(String behaviorId) {
-            this.behaviorId = behaviorId;
-        }
-
-        /**
-         * @return the id of the behavior invocation task
-         */
-        public String getTaskId() {
-            return taskId;
-        }
-
-        public void setTaskId(String taskId) {
-            this.taskId = taskId;
-        }
-
-        /**
-         * @return the behavior's execution id
-         */
-        public String getExecutionId() {
-            return executionId;
-        }
-
-        public void setExecutionId(String executionId) {
-            this.executionId = executionId;
-        }
-
-        /**
-         * @return the behavior's execution type
-         */
-        public String getExecutionType() {
-            return executionType;
-        }
-
-        public void setExecutionType(String executionType) {
-            this.executionType = executionType;
-        }
-
-        /**
-         * @return a {@link Map} of the user-provided metadata upon invocation
-         */
-        public Map<String, Object> getInvocation() {
-            return invocation;
-        }
-
-        public void setInvocation(Map<String, Object> invocation) {
-            this.invocation = invocation;
-        }
-
-        /**
-         * @return an act-as token if additional API calls to VCD need to be made
-         * (it os only populated if it is specified in the behavior's definition)
-         */
-        public String getActAsToken() {
-            return actAsToken;
-        }
-
-        public void setActAsToken(String actAsToken) {
-            this.actAsToken = actAsToken;
-        }
-    }
-}
-```
-
-</details>
+See the [Java Class representing the InvocationArguments](#java-class-representing-the-invocationarguments) in the `Code Examples` section.
 
 ### Custom Request Payload
 
@@ -486,130 +307,7 @@ Content-Type: application/vnd.vmware.vcloud.task+json
 
 There is a new line after each `boundary string`, `Content-Type` header and body. The body parts of the response can either represent a simple response or a task update response. The last body part of the webHook server response body must complete the task. If it does not, the task is completed with an error message indicating that the task should have been completed but was not. Once a body part completes the behavior invocation task, any other body parts received after that are ignored.
 
-<details>
-    <summary>Java class representing a Task</summary>
-
-```java
-import com.fasterxml.jackson.annotation.JsonValue;
-
-public class TaskType {
-
-    public static enum TaskStatus {
-        PENDING("pending"),
-        PRE_RUNNING("pre-running"),
-        RUNNING("running"),
-        SUCCESS("success"),
-        ABORTED("aborted"),
-        ERROR("error"),
-        CANCELED("canceled"),
-        EXPECTING_ACTION("expectingAction");
-
-        private final String value;
-
-        TaskStatus(String value) {
-            this.value = value;
-        }
-
-        @JsonValue
-        public String getValue() {
-            return value;
-        }
-    }
-
-    public static class ErrorType {
-        private String majorErrorCode;
-        private String minorErrorCode;
-        private String message;
-
-        public String getMajorErrorCode() {
-            return majorErrorCode;
-        }
-
-        public void setMajorErrorCode(String majorErrorCode) {
-            this.majorErrorCode = majorErrorCode;
-        }
-
-        public String getMinorErrorCode() {
-            return minorErrorCode;
-        }
-
-        public void setMinorErrorCode(String minorErrorCode) {
-            this.minorErrorCode = minorErrorCode;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-    }
-
-    private TaskType status;
-    private String operation;
-    private String details;
-    private ErrorType error;
-    private int progress;
-
-    /**
-     * @return the task status
-     */
-    public TaskType getStatus() {
-        return status;
-    }
-
-    public void setStatus(TaskType status) {
-        this.status = status;
-    }
-
-    /**
-     * @return the task operation
-     */
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    /**
-     * @return the task details
-     */
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
-    /**
-     * @return the task error as {@link ErrorType}
-     */
-    public ErrorType getError() {
-        return error;
-    }
-
-    public void setError(ErrorType error) {
-        this.error = error;
-    }
-
-    /**
-     * @return the task progress. Must be in the range [0,100].
-     */
-    public int getProgress() {
-        return progress;
-    }
-
-    public void setProgress(int progress) {
-        this.progress = progress;
-    }
-}
-```
-
-</details>
+See the [Java class representing a Task](#java-class-representing-a-task) in the `Code Examples` section.
 
 ## Authentication of WebHook Behavior Requests
 
@@ -642,217 +340,7 @@ x-vcloud-digest=[SHA-512=Yt4eiT2VmUyX8wDt6wneZ10VRk1B1H2jmHP1R7YanI9hykEAjUdtg7J
 
 Each webHook request from Cloud Director can be verified by generating the signature using the shared secret and comparing it to the signature in the signature header from Cloud Director. If they match, the request is verified.
 
-<details>
-    <summary>Example Java code for verifying a webHook behavior request's signature header</summary>
-
-```java
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-/**
- * Verifies an incoming webHook behavior request from VCD.
- */
-public class HMACRequestVerificator {
-    private static final String DIGEST_ALGORITHM = "hmac-sha512";
-    private static final String HEADER_SIGNATURE = "x-vcloud-signature";
-    private static final String HEADER_DATE = "date";
-    private static final String SIGNATURE_PARAM_SIGNATURE = "signature";
-    private static final String SIGNATURE_PARAM_ALGORITHM = "algorithm";
-    private static final String SIGNATURE_PARAM_HEADERS = "headers";
-    private static final String HEADERS_DATE = "date";
-    private static final String HEADERS_HOST = "host";
-    private static final String HEADERS_REQUEST_TARGET = "(request-target)";
-    private static final String HEADERS_DIGEST = "digest";
-    private static final Pattern HEADER_SIGNATURE_PATTERN = Pattern.compile("^algorithm=\".+\",headers=\".+\",signature=\".+\"$");
-    private Map<String, List<String>> headers = null;
-    private Map<String, String> signatureParams = null;
-    private final String sharedSecret;
-    private String host;
-    private String path;
-    private String payload;
-    private static final ObjectMapper objectMapper = new ObjectMapper()
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    /**
-     * @param sharedSecret the shared secret which will be used to verify the signature from the VCD request headers.
-     */
-    public HMACRequestVerificator(String sharedSecret) {
-        this.sharedSecret = sharedSecret;
-    }
-    /**
-     * Provides the host and path of the webhook server.
-     * @param webhookServerUrl URL of the webhook server endpoint
-     * @return this {@link HMACRequestVerificator}
-     */
-    public HMACRequestVerificator withWebhookServerUrl(String webhookServerUrl) {
-        Optional<URI> webhookServerUri = buildWebhookServerURI(webhookServerUrl);
-        if (webhookServerUri.isPresent()) {
-            URI uri = webhookServerUri.get();
-            host = uri.getHost();
-            path = uri.getPath();
-        }
-        return this;
-    }
-    /**
-     * Provides the host and path of the webhook server.
-     * @param host the host of the webhook server
-     * @param path the path of the webhook server
-     * @return this {@link HMACRequestVerificator}
-     */
-    public HMACRequestVerificator withWebhookServerHostAndPath(String host, String path) {
-        this.host = host;
-        this.path = path;
-        return this;
-    }
-    /**
-     * @param headers the headers of the incoming request from VCD
-     * @return this {@link HMACRequestVerificator}
-     */
-    public HMACRequestVerificator withHeaders(Map<String, List<String>> headers) {
-        this.headers = headers;
-        return this;
-    }
-    /**
-     * @param payload the payload of the incoming request from VCD
-     * @return this {@link HMACRequestVerificator}
-     */
-    public HMACRequestVerificator withPayload(Object payload) {
-        this.payload = serializePayload(payload);
-        return this;
-    }
-    /**
-     * Executes verification.
-     * @return true if verification was successful and false otherwise
-     */
-    public boolean verify() {
-        if (!checkParameters()) {
-            return false;
-        }
-        String signatureFromServer = signatureParams.get(SIGNATURE_PARAM_SIGNATURE);
-        Optional<String> signatureToVerify = buildSignatureToVerify(payload);
-        return signatureToVerify.isPresent() && signatureFromServer.equals(signatureToVerify.get());
-    }
-    private boolean checkParameters() {
-        return validateParameters() && validateHeaders();
-    }
-    private boolean validateParameters() {
-        return sharedSecret != null && payload != null && host != null && path != null;
-    }
-    private boolean validateHeaders() {
-        if (headers == null
-                || !headers.containsKey(HEADERS_DATE)
-                || !headers.containsKey(HEADER_SIGNATURE)) {
-            return false;
-        }
-        String signatureHeader = headers.get(HEADER_SIGNATURE).get(0);
-        Matcher matcher = HEADER_SIGNATURE_PATTERN.matcher(signatureHeader);
-        if (!matcher.matches()) {
-            return false;
-        }
-        signatureParams = extractSignatureParams(headers.get(HEADER_SIGNATURE).get(0));
-        return signatureParams.containsKey(SIGNATURE_PARAM_SIGNATURE)
-                && signatureParams.containsKey(SIGNATURE_PARAM_HEADERS)
-                && signatureParams.containsKey(SIGNATURE_PARAM_ALGORITHM);
-    }
-    private Map<String, String> extractSignatureParams(String signatureHeader) {
-        String [] signatureHeaders = signatureHeader.split(",");
-        Map<String, String> result = new HashMap<>();
-        for (String h : signatureHeaders) {
-            String param = h.split("=")[0];
-            String value = h.split("\"")[1];
-            result.put(param.toLowerCase(), value);
-        }
-        return result;
-    }
-    private byte[] getDigest(String payload) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-512");
-            digest.update(payload.getBytes());
-            return digest.digest();
-        } catch (NoSuchAlgorithmException e) {
-            //should not happen
-            throw new RuntimeException(e);
-        }
-    }
-    private Optional<String> buildSignatureToVerify(String payload) {
-        String signatureString = buildSignatureString(payload);
-        if (signatureParams.get(SIGNATURE_PARAM_ALGORITHM).equalsIgnoreCase(DIGEST_ALGORITHM)) {
-            return Optional.of(signDataSHA512HMAC(signatureString, sharedSecret));
-        }
-        return Optional.empty();
-    }
-    private String signDataSHA512HMAC(String data, String sharedSecret) {
-        try {
-            final byte[] byteKey = sharedSecret.getBytes(StandardCharsets.UTF_8);
-            Mac sha512Hmac = Mac.getInstance("HmacSHA512");
-            SecretKeySpec keySpec = new SecretKeySpec(byteKey, "HmacSHA512");
-            sha512Hmac.init(keySpec);
-            byte[] macData = sha512Hmac.doFinal(data.getBytes(StandardCharsets.UTF_8));
-            return getBase64(macData);
-        } catch (InvalidKeyException | NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-    private String buildSignatureString(String payload) {
-        String[] headersInSignature = signatureParams.get(SIGNATURE_PARAM_HEADERS).split(" ");
-        return Arrays.stream(headersInSignature)
-                .map(headerInSignature -> buildSignatureStringHeaderParam(headerInSignature, payload))
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining("\n"));
-    }
-    private String buildSignatureStringHeaderParam(String paramName, String payload) {
-        if (paramName.equalsIgnoreCase(HEADERS_HOST)) {
-            return "host: " + host;
-        } else if (paramName.equalsIgnoreCase(HEADERS_DATE)) {
-            return "date: " + getDate();
-        } else if (paramName.equalsIgnoreCase(HEADERS_DIGEST)) {
-            return "digest: SHA-512=" + getBase64(getDigest(payload));
-        } else if (paramName.equalsIgnoreCase(HEADERS_REQUEST_TARGET)) {
-            return "(request-target): post " + path;
-        }
-        return null;
-    }
-    private String getBase64(byte[] signature) {
-        return Base64.getEncoder().encodeToString(signature);
-    }
-    private Optional<URI> buildWebhookServerURI(String webhookServerUrl) {
-        try {
-            return Optional.of(new URI(webhookServerUrl));
-        } catch (URISyntaxException e) {
-            return Optional.empty();
-        }
-    }
-    private String getDate() {
-        return headers.get(HEADER_DATE).get(0).split("\"")[0];
-    }
-    private String serializePayload(Object payload) {
-        try {
-            return objectMapper.writeValueAsString(payload);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-}
-```
-
-</details>
+See the [Example Java code for verifying a webHook behavior request's signature header](#example-java-code-for-verifying-a-webhook-behavior-requests-signature-header) in the `Code Examples` section.
 
 ## Example Slack integration with webHook behaviors
 
@@ -1155,3 +643,514 @@ In order to use Cloud Director's webHook behaviors to send messages to slack web
     The following message is posted in Slack as a result:
 
     ![WebHook behavior invocation's Slack message](../../images/webHook-behavior-slack-example.png)
+
+## Code Examples
+
+### Java Class representing the InvocationArguments
+
+```java
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class InvocationArguments {
+    private String entityId;
+    private String typeId;
+    @JsonProperty("_metadata")
+    private InvocationArgumentsMetadata metadata;
+    private Map<String, Object> entity;
+    private Map<String, Object> arguments;
+    @JsonProperty("_execution_properties")
+    private Map<String, Object> executionProperties;
+    private Map<String, Object> additionalArguments;
+
+    /**
+     * @return the id of the RDE which the behavior was invoked on
+     */
+    public String getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(String entityId) {
+        this.entityId = entityId;
+    }
+
+    /**
+     * @return The id of the RDE Type of the entity which the behavior was invoked in
+     */
+    public String getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(String typeId) {
+        this.typeId = typeId;
+    }
+
+    /**
+     * @return The invocation {@link InvocationArgumentsMetadata}
+     */
+    public InvocationArgumentsMetadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(InvocationArgumentsMetadata metadata) {
+        this.metadata = metadata;
+    }
+
+    /**
+     * @return the entity contents of the RDE which the behavior was invoked on
+     */
+    public Map<String, Object> getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Map<String, Object> entity) {
+        this.entity = entity;
+    }
+
+    /**
+     * @return the user-provided arguments upon invocation
+     */
+    public Map<String, Object> getArguments() {
+        return arguments;
+    }
+
+    public void setArguments(Map<String, Object> arguments) {
+        this.arguments = arguments;
+    }
+
+    /**
+     * @return the behavior's execution_properties
+     */
+    public Map<String, Object> getExecutionProperties() {
+        return executionProperties;
+    }
+
+    public void setExecutionProperties(Map<String, Object> executionProperties) {
+        this.executionProperties = executionProperties;
+    }
+
+    /**
+     * @return additional_arguments from the behavior's execution
+     */
+    public Map<String, Object> getAdditionalArguments() {
+        return additionalArguments;
+    }
+
+    public void setAdditionalArguments(Map<String, Object> additionalArguments) {
+        this.additionalArguments = additionalArguments;
+    }
+
+
+    /**
+     * The behavior invocation metadata
+     */
+    public static class InvocationArgumentsMetadata {
+        private String behaviorId;
+        private String taskId;
+        private String executionId;
+        private String executionType;
+        private String actAsToken;
+        private Map<String, Object> invocation;
+
+
+        /**
+         * @return the id of the invoked behavior
+         */
+        public String getBehaviorId() {
+            return behaviorId;
+        }
+
+        public void setBehaviorId(String behaviorId) {
+            this.behaviorId = behaviorId;
+        }
+
+        /**
+         * @return the id of the behavior invocation task
+         */
+        public String getTaskId() {
+            return taskId;
+        }
+
+        public void setTaskId(String taskId) {
+            this.taskId = taskId;
+        }
+
+        /**
+         * @return the behavior's execution id
+         */
+        public String getExecutionId() {
+            return executionId;
+        }
+
+        public void setExecutionId(String executionId) {
+            this.executionId = executionId;
+        }
+
+        /**
+         * @return the behavior's execution type
+         */
+        public String getExecutionType() {
+            return executionType;
+        }
+
+        public void setExecutionType(String executionType) {
+            this.executionType = executionType;
+        }
+
+        /**
+         * @return a {@link Map} of the user-provided metadata upon invocation
+         */
+        public Map<String, Object> getInvocation() {
+            return invocation;
+        }
+
+        public void setInvocation(Map<String, Object> invocation) {
+            this.invocation = invocation;
+        }
+
+        /**
+         * @return an act-as token if additional API calls to VCD need to be made
+         * (it os only populated if it is specified in the behavior's definition)
+         */
+        public String getActAsToken() {
+            return actAsToken;
+        }
+
+        public void setActAsToken(String actAsToken) {
+            this.actAsToken = actAsToken;
+        }
+    }
+}
+```
+
+### Java class representing a Task
+
+```java
+import com.fasterxml.jackson.annotation.JsonValue;
+
+public class TaskType {
+
+    public static enum TaskStatus {
+        PENDING("pending"),
+        PRE_RUNNING("pre-running"),
+        RUNNING("running"),
+        SUCCESS("success"),
+        ABORTED("aborted"),
+        ERROR("error"),
+        CANCELED("canceled"),
+        EXPECTING_ACTION("expectingAction");
+
+        private final String value;
+
+        TaskStatus(String value) {
+            this.value = value;
+        }
+
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
+    }
+
+    public static class ErrorType {
+        private String majorErrorCode;
+        private String minorErrorCode;
+        private String message;
+
+        public String getMajorErrorCode() {
+            return majorErrorCode;
+        }
+
+        public void setMajorErrorCode(String majorErrorCode) {
+            this.majorErrorCode = majorErrorCode;
+        }
+
+        public String getMinorErrorCode() {
+            return minorErrorCode;
+        }
+
+        public void setMinorErrorCode(String minorErrorCode) {
+            this.minorErrorCode = minorErrorCode;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
+    private TaskType status;
+    private String operation;
+    private String details;
+    private ErrorType error;
+    private int progress;
+
+    /**
+     * @return the task status
+     */
+    public TaskType getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskType status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the task operation
+     */
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    /**
+     * @return the task details
+     */
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    /**
+     * @return the task error as {@link ErrorType}
+     */
+    public ErrorType getError() {
+        return error;
+    }
+
+    public void setError(ErrorType error) {
+        this.error = error;
+    }
+
+    /**
+     * @return the task progress. Must be in the range [0,100].
+     */
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+}
+```
+
+### Example Java code for verifying a webHook behavior request's signature header
+
+```java
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+/**
+ * Verifies an incoming webHook behavior request from VCD.
+ */
+public class HMACRequestVerificator {
+    private static final String DIGEST_ALGORITHM = "hmac-sha512";
+    private static final String HEADER_SIGNATURE = "x-vcloud-signature";
+    private static final String HEADER_DATE = "date";
+    private static final String SIGNATURE_PARAM_SIGNATURE = "signature";
+    private static final String SIGNATURE_PARAM_ALGORITHM = "algorithm";
+    private static final String SIGNATURE_PARAM_HEADERS = "headers";
+    private static final String HEADERS_DATE = "date";
+    private static final String HEADERS_HOST = "host";
+    private static final String HEADERS_REQUEST_TARGET = "(request-target)";
+    private static final String HEADERS_DIGEST = "digest";
+    private static final Pattern HEADER_SIGNATURE_PATTERN = Pattern.compile("^algorithm=\".+\",headers=\".+\",signature=\".+\"$");
+    private Map<String, List<String>> headers = null;
+    private Map<String, String> signatureParams = null;
+    private final String sharedSecret;
+    private String host;
+    private String path;
+    private String payload;
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    /**
+     * @param sharedSecret the shared secret which will be used to verify the signature from the VCD request headers.
+     */
+    public HMACRequestVerificator(String sharedSecret) {
+        this.sharedSecret = sharedSecret;
+    }
+    /**
+     * Provides the host and path of the webhook server.
+     * @param webhookServerUrl URL of the webhook server endpoint
+     * @return this {@link HMACRequestVerificator}
+     */
+    public HMACRequestVerificator withWebhookServerUrl(String webhookServerUrl) {
+        Optional<URI> webhookServerUri = buildWebhookServerURI(webhookServerUrl);
+        if (webhookServerUri.isPresent()) {
+            URI uri = webhookServerUri.get();
+            host = uri.getHost();
+            path = uri.getPath();
+        }
+        return this;
+    }
+    /**
+     * Provides the host and path of the webhook server.
+     * @param host the host of the webhook server
+     * @param path the path of the webhook server
+     * @return this {@link HMACRequestVerificator}
+     */
+    public HMACRequestVerificator withWebhookServerHostAndPath(String host, String path) {
+        this.host = host;
+        this.path = path;
+        return this;
+    }
+    /**
+     * @param headers the headers of the incoming request from VCD
+     * @return this {@link HMACRequestVerificator}
+     */
+    public HMACRequestVerificator withHeaders(Map<String, List<String>> headers) {
+        this.headers = headers;
+        return this;
+    }
+    /**
+     * @param payload the payload of the incoming request from VCD
+     * @return this {@link HMACRequestVerificator}
+     */
+    public HMACRequestVerificator withPayload(Object payload) {
+        this.payload = serializePayload(payload);
+        return this;
+    }
+    /**
+     * Executes verification.
+     * @return true if verification was successful and false otherwise
+     */
+    public boolean verify() {
+        if (!checkParameters()) {
+            return false;
+        }
+        String signatureFromServer = signatureParams.get(SIGNATURE_PARAM_SIGNATURE);
+        Optional<String> signatureToVerify = buildSignatureToVerify(payload);
+        return signatureToVerify.isPresent() && signatureFromServer.equals(signatureToVerify.get());
+    }
+    private boolean checkParameters() {
+        return validateParameters() && validateHeaders();
+    }
+    private boolean validateParameters() {
+        return sharedSecret != null && payload != null && host != null && path != null;
+    }
+    private boolean validateHeaders() {
+        if (headers == null
+                || !headers.containsKey(HEADERS_DATE)
+                || !headers.containsKey(HEADER_SIGNATURE)) {
+            return false;
+        }
+        String signatureHeader = headers.get(HEADER_SIGNATURE).get(0);
+        Matcher matcher = HEADER_SIGNATURE_PATTERN.matcher(signatureHeader);
+        if (!matcher.matches()) {
+            return false;
+        }
+        signatureParams = extractSignatureParams(headers.get(HEADER_SIGNATURE).get(0));
+        return signatureParams.containsKey(SIGNATURE_PARAM_SIGNATURE)
+                && signatureParams.containsKey(SIGNATURE_PARAM_HEADERS)
+                && signatureParams.containsKey(SIGNATURE_PARAM_ALGORITHM);
+    }
+    private Map<String, String> extractSignatureParams(String signatureHeader) {
+        String [] signatureHeaders = signatureHeader.split(",");
+        Map<String, String> result = new HashMap<>();
+        for (String h : signatureHeaders) {
+            String param = h.split("=")[0];
+            String value = h.split("\"")[1];
+            result.put(param.toLowerCase(), value);
+        }
+        return result;
+    }
+    private byte[] getDigest(String payload) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-512");
+            digest.update(payload.getBytes());
+            return digest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            //should not happen
+            throw new RuntimeException(e);
+        }
+    }
+    private Optional<String> buildSignatureToVerify(String payload) {
+        String signatureString = buildSignatureString(payload);
+        if (signatureParams.get(SIGNATURE_PARAM_ALGORITHM).equalsIgnoreCase(DIGEST_ALGORITHM)) {
+            return Optional.of(signDataSHA512HMAC(signatureString, sharedSecret));
+        }
+        return Optional.empty();
+    }
+    private String signDataSHA512HMAC(String data, String sharedSecret) {
+        try {
+            final byte[] byteKey = sharedSecret.getBytes(StandardCharsets.UTF_8);
+            Mac sha512Hmac = Mac.getInstance("HmacSHA512");
+            SecretKeySpec keySpec = new SecretKeySpec(byteKey, "HmacSHA512");
+            sha512Hmac.init(keySpec);
+            byte[] macData = sha512Hmac.doFinal(data.getBytes(StandardCharsets.UTF_8));
+            return getBase64(macData);
+        } catch (InvalidKeyException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    private String buildSignatureString(String payload) {
+        String[] headersInSignature = signatureParams.get(SIGNATURE_PARAM_HEADERS).split(" ");
+        return Arrays.stream(headersInSignature)
+                .map(headerInSignature -> buildSignatureStringHeaderParam(headerInSignature, payload))
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining("\n"));
+    }
+    private String buildSignatureStringHeaderParam(String paramName, String payload) {
+        if (paramName.equalsIgnoreCase(HEADERS_HOST)) {
+            return "host: " + host;
+        } else if (paramName.equalsIgnoreCase(HEADERS_DATE)) {
+            return "date: " + getDate();
+        } else if (paramName.equalsIgnoreCase(HEADERS_DIGEST)) {
+            return "digest: SHA-512=" + getBase64(getDigest(payload));
+        } else if (paramName.equalsIgnoreCase(HEADERS_REQUEST_TARGET)) {
+            return "(request-target): post " + path;
+        }
+        return null;
+    }
+    private String getBase64(byte[] signature) {
+        return Base64.getEncoder().encodeToString(signature);
+    }
+    private Optional<URI> buildWebhookServerURI(String webhookServerUrl) {
+        try {
+            return Optional.of(new URI(webhookServerUrl));
+        } catch (URISyntaxException e) {
+            return Optional.empty();
+        }
+    }
+    private String getDate() {
+        return headers.get(HEADER_DATE).get(0).split("\"")[0];
+    }
+    private String serializePayload(Object payload) {
+        try {
+            return objectMapper.writeValueAsString(payload);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```

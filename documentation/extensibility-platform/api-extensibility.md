@@ -864,9 +864,7 @@ Now that we have dedicated MQTT topics for communication and a token to authenti
 
 The username in the connection options should be set to the external service triplet - `vendor/name/version` and the password should be the long-live token we just created.
 
-The following sample code in `JAVA` can be used to connect an MQTT client and subscribe it to the external service topics for message processing:
-
-[Accessing the Messaging Bus over MQTT](#example-accessing-the-messaging-bus-over-mqtt)
+See [Accessing the Messaging Bus over MQTT](#example-accessing-the-messaging-bus-over-mqtt) in the `Code Examples` section. It is sample code in `JAVA` that can be used to connect an MQTT client and subscribe it to the external service topics for message processing.
 
 #### MQTT messages format
 
@@ -890,9 +888,9 @@ The following sample code in `JAVA` can be used to connect an MQTT client and su
     }
     ```
 
-    MQTT message from Cloud Director to external service can be deserialized to [MqttVCDMessage.java](api-extensibility.md#mqttvcdmessagejava).
+    MQTT message from Cloud Director to external service can be deserialized to [MqttVCDMessage.java](api-extensibility.md#mqttvcdmessagejava), which is shown in the `Code Examples` section.
 
-    The `httpRequest` byte array can be deserialized to [Payload.java](#payloadjava):
+    The `httpRequest` byte array can be deserialized to [Payload.java](#payloadjava), which is also shown in the `Code Examples` section:
 
 2. **External service to VCD**
 
