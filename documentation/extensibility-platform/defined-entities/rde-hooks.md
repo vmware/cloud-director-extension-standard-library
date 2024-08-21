@@ -1,4 +1,4 @@
-## Runtime Defined Entity Lifecycle Hooks
+# Runtime Defined Entity Lifecycle Hooks
 
 ## Overview
 
