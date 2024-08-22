@@ -518,19 +518,28 @@ An ACL Rule has the following properties:
 1. `ServiceResourceAccess` (optional)
 
     The `ServiceResourceAccess` property tells us which Service Resource/Resources of the Resource Class this ACL Rule is for.
-    - Access - String - `Shared`/`Entity`. Value `Shared` means that the action is authorized for all resources in this Resource Class. Value `Entity` means that the action is authorized for only one specific resource and a reference to that resource must be provided in the Entity property.
+
+    - Access
+    - String
+    - `Shared`/`Entity`. Value `Shared` means that the action is authorized for all resources in this Resource Class. Value `Entity` means that the action is authorized for only one specific resource and a reference to that resource must be provided in the Entity property.
     - Entity - an entity reference to a resource. The value is used only when Access is set to `Entity`.
 
 2. `OrganizationAccess` (required)
 
     The `OrganizationAccess` property tells us which organization/organizations this ACL Rule grants access to.
-    - Access - String - `Published`/`Shared`/`Entity`. Value `Published` means that this ACL Rule is published to all organizations. Value `Shared` means that the action is authorized for all members of the organization that owns the resource. Value `Entity` means that the action is authorized for only one specific organization and a reference to that organization must be provided in the Entity property.
+
+    - Access
+    - String
+    - `Published`/`Shared`/`Entity`. Value `Published` means that this ACL Rule is published to all organizations. Value `Shared` means that the action is authorized for all members of the organization that owns the resource. Value `Entity` means that the action is authorized for only one specific organization and a reference to that organization must be provided in the Entity property.
     - Entity - an entity reference to an organization. The value is used only when Access is set to `Entity`.
 
 3. `PrincipalAccess` (required)
 
     The `PrincipalAccess` property tells us which specific user of the organization or Cloud Director right this ACL rule applies to.
-    - Access - String - `Shared`/`Entity` - Value `Shared` means that the action is authorized for all users in the organization (specified by OrganizationAccess). Value `Entity` means that the action is authorized for only one specific user or Cloud Director right and a reference to that user or right must be provided in the Entity property.
+
+    - Access
+    - String
+    - `Shared`/`Entity` - Value `Shared` means that the action is authorized for all users in the organization (specified by OrganizationAccess). Value `Entity` means that the action is authorized for only one specific user or Cloud Director right and a reference to that user or right must be provided in the Entity property.
     - Entity - a reference to a specific user or specific Cloud Director right (right can be predefined or custom).  The value is used only when Access is set to `Entity`.
 
 In order to find the link for creating an ACL Rule for a Resource Class Action, you need to perform a GET on the resource class action and the link will be part of the response.
