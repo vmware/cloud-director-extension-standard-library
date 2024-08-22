@@ -1,12 +1,15 @@
 # WebHook Behaviors
+
 WebHook behaviors provide webHook functionality in the context of Cloud Director. In short, upon invocation a webHook behavior a POST request is sent to a webHook server. After receiving the server's response, the behavior invocation task is updated accordingly. The payload sent to the webHook server is configurable.
 
 ## Prerequisites
+
 A webHook server must be set-up to process requests from webHook behavior invocations before creating any webHook behaviors. The webHook server must support HTTPs and its SSL certificate must be trusted in the organization of the user invoking the webHook behavior in order for the connection to be successful ([how to trust a certificate in Cloud Director](https://docs.vmware.com/en/VMware-Cloud-Director/10.4/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-80B4CB1C-9353-4EB9-8557-4F6705949D0F.html)).
 
-For testing purposes you can use [webhooks.site](https://webhook.site/). It provides a random URL which canbe used as a webHook server URL. The response sent back from webhooks.site to each request can be customized. 
+For testing purposes you can use [webhooks.site](https://webhook.site/). It provides a random URL which canbe used as a webHook server URL. The response sent back from webhooks.site to each request can be customized.
 
 ## Behavior Definition
+
 WebHook behavior example definition:
 
 ```json
@@ -22,7 +25,7 @@ WebHook behavior example definition:
                     "content": "<#assign header_Authorization = \"${_execution_properties._secure_token}\" />{\"text\": \"Behavior with id ${_metadata.behaviorId} was executed on entity with id ${entityId}\"   }"
                  },
                  "_secure_token": "secureToken"
-             }   
+             }
     }
 }
 ```
@@ -31,23 +34,23 @@ The webHook behavior's execution `type` is `WebHook`. It is a required field.
 
 The `id` is a user-defined string. It is a required field.
 
-
-The `href` holds the URL of the webHook server which will be processing the webHook requests. The value must be a valid URL of `https` protocol. It is a required field. 
+The `href` holds the URL of the webHook server which will be processing the webHook requests. The value must be a valid URL of `https` protocol. It is a required field.
 
 The `_internal_key` holds a shared secret string which is only known to Cloud Director and the webHook server. This shared secret will be used to generate the signature header of the request which is part of the [HMAC authentication](#authentication-of-webhook-behavior-requests). It is a required field.
 
 The `template` field in the execution can be used to set-up a custom payload for the requests sent to the webHook server. More information can be found [here](#custom-request-payload).
 
 ## WebHook Request Payload (Cloud Director -> WebHook Server)
-The default payload sent to webHook servers is a JSON containing information about the actual behavior invocation (behavior information, entity information, and some metadata). However, you can also customize this payload by setting a template in the behavior definition. <a href="https://freemarker.apache.org/docs/dgui_quickstart_template.html" target="_blank">FreeMarker template engine</a> is used to render the payload from the provided template and the data model. 
+
+The default payload sent to webHook servers is a JSON containing information about the actual behavior invocation (behavior information, entity information, and some metadata). However, you can also customize this payload by setting a template in the behavior definition. <a href="https://freemarker.apache.org/docs/dgui_quickstart_template.html" target="_blank">FreeMarker template engine</a> is used to render the payload from the provided template and the data model.
 
 ### Default Request Payload
 
 The default payload sent to webHook servers is a JSON containing information about the actual behavior invocation - invocation arguments, behavior information, entity information, and some metadata.
 
-
 Default headers:
-```
+
+```text
 content-type=[application/json],
 x-vcloud-signature=[ algorithm="hmac-sha512", headers="host date (request-target) digest", signature="WjuxZuVgNXctRBuDLONeQ0NWXt+O36YL8wMdjhCGCeW7Fq8sMHfU6NCS0O6STJx2z/wRkHTjzil4GAfuho9ZUw=="],
 x-vcloud-digest=[SHA-512=Yt4eiT2VmUyX8wDt6wneZ10VRk1B1H2jmHP1R7YanI9hykEAjUdtg7JzxfioBQm/iWRRNBM8B0aJnw6Jd29Jqg==],
@@ -60,7 +63,9 @@ host=[127.0.0.1:1234],
 connection=[keep-alive],
 content-length=[579]
 ```
+
 Default payload:
+
 ```json
 {
   "_execution_properties": {
@@ -104,8 +109,544 @@ Default payload:
 }
 ```
 
-<details>
-    <summary>Java Class representing the InvocationArguments</summary>
+See the [Java Class representing the InvocationArguments](#java-class-representing-the-invocationarguments) in the `Code Examples` section.
+
+### Custom Request Payload
+
+The payload can be customized by setting a template in the behavior definition. <a href="https://freemarker.apache.org/docs/dgui_quickstart_template.html" target="_blank">FreeMarker template engine</a> is used to render the payload from the provided template and the data model.
+
+#### The Data Model
+
+The data model represents all the data that was prepared for the template. Or in other words, all the data which can be included in the payload. As far as the template author is concerned, the data model is a tree-like structure and can be visualized as:
+
+```text
++ - entityId
+|
++ - typeId
+|
++ - arguments
+|
++ - arguments_string
+|
++ - _execution_properties
+|
++ - _metadata
+|   |
+|   + - executionId
+|   + - behaviorId
+|   + - executionType
+|   + - taskId
+|   + - execution // can select all the values from execution by key name
+|   |   |
+|   |   + - href
+|   + - invocation // can select all the values from invocation by key name
+|   + - invocationId
+ |   + - requestId
+|   + - apiVersion
+|
++ -  entity
+|
++ - entity_string
+
+```
+
+- `entityId` - the ID of the defined entity which the behavior was invoked on.
+- `typeId` - the ID of the entity type of the defined entity which the behavior was invoked on.
+- `arguments` - the user supplied arguments from the body of the behavior invocation.
+- `arguments_string` - a JSON-encoded string of arguments, can be used if the user wants to add all the arguments to the payload.
+- `_execution_properties` - the `execution_properties` from the behavior definition.
+- `behaviorId` - the ID of the invoked behavior.
+- `executionType` - the execution type of the invoked behavior.
+- `taskId` - the ID of the behavior invocation task.
+- `execution` - the execution from the behavior definition.
+- `invocation` - the user supplied metadata from the body of the behavior invocation.
+- `invocationId` - the ID of the behavior invocation.
+- `apiVersion` - the API version the behavior was invoked with.
+- `entity` - a map of the entity contents, can select all values in entity by key name.
+- `entity_string` - a JSON-encoded string of the entity contents.
+
+#### The Template
+
+More details on how to build a template can be found in the <a href="https://freemarker.apache.org/docs/dgui_quickstart_template.html" target="_blank">FreeMarker documentation</a> . In short, the way to evaluate a key from the data model is wrapping the key in `${…}`. For example `${_metadata.execution.href}` is the way to get the `href` value from the execution. An example template is:
+
+```json
+{
+    "text": "Behavior with id ${_metadata.behaviorId} was executed on entity with id ${entityId}"
+}
+```
+
+#### Setting Custom Request Headers
+
+Custom headers can be set in the webHook reques by using the template. Each header can be set as a variable in the template with the prefix `header_`.
+
+Examples:
+
+```text
+<#assign header_Content-Type = "application/json" />
+
+<#assign header_Authorization = "${_execution_properties._secure_token}" />
+```
+
+Example behavior definition with custom payload and headers:
+
+```json
+{
+    "name": "test-behavior",
+    "execution": {
+        "type": "WebHook",
+        "id": "testWebHook",
+        "href": "https://webhook.site/45b2d281-9de8-4eec-b7cc-a67529ec4be4",
+        "_internal_key": "secretKey",
+        "execution_properties": {
+            "template": {
+                "content": "<#assign header_Authorization = \"${_execution_properties._secure_token}\" />{\"text\": \"Behavior with id ${_metadata.behaviorId} was executed on entity with id ${entityId}\"}"
+            },
+            "_secure_token": "secureToken"
+        }
+    }
+}
+```
+
+## WebHook Response Payload (WebHook Server -> Cloud Director)
+
+There are three possible response formats for the webHook server to send back to Cloud Director. Each one is processed differently by Cloud Director.
+
+### Simple Response
+
+Sets the behavior invocation task result only.
+
+- Success response - the behavior invocation task status is set to `success` and the response body is used as the task result
+
+```text
+Status code: 200
+Content-Type:  text/plain //or none
+
+...some string...
+```
+
+- Error response - the behavior invocation task status is set to `ERROR`
+
+```text
+response code != 200
+```
+
+### Task Update Response (one-time task update)
+
+Allows for updating not only the behavior invocation task `result`, but also task's `status`, `details`, `operation`, `error`, `progress`. The payload must represent a valid JSON representation of a `TaskType` with the task properties that need to be modified.
+
+- Success response
+
+```text
+Status code: 200
+Content-Type:  application/vnd.vmware.vcloud.task+json
+```
+
+```json
+{
+    "status": "success",
+    "details": "example details",
+    "operation": "example operation",
+    "progress": 100,
+    "result": {
+        "resultContent": "example result"
+    }
+}
+```
+
+- Error response
+
+```text
+Status code: 200
+Content-Type: application/vnd.vmware.vcloud.task+json
+```
+
+```json
+{
+    "status": "error",
+    "details": "example details",
+    "operation": "example operation",
+    "progress": 50,
+    "error": {
+        "majorErrorCode": 404,
+        "minorErrorCode": "ERROR",
+        "message": "example error message"
+    }
+}
+```
+
+### Continuous Task Update Response
+
+Allows for sending multiple task updates before completing the behavior invocation task. This is done by using HTTP multipart response. Each update is a separate body part of the response body. The last body part of the response body must complete the task. If it does not, the task is completed with an error message indicating that the task should have been completed but was not.
+
+Example response:
+
+```text
+Status code: 200
+Content-Type: multipart/form-data; boundary=<boundary_string>
+```
+
+```text
+--<boundary_string>
+Content-Type: application/vnd.vmware.vcloud.task+json
+{
+    "details": "example details",
+    "operation": "example operation",
+    "progress": 50
+}
+--<boundary_string>
+Content-Type: application/vnd.vmware.vcloud.task+json
+{
+    "status": "success",
+    "progress": 100,
+    "result": {
+        "resultContent": "example result"
+    }
+}
+--<boundary_string>
+```
+
+There is a new line after each `boundary string`, `Content-Type` header and body. The body parts of the response can either represent a simple response or a task update response. The last body part of the webHook server response body must complete the task. If it does not, the task is completed with an error message indicating that the task should have been completed but was not. Once a body part completes the behavior invocation task, any other body parts received after that are ignored.
+
+See the [Java class representing a Task](#java-class-representing-a-task) in the `Code Examples` section.
+
+## Authentication of WebHook Behavior Requests
+
+WebHook behavior requests are secured via HMAC authentication.
+
+### What is HMAC authentication?
+
+HMAC (or hash-based message authentication code) is a mechanism used to ensure the authenticity and integrity of HTTP requests. This is achieved by including two custom headers to each HTTP request – signature header and digest (in our case `x-vcloud-signature` and `x-vcloud-digest`).
+
+```text
+x-vcloud-signature=[ algorithm="hmac-sha512", headers="host date (request-target) digest", signature="WjuxZuVgNXctRBuDLONeQ0NWXt+O36YL8wMdjhCGCeW7Fq8sMHfU6NCS0O6STJx2z/wRkHTjzil4GAfuho9ZUw=="]
+
+x-vcloud-digest=[SHA-512=Yt4eiT2VmUyX8wDt6wneZ10VRk1B1H2jmHP1R7YanI9hykEAjUdtg7JzxfioBQm/iWRRNBM8B0aJnw6Jd29Jqg==]
+```
+
+### Some terms
+
+- Shared secret - this a string which is only known to Cloud Director and the webHook server (`_internal_key`). This shared secret will be used to generate the signature header
+- Signature header (`x-vcloud-signature`) - This is a custom header sent with each webHook request. It consists of three parts:
+  - `algorithm` (`hmac-sha512`) - this is the algorithm used to generate the signature
+  - `headers` (`host date (request-target) digest`) - this shows what is included in the base string which is signed to create the signature
+    - `host` - the webHook server host
+    - `date` - date of the request
+    - `(reguest-target) = <http-method> + <ASCII space> + <path>`(e.g. `post /webhook`)
+    - `digest` - sha-512 digest of the request body
+  - `signature` - this is the generated signature
+- Digest header (`x-vcloud-digest`) - this is a `base64` encoded sha-512 digest of the request body
+
+### How are requests authenticated by the webHook server?
+
+Each webHook request from Cloud Director can be verified by generating the signature using the shared secret and comparing it to the signature in the signature header from Cloud Director. If they match, the request is verified.
+
+See the [Example Java code for verifying a webHook behavior request's signature header](#example-java-code-for-verifying-a-webhook-behavior-requests-signature-header) in the `Code Examples` section.
+
+## Example Slack integration with webHook behaviors
+
+Slack has a functionality for creating incoming webHooks which can be used for posting messages to Slack channels. WebHook behaviors can be used to integrate Slack incoming webHooks with Cloud Director, allowing Cloud Director to post messages directly to a slack channel.
+More information on how to create a Slack incoming webHook for a channel can be found [here]( https://api.slack.com/messaging/webhooks).
+
+Once a Slack webHook is configured, messages to it can be sent via a POST request to the webHook URL - `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX`. The request payload has to be of a specific format in order for it to be recognized by the Slack webHook and the `Content-Type` header must be set to `application/json`.
+
+In order to use Cloud Director's webHook behaviors to send messages to slack webHooks, the following steps must be followed:
+
+1. [Set-up incoming webHook URL in Slack](https://api.slack.com/messaging/webhooks).
+2. Create an Interface
+
+    ```text
+    POST /cloudapi/1.0.0/interfaces
+    ```
+
+    ```json
+    {
+        "name": "test",
+        "vendor": "vmware",
+        "nss": "test",
+        "version": "1.0.0"
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+        "name": "test",
+        "id": "urn:vcloud:interface:vmware:test:1.0.0",
+        "version": "1.0.0",
+        "vendor": "vmware",
+        "nss": "test",
+        "readonly": false
+    }
+    ```
+
+3. Create a template for the payload sent to the webHook server
+
+    ```text
+    <#assign header_Content\-Type= "application/json" />
+
+    {
+
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*BEHAVIOR_EXECUTION*:vcda:\n Behavior with id \n_${_metadata.behaviorId}_\n was executed on entity with id \n_${entityId}_\n ${arguments.greeting}"
+                }
+            }
+        ]
+    }
+    ```
+
+4. Create a webHook behavior in the test interface
+
+    For the behavior's `href` use the slack webHook URL.
+
+    ```text
+    POST /cloudapi/1.0.0/interfaces/urn:vcloud:interface:vmware:test:1.0.0/behaviors
+    ```
+
+    ```json
+    {
+        "name": "testTemplateWebhookBehaviorSlack",
+        "execution": {
+                "type": "WebHook",
+                "id": "testWebHook",
+                "href": "https://hooks.slack.com:443/services/T07UZFN0N/B01EW5NC42D/rfjhHCGIwzuzQFrpPZiuLkIX" ,
+                "key": "secretKey",
+                "execution_properties": {
+                    "template": {
+                        "content": "    \n    \"blocks\": [\n        {\n            \"type\": \"section\",\n            \"text\": {\n\"type\": \"mrkdwn\",\n\"text\": \"*BEHAVIOR_EXECUTION*:vcda:\\n Behavior with id \\n_${_metadata.behaviorId}_\\n was executed on entity with id \\n_${entityId}_\\n ${arguments.greeting}\"\n}\n        }\n    ]\n}"
+                    }
+                }
+
+        }
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+        "name": "testTemplateWebhookBehaviorSlack",
+        "id": "urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0",
+        "ref": "urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0",
+        "description": null,
+        "execution": {
+            "id": "testWebHook",
+            "href": "https://hooks.slack.com:443/services/T07UZFN0N/B01EW5NC42D/rfjhHCGIwzuzQFrpPZiuLkIX",
+            "type": "WebHook",
+            "key": "secretKey",
+            "execution_properties": {
+                "template": {
+                    "content": "<#assign header_Content-Type= \"application/json\" /> { \"blocks\": [ { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*BEHAVIOR_EXECUTION*:vcda:\n Behavior with id \n_${_metadata.behaviorId}_\n was executed on entity with id \n_${entityId}_\n ${arguments.greeting}\" } } ] }"
+                }
+            }
+        }
+    }
+    ```
+
+    The template configures the payload to be alligned with what the Slack server expects to receive. The request `Content-Type` header is set to `application/json`. The body of the request is formatted using [Slack webHooks formatting](https://api.slack.com/messaging/webhooks#advanced_message_formatting).
+
+    ```text
+    <#assign header_Content\-Type= "application/json" />
+
+    {
+
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*BEHAVIOR_EXECUTION*:vcda:\n Behavior with id \n_${_metadata.behaviorId}_\n was executed on entity with id \n_${entityId}_\n ${arguments.greeting}"
+                }
+            }
+        ]
+    }
+    ```
+
+5. Trust Slack server SSL certificate
+
+    In order to be able to send data to Slack, the Slack server SSL certificate must be trusted. More information on managing SSL certificates in Cloud Director can be found [here](https://docs.vmware.com/en/VMware-Cloud-Director/10.4/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-80B4CB1C-9353-4EB9-8557-4F6705949D0F.html).
+
+6. Create a RDE Type implementing the newly created interface
+
+    ```text
+    POST /cloudapi/1.0.0/entityTypes
+    ```
+
+    ```json
+    {
+        "name": "testType",
+        "description": "string",
+        "nss": "testType",
+        "version": "1.0.0",
+        "externalId": "123",
+        "schema": {
+            "type": "object",
+            "properties": {
+                "application/json": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "interfaces": ["urn:vcloud:interface:vmware:test:1.0.0"],
+        "vendor": "vmware",
+        "readonly": false
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+        "id": "urn:vcloud:type:vmware:testType:1.0.0",
+        "name": "testType",
+        "description": "string",
+        "nss": "testType",
+        "version": "1.0.0",
+        "inheritedVersion": null,
+        "externalId": "123",
+        "schema": {
+            "type": "object",
+            "properties": {
+                "application/json": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "vendor": "vmware",
+        "interfaces": [
+            "urn:vcloud:interface:vmware:test:1.0.0"
+        ],
+        "hooks": null,
+        "readonly": false,
+        "maxImplicitRight": null
+    }
+    ```
+
+7. Create a Behavior Access Control for the webHook behavior
+
+    The webHook behavior invocations will be limited to users who have Full Control access to the defined entity the behavior will be invoked on.
+
+    ```text
+    POST /cloudapi/1.0.0/entityTypes/urn:vcloud:type:vmware:testType:1.0.0/behaviorAccessControls
+    ```
+
+    ```json
+    {
+        "behaviorId": "urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0",
+        "accessLevelId": "urn:vcloud:accessLevel:FullControl"
+    }
+    ```
+
+    Response:
+
+    ```json
+    {
+        "behaviorId": "urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0",
+        "accessLevelId": "urn:vcloud:accessLevel:FullControl"
+    }
+    ```
+
+8. Create an entity of the `testType` RDE type
+
+    ```text
+    POST /cloudapi/1.0.0/entityTypes/urn:vcloud:type:vmware:testType:1.0.0
+    ```
+
+    ```json
+    {
+
+        "name": "testEntity",
+        "externalId": null,
+        "entity": {
+            "application/json": {
+                "name": "test"
+            }
+        }
+    }
+    ```
+
+    Response:
+
+    ```text
+    Headers:
+
+    Location: https://localhost:8443/api/task/9f1fe9a7-dd5e-4975-a6eb-06502359e2e4
+    ```
+
+    To obtain the newly created entity's ID you must retrieve the associated `createDefinedEntity` task from the response headers. The `owner` property holds the entity's ID:
+
+    ```json
+    {
+        ...
+        "owner": {
+            "otherAttributes": {},
+            "href": "",
+            "id": "urn:vcloud:entity:vmware:testType:14f02e11-d8e1-4c23-8cd9-8fa256ed9b8e",
+            "type": "application/json",
+            "name": "entity",
+            "vCloudExtension": []
+        },
+        ...
+    }
+    ```
+
+9. Resolve newly created entity
+
+    ```text
+    POST /cloudapi/1.0.0/entities/urn:vcloud:entity:vmware:testType:14f02e11-d8e1-4c23-8cd9-8fa256ed9b8e/resolve
+    ```
+
+    Response:
+
+    ```json
+    {
+        "id": "urn:vcloud:entity:vmware:testType:14f02e11-d8e1-4c23-8cd9-8fa256ed9b8e",
+        "entity": {
+            "application/json": {
+                "name": "test"
+            }
+        },
+        "state": "RESOLVED",
+        "entityState": "RESOLVED",
+        "message": null
+    }
+    ```
+
+10. Invoke webHook behavior
+
+    ```text
+    POST /cloudapi/1.0.0/entities/urn:vcloud:entity:vmware:testType:14f02e11-d8e1-4c23-8cd9-8fa256ed9b8e/behaviors/urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0/invocations
+    ```
+
+    ```json
+    {
+        "arguments": {
+            "greeting": "Greetings from vCloudDirector"
+        }
+    }
+    ```
+
+    The following message is posted in Slack as a result:
+
+    ![WebHook behavior invocation's Slack message](../../images/webHook-behavior-slack-example.png)
+
+## Code Examples
+
+### Java Class representing the InvocationArguments
 
 ```java
 import java.util.Map;
@@ -283,180 +824,7 @@ public class InvocationArguments {
 }
 ```
 
-</details>
-
-### Custom Request Payload
-The payload can be customized by setting a template in the behavior definition. <a href="https://freemarker.apache.org/docs/dgui_quickstart_template.html" target="_blank">FreeMarker template engine</a> is used to render the payload from the provided template and the data model.
-#### The Data Model
-The data model represents all the data that was prepared for the template. Or in other words, all the data which can be included in the payload. As far as the template author is concerned, the data model is a tree-like structure and can be visualized as:
-
-```
-+ - entityId
-|
-+ - typeId
-|   
-+ - arguments
-|  
-+ - arguments_string
-|
-+ - _execution_properties
-|                      
-+ - _metadata
-|   |
-|   + - executionId
-|   + - behaviorId
-|   + - executionType
-|   + - taskId
-|   + - execution // can select all the values from execution by key name
-|   |   |
-|   |   + - href
-|   + - invocation // can select all the values from invocation by key name
-|   + - invocationId
-	|   + - requestId
-|   + - apiVersion
-|  
-+ -  entity
-|
-+ - entity_string
-
-```
-- `entityId` - the ID of the defined entity which the behavior was invoked on.
-- `typeId` - the ID of the entity type of the defined entity which the behavior was invoked on.
-- `arguments` - the user supplied arguments from the body of the behavior invocation.
-- `arguments_string` - a JSON-encoded string of arguments, can be used if the user wants to add all the arguments to the payload.
-- `_execution_properties` - the `execution_properties` from the behavior definition.
-- `behaviorId` - the ID of the invoked behavior.
-- `executionType` - the execution type of the invoked behavior.
-- `taskId` - the ID of the behavior invocation task.
-- `execution` - the execution from the behavior definition.
-- `invocation` - the user supplied metadata from the body of the behavior invocation.
-- `invocationId` - the ID of the behavior invocation.
-- `apiVersion` - the API version the behavior was invoked with.
-- `entity` - a map of the entity contents, can select all values in entity by key name.
-- `entity_string` - a JSON-encoded string of the entity contents.
-
-#### The Template
-More details on how to build a template can be found in the <a href="https://freemarker.apache.org/docs/dgui_quickstart_template.html" target="_blank">FreeMarker documentation</a> . In short, the way to evaluate a key from the data model is wrapping the key in `${…}`. For example `${_metadata.execution.href}` is the way to get the `href` value from the execution. An example template is:
-```json
-{
-    "text": "Behavior with id ${_metadata.behaviorId} was executed on entity with id ${entityId}"
-}
-```
-#### Setting Custom Request Headers
-Custom headers can be set in the webHook reques by using the template. Each header can be set as a variable in the template with the prefix `header_`. 
-
-Examples:
-```
-<#assign header_Content-Type = "application/json" />
-
-<#assign header_Authorization = "${_execution_properties._secure_token}" />
-```
-
-Example behavior definition with custom payload and headers:
-```json
-{
-    "name": "test-behavior",
-    "execution": {
-        "type": "WebHook",
-        "id": "testWebHook",
-        "href": "https://webhook.site/45b2d281-9de8-4eec-b7cc-a67529ec4be4",
-        "_internal_key": "secretKey",
-        "execution_properties": {
-            "template": {
-                "content": "<#assign header_Authorization = \"${_execution_properties._secure_token}\" />{\"text\": \"Behavior with id ${_metadata.behaviorId} was executed on entity with id ${entityId}\"}"
-            },
-            "_secure_token": "secureToken"
-        }
-    }
-}
-```
-## WebHook Response Payload (WebHook Server -> Cloud Director)
-There are three possible response formats for the webHook server to send back to Cloud Director. Each one is processed differently by Cloud Director.
-
-### Simple Response
-Sets the behavior invocation task result only.
-- Success response - the behavior invocation task status is set to `success` and the response body is used as the task result
-```
-Status code: 200
-Content-Type:  text/plain //or none
-
-...some string...
-```
-- Error response - the behavior invocation task status is set to `ERROR`
-```
-response code != 200
-```
-### Task Update Response (one-time task update)
-
-Allows for updating not only the behavior invocation task `result`, but also task's `status`, `details`, `operation`, `error`, `progress`. The payload must represent a valid JSON representation of a `TaskType` with the task properties that need to be modified.
-
-- Success response
-```
-Status code: 200
-Content-Type:  application/vnd.vmware.vcloud.task+json
-```
-```json
-{
-    "status": "success",
-    "details": "example details",
-    "operation": "example operation",
-    "progress": 100,
-    "result": {
-        "resultContent": "example result"
-    }
-}
-```
-- Error response
-```
-Status code: 200
-Content-Type: application/vnd.vmware.vcloud.task+json
-```
-```json
-{
-    "status": "error",
-    "details": "example details",
-    "operation": "example operation",
-    "progress": 50,
-    "error": {
-        "majorErrorCode": 404,
-        "minorErrorCode": "ERROR",
-        "message": "example error message"
-    }
-}
-```
-### Continuous Task Update Response
-
-Allows for sending multiple task updates before completing the behavior invocation task. This is done by using HTTP multipart response. Each update is a separate body part of the response body. The last body part of the response body must complete the task. If it does not, the task is completed with an error message indicating that the task should have been completed but was not.
-
-Example response:
-```
-Status code: 200
-Content-Type: multipart/form-data; boundary=<boundary_string>
-```
-```
---<boundary_string>
-Content-Type: application/vnd.vmware.vcloud.task+json
-{                                                       
-    "details": "example details",                      
-    "operation": "example operation",
-    "progress": 50
-}
---<boundary_string>
-Content-Type: application/vnd.vmware.vcloud.task+json
-{
-    "status": "success",
-    "progress": 100,
-    "result": {
-        "resultContent": "example result"
-    }
-}
---<boundary_string>
-```
-
-There is a new line after each `boundary string`, `Content-Type` header and body. The body parts of the response can either represent a simple response or a task update response. The last body part of the webHook server response body must complete the task. If it does not, the task is completed with an error message indicating that the task should have been completed but was not. Once a body part completes the behavior invocation task, any other body parts received after that are ignored.
-
-<details>
-    <summary>Java class representing a Task</summary>
+### Java class representing a Task
 
 ```java
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -577,36 +945,8 @@ public class TaskType {
     }
 }
 ```
-</details>
 
-## Authentication of WebHook Behavior Requests
-WebHook behavior requests are secured via HMAC authentication.
-### What is HMAC authentication?
-HMAC (or hash-based message authentication code) is a mechanism used to ensure the authenticity and integrity of HTTP requests. This is achieved by including two custom headers to each HTTP request – signature header and digest (in our case `x-vcloud-signature` and `x-vcloud-digest`).
-
-```
-x-vcloud-signature=[ algorithm="hmac-sha512", headers="host date (request-target) digest", signature="WjuxZuVgNXctRBuDLONeQ0NWXt+O36YL8wMdjhCGCeW7Fq8sMHfU6NCS0O6STJx2z/wRkHTjzil4GAfuho9ZUw=="]
-
-x-vcloud-digest=[SHA-512=Yt4eiT2VmUyX8wDt6wneZ10VRk1B1H2jmHP1R7YanI9hykEAjUdtg7JzxfioBQm/iWRRNBM8B0aJnw6Jd29Jqg==]
-```
-### Some terms
-- Shared secret - this a string which is only known to Cloud Director and the webHook server (`_internal_key`). This shared secret will be used to generate the signature header
-- Signature header (`x-vcloud-signature`) - This is a custom header sent with each webHook request. It consists of three parts:
-    - `algorithm` (`hmac-sha512`) - this is the algorithm used to generate the signature
-    - `headers` (`host date (request-target) digest`) - this shows what is included in the base string which is signed to create the signature
-        - `host` - the webHook server host
-        - `date` - date of the request
-        - `(reguest-target) = <http-method> + <ASCII space> + <path> `(e.g. `post /webhook`)
-        - `digest` - sha-512 digest of the request body
-    - `signature` - this is the generated signature
-- Digest header (`x-vcloud-digest`) - this is a `base64` encoded sha-512 digest of the request body
-
-### How are requests authenticated by the webHook server?
-Each webHook request from Cloud Director can be verified by generating the signature using the shared secret and comparing it to the signature in the signature header from Cloud Director. If they match, the request is verified.
-
-
-<details>
-    <summary>Example Java code for verifying a webHook behavior request's signature header</summary>
+### Example Java code for verifying a webHook behavior request's signature header
 
 ```java
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -814,275 +1154,3 @@ public class HMACRequestVerificator {
     }
 }
 ```
-</details>
-
-## Example Slack integration with webHook behaviors
-
-Slack has a functionality for creating incoming webHooks which can be used for posting messages to Slack channels. WebHook behaviors can be used to integrate Slack incoming webHooks with Cloud Director, allowing Cloud Director to post messages directly to a slack channel. 
-More information on how to create a Slack incoming webHook for a channel can be found [here]( https://api.slack.com/messaging/webhooks).
-
-Once a Slack webHook is configured, messages to it can be sent via a POST request to the webHook URL - `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX`. The request payload has to be of a specific format in order for it to be recognized by the Slack webHook and the `Content-Type` header must be set to `application/json`. 
-
-In order to use Cloud Director's webHook behaviors to send messages to slack webHooks, the following steps must be followed:
-
-1. [Set-up incoming webHook URL in Slack](https://api.slack.com/messaging/webhooks).
-1. Create an Interface
-```
-POST /cloudapi/1.0.0/interfaces
-```
-```json
-{
-    "name": "test",
-    "vendor": "vmware",
-    "nss": "test",
-    "version": "1.0.0"
-}
-```
-
-Response:
-```json
-{
-    "name": "test",
-    "id": "urn:vcloud:interface:vmware:test:1.0.0",
-    "version": "1.0.0",
-    "vendor": "vmware",
-    "nss": "test",
-    "readonly": false
-}
-```
-2. Create a template for the payload sent to the webHook server
-```
-<#assign header_Content\-Type= "application/json" />
- 
-{
-     
-    "blocks": [
-        {
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": "*BEHAVIOR_EXECUTION*:vcda:\n Behavior with id \n_${_metadata.behaviorId}_\n was executed on entity with id \n_${entityId}_\n ${arguments.greeting}"
-            }
-        }
-    ]
-}
-```
-2. Create a webHook behavior in the test interface
-
-For the behavior's `href` use the slack webHook URL.
-```
-POST /cloudapi/1.0.0/interfaces/urn:vcloud:interface:vmware:test:1.0.0/behaviors
-```
-```json
-{
-    "name": "testTemplateWebhookBehaviorSlack",
-    "execution": {
-             "type": "WebHook",
-             "id": "testWebHook",
-             "href": "https://hooks.slack.com:443/services/T07UZFN0N/B01EW5NC42D/rfjhHCGIwzuzQFrpPZiuLkIX" ,
-             "key": "secretKey",
-             "execution_properties": {
-                 "template": {
-                    "content": "    \n    \"blocks\": [\n        {\n            \"type\": \"section\",\n            \"text\": {\n\"type\": \"mrkdwn\",\n\"text\": \"*BEHAVIOR_EXECUTION*:vcda:\\n Behavior with id \\n_${_metadata.behaviorId}_\\n was executed on entity with id \\n_${entityId}_\\n ${arguments.greeting}\"\n}\n        }\n    ]\n}"
-                 }
-             }
- 
-    }
-}
-```
-Response:
-```json
-{
-    "name": "testTemplateWebhookBehaviorSlack",
-    "id": "urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0",
-    "ref": "urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0",
-    "description": null,
-    "execution": {
-        "id": "testWebHook",
-        "href": "https://hooks.slack.com:443/services/T07UZFN0N/B01EW5NC42D/rfjhHCGIwzuzQFrpPZiuLkIX",
-        "type": "WebHook",
-        "key": "secretKey",
-        "execution_properties": {
-            "template": {
-                "content": "<#assign header_Content-Type= \"application/json\" /> { \"blocks\": [ { \"type\": \"section\", \"text\": { \"type\": \"mrkdwn\", \"text\": \"*BEHAVIOR_EXECUTION*:vcda:\n Behavior with id \n_${_metadata.behaviorId}_\n was executed on entity with id \n_${entityId}_\n ${arguments.greeting}\" } } ] }"
-            }
-        }
-    }
-}
-```
-The template configures the payload to be alligned with what the Slack server expects to receive. The request `Content-Type` header is set to `application/json`. The body of the request is formatted using [Slack webHooks formatting](https://api.slack.com/messaging/webhooks#advanced_message_formatting).
-
-```
-<#assign header_Content\-Type= "application/json" />
-
-{
-     
-    "blocks": [
-        {
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": "*BEHAVIOR_EXECUTION*:vcda:\n Behavior with id \n_${_metadata.behaviorId}_\n was executed on entity with id \n_${entityId}_\n ${arguments.greeting}"
-            }
-        }
-    ]
-}
-```
-3. Trust Slack server SSL certificate
-
-    In order to be able to send data to Slack, the Slack server SSL certificate must be trusted. More information on managing SSL certificates in Cloud Director can be found [here](https://docs.vmware.com/en/VMware-Cloud-Director/10.4/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-80B4CB1C-9353-4EB9-8557-4F6705949D0F.html).
-
-4. Create a RDE Type implementing the newly created interface
-
-```
-POST /cloudapi/1.0.0/entityTypes
-```
-```json
-{
-    "name": "testType",
-    "description": "string",
-    "nss": "testType",
-    "version": "1.0.0",
-    "externalId": "123",
-    "schema": {
-        "type": "object",
-        "properties": {
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    }
-                }
-            }
-        }
-    },
-    "interfaces": ["urn:vcloud:interface:vmware:test:1.0.0"],
-    "vendor": "vmware",
-    "readonly": false
-}
-```
-Response:
-```json
-{
-    "id": "urn:vcloud:type:vmware:testType:1.0.0",
-    "name": "testType",
-    "description": "string",
-    "nss": "testType",
-    "version": "1.0.0",
-    "inheritedVersion": null,
-    "externalId": "123",
-    "schema": {
-        "type": "object",
-        "properties": {
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    }
-                }
-            }
-        }
-    },
-    "vendor": "vmware",
-    "interfaces": [
-        "urn:vcloud:interface:vmware:test:1.0.0"
-    ],
-    "hooks": null,
-    "readonly": false,
-    "maxImplicitRight": null
-}
-```
-5. Create a Behavior Access Control for the webHook behavior
-
-    The webHook behavior invocations will be limited to users who have Full Control access to the defined entity the behavior will be invoked on.
-
-```
-POST /cloudapi/1.0.0/entityTypes/urn:vcloud:type:vmware:testType:1.0.0/behaviorAccessControls
-```
-```json
-{
-    "behaviorId": "urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0",
-    "accessLevelId": "urn:vcloud:accessLevel:FullControl"
-}
-```
-Response:
-```json
-{
-    "behaviorId": "urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0",
-    "accessLevelId": "urn:vcloud:accessLevel:FullControl"
-}
-```
-6. Create an entity of the `testType` RDE type
-```
-POST /cloudapi/1.0.0/entityTypes/urn:vcloud:type:vmware:testType:1.0.0
-```
-```json
-{
-
-      "name": "testEntity",
-      "externalId": null,
-      "entity": {
-        "application/json": {
-            "name": "test"
-        }
-    }
-}
-```
-Response:
-```
-Headers:
-
-Location: https://localhost:8443/api/task/9f1fe9a7-dd5e-4975-a6eb-06502359e2e4
-```
-
-To obtain the newly created entity's ID you must retrieve the associated `createDefinedEntity` task from the response headers. The `owner` property holds the entity's ID:
-
-```json
-{
-    ...
-    "owner": {
-        "otherAttributes": {},
-        "href": "",
-        "id": "urn:vcloud:entity:vmware:testType:14f02e11-d8e1-4c23-8cd9-8fa256ed9b8e",
-        "type": "application/json",
-        "name": "entity",
-        "vCloudExtension": []
-    },
-    ...
-}
-```
-7. Resolve newly created entity
-```
-POST /cloudapi/1.0.0/entities/urn:vcloud:entity:vmware:testType:14f02e11-d8e1-4c23-8cd9-8fa256ed9b8e/resolve
-```
-Response:
-```json
-{
-    "id": "urn:vcloud:entity:vmware:testType:14f02e11-d8e1-4c23-8cd9-8fa256ed9b8e",
-    "entity": {
-        "application/json": {
-            "name": "test"
-        }
-    },
-    "state": "RESOLVED",
-    "entityState": "RESOLVED",
-    "message": null
-}
-```
-8. Invoke webHook behavior
-```
-POST /cloudapi/1.0.0/entities/urn:vcloud:entity:vmware:testType:14f02e11-d8e1-4c23-8cd9-8fa256ed9b8e/behaviors/urn:vcloud:behavior-interface:testTemplateWebhookBehaviorSlack:vmware:test:1.0.0/invocations
-```
-```json
-{
-    "arguments": {
-        "greeting": "Greetings from vCloudDirector"
-    }
-}
-```
-And in Slack the following message is posted:
-
-![WebHook behavior invocation's Slack message](../../images/webHook-behavior-slack-example.png)
-

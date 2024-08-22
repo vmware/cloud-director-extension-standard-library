@@ -79,6 +79,8 @@ Access to the RDE cannot be shared with users outside the tenant.
 - [RDE Types](defined-entity-types.md)
 - [RDE Lifecycle](defined-entities-lifecycle.md)
 - [RDE Operations](defined-entity-operations.md)
+- [RDE Queries](rde-queries.md)
 - [RDE Behaviors](behaviors-general-concepts.md)
 - [RDE Access Control](rde-access-control.md)
+- [RDE Hooks](rde-hooks.md)
 - [RDE Versioning](rde-versions.md)

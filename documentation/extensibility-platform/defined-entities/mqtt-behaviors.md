@@ -1,13 +1,17 @@
 # MQTT Behaviors
-MQTT behaviors in Cloud Director are based on MQTT API extensions (in the context of [API extensibility]()) <!--TODO add link to API extensibility docs-->. Invocation of a MQTT behavior is another way to trigger a MQTT extension (send a message to the extension for processing). When invoked MQTT behaviors essentially post a message to an extension topic and listen for a response to that message.
+
+MQTT behaviors in Cloud Director are based on MQTT API extensions (in the context of [API extensibility](../api-extensibility.md)). Invocation of a MQTT behavior is another way to trigger a MQTT extension (send a message to the extension for processing). When invoked MQTT behaviors essentially post a message to an extension topic and listen for a response to that message.
 
 ## Prerequisites
+
 In order to create a MQTT behavior an MQTT API extension must be registered in Cloud Director first.
 
-Please familiarize yourself with [MQTT API extensibility]()<!--TODO add link to API extensibility docs--> and how to register such an extension.
+Please familiarize yourself with [MQTT API extensibility](../api-extensibility.md) and how to register such an extension.
 
 ## Behavior Definition
+
 MQTT behavior example definition:
+
 ```json
 {
     "name": "mqtt_behavior_test",
@@ -18,25 +22,31 @@ MQTT behavior example definition:
             "serviceId": "urn:vcloud:extension-api:VMWare_TEST:MqttExtension_TEST:1.2.3",
             "invocation_timeout": 15
         }
- 
+
      }
 }
 ```
+
 The MQTT behavior's execution `type` is `MQTT`.  It is a required field.
 
 The `id` is a user-defined string. It is a required field.
 
 The `serviceId` from the `execution_properties` section holds the ID of the MQTT API extension which will be consuming the messages of this behavior. It is a required field.
 
-The `invocation_timeout` field is used to specify a timeout in seconds for the response received from the MQTT extension. If not set, there is a system parameter `extensibility.timeout` which will be used as timeout (default is 10 seconds). 
+The `invocation_timeout` field is used to specify a timeout in seconds for the response received from the MQTT extension. If not set, there is a system parameter `extensibility.timeout` which will be used as timeout (default is 10 seconds).
 
 ## MQTT Behavior Message Format
+
 ### Cloud Director to Extension
+
 Messages from Cloud Director to Extension are sent on the extension's monitor topic:
-```
+
+```text
 topic/extension/<vendor>/<name>/<version>/ext
 ```
+
 The messages have the following format:
+
 ```json
 {
     "type":"BEHAVIOR_INVOCATION",
@@ -53,15 +63,174 @@ The messages have the following format:
             ]
         },
         "payload": " <a JSON string of the invocation arguments> "
- 
+
     }
 }
 ```
 
 The `rights` field from the `context` header is populated only if the `extensibility.enableRightInfo` configuration property is set to true. By default it is set to false.
 
-<details>
-    <summary>Java Class representing invocation MQTT message</summary>
+See the [Java Class representing an invocation MQTT message](#java-class-representing-an-invocation-mqtt-message) in the `Code Examples` section.
+
+The payload holds the invocation arguments from the MQTT behavior invocation:
+
+```json
+{
+    "_execution_properties":{
+        "serviceId":"urn:vcloud:extension-api:VMWare_TEST:MqttExtension_TEST:1.2.3"
+    },
+    "entityId":"urn:vcloud:entity:vmware:mqttType_test:1.0.0:3542f778-37e3-4ce9-b244-41ccc36e27c3",
+    "typeId":"urn:vcloud:type:vmware:mqttType_test:1.0.0",
+    "arguments":{
+        "argument1":"argument1"
+    },
+    "additionalArguments":null,
+    "_metadata": {
+        "executionId":"mqtt_behavior_test",
+        "invocation":{},
+        "behaviorId":"urn:vcloud:behavior-interface:mqtt_behavior_test:vmware:mqttInterface:1.0.0",
+        "taskId":"c359ea34-2db6-419f-bad6-468a9704d49e",
+        "executionType":"MQTT"
+        },
+    "entity": {
+        "property1":"property1",
+    }
+}
+```
+
+See the [Java Class to deserialize a payload to InvocationArguments](#java-class-to-deserialize-a-payload-to-invocationarguments) in the `Code Examples` section.
+
+### Extension to Cloud Director
+
+Response messages from Cloud Director to extension must be sent on the extension's respond topic:
+
+```text
+topic/extension/<vendor>/<name>/<version>/vcd
+```
+
+The messages must have the following format:
+
+```json
+{
+    "type": "BEHAVIOR_RESPONSE",
+    "headers": {
+        "taskId": "9cb74c5d-2a72-45de-b729-2495f680c7f4",
+        "entityId": "urn:vcloud:entity:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    },
+    "payload": "<a string>"
+
+}
+```
+
+See the [Java Class representing a response MQTT message](#java-class-representing-a-response-mqtt-message) in the `Code Examples` section.
+
+There are two types of responses an extension can send back to Cloud Director - a simple response and a task update response.
+
+The simple response (`ResponseContentType.PLAIN_TEXT`) completes the behavior invocation task successfully and uses the payload string as the task result.
+
+The task update response (`ResponseContentType.TASK`) allows for updating not only the behavior invocation task's `result`, but also the task's `status`, `details`, `operation`, `error`, `progress`. The payload must represent a valid JSON representation of `TaskType` with the task properties that need to be modified. The headers must contain a `Content-Type` header with the value of `application/vnd.vmware.vcloud.task+json`.
+
+Multiple task update responses can be sent back to Cloud Director. This allows the task progress to be updated continuously, for example. The last task update must complete the task. Once the task is completed, later task updates regarding this task are ignored.
+
+Example success task update payload:
+
+```json
+{
+    "status": "success",
+    "operation": "test-operation",
+    "details": "test details",
+    "result": {
+        "resultContent": "test result"
+    },
+    "progress": 100
+}
+```
+
+Example error task update payload:
+
+```json
+{
+    "status": "error",
+    "operation": "test-operation",
+    "details": "test details",
+    "error": {
+        "majorErrorCode": 409,
+        "minorErrorCode": "TEST_ERROR",
+        "message": "Test error message"
+    }
+}
+```
+
+Example aborted task update payload
+
+```json
+{
+    "status": "aborted",
+    "operation": "test-operation",
+    "details": "test details",
+    "progress": 50
+}
+```
+
+See the [Java class representing a Task](#java-class-representing-a-task) in the `Code Examples` section.
+
+## Example `IMqttMessageListener` implementation for processing MQTT messages
+
+```java
+public class MqttListener implements IMqttMessageListener {
+
+    private final String topicToRespond;
+    private final MqttClient mqttClient;
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    public MqttListener(final String topicToRespond, final MqttClient mqttClient) {
+        this.topicToRespond = topicToRespond;
+        this.mqttClient = mqttClient;
+    }
+
+    public void closeListener() throws MqttException {
+        this.mqttClient.disconnectForcibly();
+    }
+
+
+    @Override
+    public void messageArrived(final String s, final MqttMessage mqttMessage) throws Exception {
+        // Message from VCD received
+
+        MqttRemoteServerMessage request = objectMapper.readValue(mqttMessage.getPayload(), MqttRemoteServerMessage.class);
+
+        if (NotificationType.BEHAVIOR_INVOCATION != request.getType()) {
+            // ignore not behavior invocation messages
+            return;
+        }
+        //parse the request payload to a Map
+        InvocationArguments invocationArguments = objectMapper.readValue(request.getPayload(), InvocationArguments.class);
+
+        //now the information can be accessed
+        Map<String, Object> executionProperties = invocationArguments.getExecutionProperties();
+        InvocationArguments.InvocationArgumentsMetadata metadata = invocationArguments.getMetadata();
+        Map<String, Object> arguments = invocationArguments.getArguments();
+        String typeId = invocationArguments.getTypeId();
+
+        final MqttRemoteServerResponseMessage response = createResponse(request);
+
+        String responseAsJson = objectMapper.writeValueAsString(response);
+
+        mqttClient.publish(topicToRespond, new MqttMessage(responseAsJson.getBytes()));
+    }
+
+    private MqttRemoteServerResponseMessage createResponse(MqttRemoteServerMessage request) {
+        // your business logic goes here
+    }
+
+}
+
+```
+
+## Code Examples
+
+### Java Class representing an invocation MQTT message
 
 ```java
 public enum NotificationType {
@@ -213,34 +382,8 @@ public class MqttRemoteServerMessage {
 
 }
 ```
-</details>
 
-The payload holds the invocation arguments from the MQTT behavior invocation:
-```json
-{
-    "_execution_properties":{
-        "serviceId":"urn:vcloud:extension-api:VMWare_TEST:MqttExtension_TEST:1.2.3"
-    },
-    "entityId":"urn:vcloud:entity:vmware:mqttType_test:1.0.0:3542f778-37e3-4ce9-b244-41ccc36e27c3",
-    "typeId":"urn:vcloud:type:vmware:mqttType_test:1.0.0",
-    "arguments":{
-        "argument1":"argument1"
-    },
-    "additionalArguments":null,
-    "_metadata": {
-        "executionId":"mqtt_behavior_test",
-        "invocation":{},
-        "behaviorId":"urn:vcloud:behavior-interface:mqtt_behavior_test:vmware:mqttInterface:1.0.0",
-        "taskId":"c359ea34-2db6-419f-bad6-468a9704d49e",
-        "executionType":"MQTT"
-        },
-    "entity": {
-        "property1":"property1",
-    }
-}
-```
-<details>
-    <summary>Java Class to deserialize payload to InvocationArguments</summary>
+### Java Class to deserialize a payload to InvocationArguments
 
 ```java
 import java.util.Map;
@@ -418,28 +561,7 @@ public class InvocationArguments {
 }
 ```
 
-</details>
-
-### Extension to Cloud Director
-Response messages from Cloud Director to extension must be sent on the extension's respond topic:
-```
-topic/extension/<vendor>/<name>/<version>/vcd
-```
-The messages must have the following format:
-```json
-{
-    "type": "BEHAVIOR_RESPONSE",
-    "headers": {
-        "taskId": "9cb74c5d-2a72-45de-b729-2495f680c7f4",
-        "entityId": "urn:vcloud:entity:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    },
-    "payload": "<a string>"
- 
-}
-```
-
-<details>
-    <summary>Java Class representing response MQTT message</summary>
+### Java Class representing a response MQTT message
 
 ```java
 import java.util.Arrays;
@@ -550,54 +672,8 @@ public class MqttRemoteServerResponseMessage {
     }
 }
 ```
-</details>
-There are two types of responses an extension can send back to Cloud Director - a simple response and a task update response.
 
-The simple response (`ResponseContentType.PLAIN_TEXT`) completes the behavior invocation task successfully and uses the payload string as the task result.
-
-The task update response (`ResponseContentType.TASK`) allows for updating not only the behavior invocation task's `result`, but also the task's `status`, `details`, `operation`, `error`, `progress`. The payload must represent a valid JSON representation of `TaskType` with the task properties that need to be modified. The headers must contain a `Content-Type` header with the value of `application/vnd.vmware.vcloud.task+json`.
-
-Multiple task update responses can be sent back to Cloud Director. This allows the task progress to be updated continuously, for example. The last task update must complete the task. Once the task is completed, later task updates regarding this task are ignored.
-
-Example success task update payload:
-
-```json
-{
-    "status": "success",
-    "operation": "test-operation",
-    "details": "test details",
-    "result": {
-        "resultContent": "test result"
-    },
-    "progress": 100
-}
-```
-
-Example error task update payload:
-```json
-{   
-    "status": "error",
-    "operation": "test-operation",
-    "details": "test details",
-    "error": {
-        "majorErrorCode": 409,
-        "minorErrorCode": "TEST_ERROR",
-        "message": "Test error message"
-    }
-}
-```
-
-Example aborted task update payload
-```json
-{
-    "status": "aborted",
-    "operation": "test-operation",
-    "details": "test details",
-    "progress": 50
-}
-```
-<details>
-    <summary>Java class representing a Task</summary>
+### Java class representing a Task
 
 ```java
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -718,59 +794,3 @@ public class TaskType {
     }
 }
 ```
-</details>
-
-## Example `IMqttMessageListener` implementation for processing MQTT messages
-
-```java
-public class MqttListener implements IMqttMessageListener {
-
-    private final String topicToRespond;
-    private final MqttClient mqttClient;
-    private static final ObjectMapper objectMapper = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-    public MqttListener(final String topicToRespond, final MqttClient mqttClient) {
-        this.topicToRespond = topicToRespond;
-        this.mqttClient = mqttClient;
-    }
-
-    public void closeListener() throws MqttException {
-        this.mqttClient.disconnectForcibly();
-    }
-
-
-    @Override
-    public void messageArrived(final String s, final MqttMessage mqttMessage) throws Exception {
-        // Message from VCD received
- 
-        MqttRemoteServerMessage request = objectMapper.readValue(mqttMessage.getPayload(), MqttRemoteServerMessage.class);
-
-        if (NotificationType.BEHAVIOR_INVOCATION != request.getType()) {
-            // ignore not behavior invocation messages
-            return;
-        }
-        //parse the request payload to a Map
-        InvocationArguments invocationArguments = objectMapper.readValue(request.getPayload(), InvocationArguments.class);
- 
-        //now the information can be accessed
-        Map<String, Object> executionProperties = invocationArguments.getExecutionProperties();
-        InvocationArguments.InvocationArgumentsMetadata metadata = invocationArguments.getMetadata();
-        Map<String, Object> arguments = invocationArguments.getArguments();
-        String typeId = invocationArguments.getTypeId();
- 
-        final MqttRemoteServerResponseMessage response = createResponse(request);
- 
-        String responseAsJson = objectMapper.writeValueAsString(response);
- 
-        mqttClient.publish(topicToRespond, new MqttMessage(responseAsJson.getBytes()));
-    }
-
-    private MqttRemoteServerResponseMessage createResponse(MqttRemoteServerMessage request) {
-        // your business logic goes here
-    }
-
-}
-
-```
-

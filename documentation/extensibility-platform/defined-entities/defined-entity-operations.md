@@ -187,7 +187,7 @@ PUT https://{{vcd_host}}:{{vcd_port}}/cloudapi/1.0.0/entities/urn:vcloud:entity:
 An important note here is that the client must be using the same API version for the GET and PUT requests in order to avoid inconsistencies due to different API behavior in the diffeent API versions.
 
 The `entity` and `name` properties can be updated by any user who has [ReadWrite access](rde-access-control.md) to the entity.
-To avoid concurrency issues during update, use the [RDE Optimistic Concurrency Control](#optimistic-concurrency-control) mechanism.
+To avoid concurrency issues during update, use the [RDE Optimistic Concurrency Control](#optimistic-concurrency-control-occ) mechanism.
 
 ### Update the RDE `owner` property
 
