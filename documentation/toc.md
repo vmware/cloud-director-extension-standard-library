@@ -1,4 +1,4 @@
-# Cloud Director Extension SDK
+# VMware Cloud Director Extension SDK
 
 * [Introduction](introduction.md)
 * [Extension SDK](extension-sdk/extension-sdk.md)

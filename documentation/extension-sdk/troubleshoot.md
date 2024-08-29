@@ -23,17 +23,17 @@ solution |> solution run <operation> <arguments>
 ```shell
 $ sudo mount -o loop </path/to/add-on>.iso <mount/point>
 $ cd <mount/point>
-# Inject the add-on vendor certificate into the Cloud Director Certificate Manager targeted by operation.
+# Inject the add-on vendor certificate into the VMware Cloud Director Certificate Manager targeted by operation.
 $ ./linux.run trust --accept --host <host> 
-# Fetch and review the targeted Cloud Director identity 
-$ ./linux.run get certificate --accept --certificate-file server.pem <cloud director authentication arguments>
-# Trust targeted Cloud Director identity and perform the operation
+# Fetch and review the targeted VMware Cloud Director identity 
+$ ./linux.run get certificate --accept --certificate-file server.pem <VMware Cloud Director authentication arguments>
+# Trust targeted VMware Cloud Director identity and perform the operation
 $ ./linux.run <operation> <arguments> --certificate-file server.pem --trace --encryption-key <your very own secret>
 ```
 
 ## Remote Execution
 Remote execution refers to a situation when the binary of the add-on is executed on the current machine but all automation
-tasks have been delegated to a Cloud Director Solution Add-On Agent part of the Cloud Director product since 10.4.1.
+tasks have been delegated to a VMware Cloud Director Solution Add-On Agent part of the VMware Cloud Director product since 10.4.1.
 Remote execution is enforced when an operation is executed without the`--encryption-key` flag.
 
 All the commands bellow assume developer is using Linux environment.
@@ -52,11 +52,11 @@ In production mode just skip `encryption-key` from the operation arguments.
 ```shell
 $ sudo mount -o loop </path/to/add-on>.iso <mount/point>
 $ cd <mount/point>
-# Inject the add-on vendor certificate into the Cloud Director Certificate Manager targeted by operation.
+# Inject the add-on vendor certificate into the VMware Cloud Director Certificate Manager targeted by operation.
 $ ./linxu.run trust --accept --host <host> 
-# Fetch and review the targeted Cloud Director identity 
-$ ./linxu.run get certificate --accept <cloud director authentication arguments> --certificate-file server.pem
-# Trust targeted Cloud Director identity and perform the operation
+# Fetch and review the targeted VMware Cloud Director identity 
+$ ./linxu.run get certificate --accept <VMware Cloud Director authentication arguments> --certificate-file server.pem
+# Trust targeted VMware Cloud Director identity and perform the operation
 $ ./linux.run <operation> <arguments> --certificate-file server.pem --trace
 ```
 
@@ -66,15 +66,15 @@ Both `vcd-ext` and `vcd-ext-shell` commands provides user control on the log lev
 
 ## Development Environment Setup
 * Verify your development environment is in compliance with [Setting up the Development Environment](setup.md) guideline.
-* Verify your internet access is permitted. Note that [Cloud Director Extension Standard Library](https://github.com/vmware/cloud-director-extension-standard-library) is located in GitHub
+* Verify your internet access is permitted. Note that [VMware Cloud Director Extension Standard Library](https://github.com/vmware/cloud-director-extension-standard-library) is located in GitHub
   and the `vcd-ext-shell` `new` and `element` commands are using this library to fetch add-on building blocks.
 
 ## Network Issues
 - If the operation hangs in the very beginning of its execution this might be due to firewall or routing issue preventing
-the client to communicate with its Cloud Director target. Try to access the Cloud Director instance manually.
+the client to communicate with its VMware Cloud Director target. Try to access the VMware Cloud Director instance manually.
 
 ## Certificate Issues
-- If the targeted Cloud Director is behind a load balancer validate that the Cloud Director / Public IP Address configuration 
+- If the targeted VMware Cloud Director is behind a load balancer validate that the VMware Cloud Director / Public IP Address configuration 
   contain the load balancer IP and its associated certificate. If the certificate is missing solution add-on operation 
   will complete with certificate trust error.   
 

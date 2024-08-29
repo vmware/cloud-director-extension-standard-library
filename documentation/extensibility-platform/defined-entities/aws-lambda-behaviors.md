@@ -1,11 +1,11 @@
 
 # AWS Lambda Behaviors
 
-AWS Lambda behaviors act as an interface for communicating with Amazon AWS Lambda functions in Cloud Director. Each behavior represents one Lambda function and upon invoking this behavior, that function is executed in AWS by Cloud Director as well.
+AWS Lambda behaviors act as an interface for communicating with Amazon AWS Lambda functions in VMware Cloud Director. Each behavior represents one Lambda function and upon invoking this behavior, that function is executed in AWS by VMware Cloud Director as well.
 
 ## Prerequisites
 
-In order to create an AWS Lambda behavior in Cloud Director, a function in [AWS Lambda](https://aws.amazon.com/lambda/) needs to be created for the behavior to invoke.
+In order to create an AWS Lambda behavior in VMware Cloud Director, a function in [AWS Lambda](https://aws.amazon.com/lambda/) needs to be created for the behavior to invoke.
 
 ## Behavior Definition
 
@@ -49,7 +49,7 @@ The `aws_include_log_tail` is a boolean field which specifies whether to create 
 
 The `aws_function_qualifier` field specifies a version or alias to invoke a published version of the function (if not specified latest published verson is invoked).
 
-## Payload sent from Cloud Director to AWS Lambda function
+## Payload sent from VMware Cloud Director to AWS Lambda function
 
 When invoking an AWS Lambda behavior the corresponding AWS Lambda function receives the following event:
 
@@ -77,7 +77,7 @@ The `entityId` holds the ID of the RDE which the behavior was invoked on.
 
 The `entity` holds the entity contents of the RDE which the behavior was invoked on.
 
-The `vcdContext` contains Cloud Director's hostname and port, and an act-as token if one was requested (from the behavior definition).
+The `vcdContext` contains VMware Cloud Director's hostname and port, and an act-as token if one was requested (from the behavior definition).
 
 ## Behavior Invocation Task
 
@@ -141,7 +141,7 @@ When invoked, an AWS Lambda behavior returns a task in the response `Location` h
 
 2. Get credentials for an AWS user to execute the function, including `access_key` and `secret_key`
 
-3. Create an Interface in Cloud Director
+3. Create an Interface in VMware Cloud Director
 
     ```text
     POST /cloudapi/1.0.0/interfaces

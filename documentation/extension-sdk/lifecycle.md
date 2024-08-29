@@ -2,7 +2,7 @@
 This section is aimed at solution add-on vendor role and assumes the vendor is about to onboard an existing solution as an add-on, or create new with already identified requirements.
 
 ## Foundation
-A solution add-on is composed of one or more elements, which are supported by the Cloud Director Extension SDK.
+A solution add-on is composed of one or more elements, which are supported by the VMware Cloud Director Extension SDK.
 Add-ons can be either single-instance or multi-instance, depending on the vendor implementation.
 
 ### Single-Instance Add-Ons
@@ -23,7 +23,7 @@ If the element resources are already available in the environment before creatin
 
 **Important**: The multi-instance strategy needs to be carefully planned due to the following implicit limitations:
 - Every mutable element must be unique to its instance, so its name has to be computed for each add-on instance.
-- Some elements inherit constraints from their resource type defined by the Cloud Director entity. This requires computing at least one of the element configuration properties.
+- Some elements inherit constraints from their resource type defined by the VMware Cloud Director entity. This requires computing at least one of the element configuration properties.
 - A good strategy is to split complex add-ons into two parts, where one is a single-instance add-on that contains all shared elements, and the other is a multi-instance add-on responsible for scaling or load balancing elements.
 
 ### Add-On Element Identity
@@ -96,7 +96,7 @@ Providing answers to these questions will assist in selecting the appropriate SD
 
 Once the design decisions are made they can be incorporated by the construction.
 
-A solution add-on consists of a *Manifest* (`manifest.yaml`) describing the vendor, minimal Cloud Director version to run this add-on, the elements implementing its business logic.
+A solution add-on consists of a *Manifest* (`manifest.yaml`) describing the vendor, minimal VMware Cloud Director version to run this add-on, the elements implementing its business logic.
 Each element further contains details about the location of its source code and configuration.
 
 Solutions add-ons are created, built, tested and packaged with `vcd-ext-shell`. Creating a new add-on can be achieved with the following command:
@@ -189,7 +189,7 @@ There is also an option for remote signing. With no-sign option `solution packag
 
 You can package for specific platform using `--platform` parameter. During packaging vcdext and  all executables defined as triggers will be filtered to the desired platform. Supported platforms are `linux,windows,darwin,darwin-arm64`.
 
-**Important** Cloud Director does not allow installation of ISOs without signature.
+**Important** VMware Cloud Director does not allow installation of ISOs without signature.
 
 Before executing the package command make sure you have the required EULA.txt (for development it can be empty) in your solution folder. 
 
@@ -227,7 +227,7 @@ When creating the add-on ISO the `vcd-ext-shell` will implicitly include the fol
 - End-user license agreement
 - VMware Customer Experience Improvement Program note
 
-In case of remote signing the accepted `certificate.pem` by Cloud Director follows the format:
+In case of remote signing the accepted `certificate.pem` by VMware Cloud Director follows the format:
 ```shell
 SHA256(manifest.mf)= <Base64 encoded signature of the SHA256 of manifest.mf>
 -----BEGIN CERTIFICATE-----
@@ -243,7 +243,7 @@ A solution add-on instance can be created by executing the following command.
 my-solution |> solution run create-instance --name <solution instance name> [<arguments> ...]
 ```
 
-**NOTE**: Prior execution of an instance commands `vcd-ext-shell` has to be setup with a Cloud Director instance in active state. [[Setup]](setup.md#environment)
+**NOTE**: Prior execution of an instance commands `vcd-ext-shell` has to be setup with a VMware Cloud Director instance in active state. [[Setup]](setup.md#environment)
 
 ## Upgrade Solution Instance
 A solution add-on instance can be upgraded by executing the following command using the ISO containing a higher version of the add-on:
@@ -275,7 +275,7 @@ my-solution |> solution run publish-instance --name <solution instance name> [<a
 ```
 
 ## Invoke Solution Instance Operation
-Once a solution add-on instance is operational, there might be events that require reconfiguring certain aspects of the instance. In such situations, there are day-2 operations supported by actions that can take user input and apply it within the latest Cloud Director execution context.
+Once a solution add-on instance is operational, there might be events that require reconfiguring certain aspects of the instance. In such situations, there are day-2 operations supported by actions that can take user input and apply it within the latest VMware Cloud Director execution context.
 ```
 my-solution |> solution run invoke <operation> instance --name <solution instance name> [<arguments> ...]
 ```
@@ -320,7 +320,7 @@ setup vendor-certificate generate
 # Add-on solution run command requires encryption-key, note this is used only for development purposes
 setup encryption-key --key devkey
 
-# Create new add-on from a template validated against Cloud Director 10.4.1 in the current folder
+# Create new add-on from a template validated against VMware Cloud Director 10.4.1 in the current folder
 solution new --name human --vendor demo --version 1.0.0 --from-template cloud-director-10.4.1/multi-instance-skeleton --folder .
 
 # Produce artifacts about to be packaged
@@ -329,10 +329,10 @@ solution build
 # Generate the add-on form factor, the ISO
 solution package
 
-# Add-on run command requires a Cloud Director target to perform an operation
+# Add-on run command requires a VMware Cloud Director target to perform an operation
 setup cloud-director add --host host --port 443 --username administrator --password password
 
-# Execute an add-on create instance operation, note this is used only for development purposes for production the ISO is uploaded in Cloud Director UI
+# Execute an add-on create instance operation, note this is used only for development purposes for production the ISO is uploaded in VMware Cloud Director UI
 solution run create-instance --name human01 --input-provider-business-scope-property human01 --input-password human01Password
 ```
 

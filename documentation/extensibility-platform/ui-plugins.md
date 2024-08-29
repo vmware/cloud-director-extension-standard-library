@@ -12,7 +12,7 @@ For more information on the elements view [Elements of the Solution Add-Ons](../
 The initial creation of a UI plugin is done in a manner similar to any of the elements of a Solution Add-On. 
 For more details on how to create a Solution Add-On, check [Building a Simple Solution Add-On](../extension-sdk/playground.md).
 
-The [Cloud Director Extension Standard Library](https://github.com/vmware/cloud-director-extension-standard-library) repository contains template for creating solution add-ons. 
+The [VMware Cloud Director Extension Standard Library](https://github.com/vmware/cloud-director-extension-standard-library) repository contains template for creating solution add-ons. 
 The Showcase UI plugin is part of the Skeleton template. It contains example utilization of all UI Extension points described below in the development guide. 
 To kick-start your UI Plugin development, please refer to the [Generate add-on from template](../extension-sdk/playground.md#create-and-test-solution-add-on-from-template-in-1-minute).
 
@@ -34,14 +34,14 @@ The following mandatory properties are available for configuration in the UI plu
 - name - name of the UI plugin
 - description - description of the UI plugin
 - manifestVersion - supported version of the manifest file
-- containerVersion - the minimum supported version of Cloud Director required for this plugin
-- productVersions - list of the Cloud Director versions on which this UI plugin claims compatibility with.
+- containerVersion - the minimum supported version of VMware Cloud Director required for this plugin
+- productVersions - list of the VMware Cloud Director versions on which this UI plugin claims compatibility with.
 - version - the current version of the UI plugin
 - scope - list of the supported scope in which the UI plugin can be published. Currently valid values are: "service-provider", "tenant"
 - vendor - the name of the vendor providing the UI plugin
 - license - license of the UI plugin: full name, license text, SPDX identifier, or other representation
 - link - href to information about the UI plugin
-- module - the name of the main exported Angular module of the UI plugin to be loaded dynamically by the Cloud Director
+- module - the name of the main exported Angular module of the UI plugin to be loaded dynamically by the VMware Cloud Director
 - route - a top level URL route that the module can use to register child routes under
 - extensionPoints - see [Extension Points](#extension-points)
 - locales - see [Localization](#localization)
@@ -83,7 +83,7 @@ Example manifest.json:
 
 ## Extension Points
 
-An extension point essentially is a Cloud Director UI predefined placeholder in the primary or contextual navigation, 
+An extension point essentially is a VMware Cloud Director UI predefined placeholder in the primary or contextual navigation, 
 in an actions menu, or in a wizard/dialog.
 A UI plugin will use this point to attach itself to and provide additional functionality.
 There is a list of the supported extension points types, available to select from. Currently, this is list is the following:
@@ -178,7 +178,7 @@ manifest.json
 
 ### Navigation Extensions
 
-The navigation extension points are placeholders in the navigation system of the Cloud Director UI.
+The navigation extension points are placeholders in the navigation system of the VMware Cloud Director UI.
 
 #### Primary (Top Level) Navigation Extensions
 
@@ -209,7 +209,7 @@ manifest.json
 
 #### Sub Navigation Entity Extensions
 
-The sub-navigation extensions are rendered as part of the secondary navigation systems in the Cloud Director UI - 
+The sub-navigation extensions are rendered as part of the secondary navigation systems in the VMware Cloud Director UI - 
 the side navigation or the main navigation bar.
 
 ```shell
@@ -381,9 +381,9 @@ export class CreateIPBindingsExtensionPointComponent extends WizardExtensionWith
 
 ## UI SDK
 
-The UI Plugin SDK provides means for creating Cloud Director UI plugins.
+The UI Plugin SDK provides means for creating VMware Cloud Director UI plugins.
 The UI SDK is available on npm [vcd/sdk](https://www.npmjs.com/package/@vcd/sdk).
-Please, note it is separate from the Cloud Director Extension SDK.
+Please, note it is separate from the VMware Cloud Director Extension SDK.
 
 ### Prerequisites ###
 
@@ -416,7 +416,7 @@ export class MyPluginModule {...}
 - `SESSION_ORGANIZATION` - the name of the org you are logged in
 - `SESSION_ORG_ID` - the id of the org you are logged in
 - `EXTENSION_ASSET_URL` - URL to folder where the static assets of the plugin are located.
-- `extensionRoute` - relative to the Cloud Director application route, in which the plugin is registered. This corresponds to the "route" attribute set in the manifest.json of the plugin.
+- `extensionRoute` - relative to the VMware Cloud Director application route, in which the plugin is registered. This corresponds to the "route" attribute set in the manifest.json of the plugin.
 
 ```
 manifest.json
@@ -429,7 +429,7 @@ manifest.json
     "version": "2.0.0",
     "scope": ["service-provider", "tenant"],
     "permissions": [],
-    "description": "Demonstrates Cloud Director UI plugin",
+    "description": "Demonstrates VMware Cloud Director UI plugin",
     "vendor": "VMware Inc",
     "license": "BSD-2-Clause",
     "link": "https://www.vmware.com/support",
@@ -474,8 +474,8 @@ scope-example.component.html
 Injection of the EXTENSION_ASSET_URL is required for the plugin to correctly locate any assets that are contained in it, 
 as shown in the example `<img>` tag below.  
 The assets for each plugin are loaded from the server in isolation from any other plugins, 
-and in isolation from the Cloud Director instance itself.
-The root URL for loading static resources is defined by the Cloud Director and needs to be injected in the component 
+and in isolation from the VMware Cloud Director instance itself.
+The root URL for loading static resources is defined by the VMware Cloud Director and needs to be injected in the component 
 for the latter to be able to fetch static resources.
 
 load-static-image-demo.component.ts
@@ -501,13 +501,13 @@ load-static-image-example.component.html
 <img src="{{assetUrl}}/sample-image.jpg" alt="{{'sample-image-alt-text' | translate}}">
 ```
 
-### Cloud Director API Client
+### VMware Cloud Director API Client
 
-The VcdApiClient provides basic means for interacting with the Cloud Director APIs. 
-The client uses the authorization performed in the Cloud Director instance, the plugin is running within, 
+The VcdApiClient provides basic means for interacting with the VMware Cloud Director APIs. 
+The client uses the authorization performed in the VMware Cloud Director instance, the plugin is running within, 
 so in general there is no need for explicit authentication/login.
-This client provides CRUD methods, paginated queries, tasks tracking, to perform on Cloud Director entities,
-means to upload files to the Cloud Director instance, HATEOS links handling, session and multisite information.
+This client provides CRUD methods, paginated queries, tasks tracking, to perform on VMware Cloud Director entities,
+means to upload files to the VMware Cloud Director instance, HATEOS links handling, session and multisite information.
 The request headers links and etag are intercepted and moved to links and etag in the response body.
 Logging interception is also available.
 
@@ -561,7 +561,7 @@ this.client.updateSync("api/endpoint", body, options);
 // Delete
 this.client.deleteSync("api/endpoint", options);
 ```
-Every method from the aforementioned list supports Async alternative of the method, where Async means that you work with Task, i.e long running operation, in Cloud Director.
+Every method from the aforementioned list supports Async alternative of the method, where Async means that you work with Task, i.e long running operation, in VMware Cloud Director.
 
 You get some ancillary methods as well like:
 ```typescript
@@ -581,7 +581,7 @@ this.client.previousPage(records);
 this.client.hasPreviousPage(records);
 ```
 #### TransferService - Upload Large Files
-In Cloud Director you would need to upload large files. To handle this process you can use the TransferService provided by @vcd/sdk.
+In VMware Cloud Director you would need to upload large files. To handle this process you can use the TransferService provided by @vcd/sdk.
 ```typescript
 const fileToUpload = null;
 const uploadingProgress = new Subject<TransferProgress>();
@@ -657,7 +657,7 @@ Note the two differences to the standard angular builder configuration:
 
 
 The `externalLibs` configuration represents the list of the libraries which are expected to be provided 
-by the Cloud Director Core UI and excluded from the current UI plugin build. 
+by the VMware Cloud Director Core UI and excluded from the current UI plugin build. 
 Each library name is a regular expression formatted as a string.
 
 ```shell
@@ -674,7 +674,7 @@ Each library name is a regular expression formatted as a string.
 ```
 
 This example configuration will result in the @cds/core being excluded from the UI plugin build 
-and the Cloud Director is expected to provide this library for the plugin.
+and the VMware Cloud Director is expected to provide this library for the plugin.
 
 ### Build/Run
 
@@ -682,7 +682,7 @@ ng build
 
 ## UI Emulator
 
-The UI Emulator uses the Hyper Plugin to simulate the Cloud Director Extensibility Framework in non-production 
+The UI Emulator uses the Hyper Plugin to simulate the VMware Cloud Director Extensibility Framework in non-production 
 environment, for local development.
 It can be utilized from npm: [vcd/ui-emulator](https://www.npmjs.com/package/@vcd/ui-emulator).
 
@@ -691,8 +691,8 @@ It can be utilized from npm: [vcd/ui-emulator](https://www.npmjs.com/package/@vc
 - Support for Angular v15 and v9
 - Source maps
 - Live reload
-- Proxy HTTP calls to live Cloud Director environment
-- Authentication with JWT or Cloud Director auth token
+- Proxy HTTP calls to live VMware Cloud Director environment
+- Authentication with JWT or VMware Cloud Director auth token
 - Tenant and Provider scoping
 - Localization
 - Multiple UI Plugins loading
@@ -700,9 +700,9 @@ It can be utilized from npm: [vcd/ui-emulator](https://www.npmjs.com/package/@vc
 
 ### Installation
 
-Full example can be found in [Cloud Director Extension Standard Library Multi Instance Skeleton](https://github.com/vmware/cloud-director-extension-standard-library/tree/main/add-on/multi-instance-skeleton)
+Full example can be found in [VMware Cloud Director Extension Standard Library Multi Instance Skeleton](https://github.com/vmware/cloud-director-extension-standard-library/tree/main/add-on/multi-instance-skeleton)
 
-1. Clone [Cloud Director Extension Standard Library Multi Instance Skeleton](https://github.com/vmware/cloud-director-extension-standard-library/tree/main/add-on/multi-instance-skeleton)
+1. Clone [VMware Cloud Director Extension Standard Library Multi Instance Skeleton](https://github.com/vmware/cloud-director-extension-standard-library/tree/main/add-on/multi-instance-skeleton)
 ```bash
 git clone https://github.com/vmware/cloud-director-extension-standard-library.git
 ```
@@ -723,9 +723,9 @@ npm i --legacy-peer-deps
 
 
 - `pluginServeList` - list of directories for the UI plugins that are to be loaded in the emulator
-- `vcdHost` - the URL of the Cloud Director instance
-- `jwt` - the JSON Web Token (JWT) used for authentication to the Cloud Director API
-- `authtoken` - obsolete authentication token to the Cloud Director API (used by older API versions)
+- `vcdHost` - the URL of the VMware Cloud Director instance
+- `jwt` - the JSON Web Token (JWT) used for authentication to the VMware Cloud Director API
+- `authtoken` - obsolete authentication token to the VMware Cloud Director API (used by older API versions)
 - `scope` - set the scope to use: tenant or service-provider
 - `orgName` - set the the name of the organization/tenant to be used
 - `orgId` - set the ID of the organization/tenant to be used
@@ -790,13 +790,13 @@ Sample proxy.conf:
 ```json
 {
     "/api/*": {
-        "target": "https://<insert your Cloud Director endpoint here>",
+        "target": "https://<insert your VMware Cloud Director endpoint here>",
         "secure": false,
         "logLevel": "debug",
         "changeOrigin": true
     },
     "/cloudapi/*": {
-        "target": "https://<insert your Cloud Director endpoint here>",
+        "target": "https://<insert your VMware Cloud Director endpoint here>",
         "secure": false,
         "logLevel": "debug",
         "changeOrigin": true
@@ -807,7 +807,7 @@ Sample proxy.conf:
 ## iframe support
 
 UI Plugins can contain iframes.
-Please, note that the Cloud Director UI is based on Angular. 
+Please, note that the VMware Cloud Director UI is based on Angular. 
 In case you would like to use another UI framework, you may try utilizing iframes.
 
 For iframe usage, typically your approach would be:
@@ -819,7 +819,7 @@ For iframe usage, typically your approach would be:
 In terms of hosting the iframe contents, there are the following options:
 
  - Without hosting server - the solution application's build output files can be loaded as assets to a simple angular plugin. 
-This way, the Cloud Director will host and serve your solution application files.
+This way, the VMware Cloud Director will host and serve your solution application files.
 You can embed your Application like this:
 ```html
 <iframe src="https://vcd.com/<PROVIDER OR TENANT>/uiPlugins/<PLUGIN_ID>/<RESOURCE_ID>/assets/<YOUR_APPLICATION_INDEX_HTML>"></iframe>
@@ -865,7 +865,7 @@ manifest.json
 
 The localization for the plugin content is done using the [vcd/i18n](https://www.npmjs.com/package/@vcd/i18n).
 
-The Cloud Director translation service supports 2 localization file formats, from which you can choose:
+The VMware Cloud Director translation service supports 2 localization file formats, from which you can choose:
 
   - one file (i18n.json) with all the locales (default)
 ```
@@ -910,7 +910,7 @@ example angular.json of your UI plugin:
 
 ## Clarity Icons
 
-[Clarity icons](https://core.clarity.design/foundation/icons/) are provided by the Cloud Director, 
+[Clarity icons](https://core.clarity.design/foundation/icons/) are provided by the VMware Cloud Director, 
 there are no additional actions required by the plugin developer in order to utilize them.
 
 Examples:
@@ -927,18 +927,18 @@ clarity-clr-icon-example.component.html
 
 ## Under the Hood
 
-The UI plugins are deployed using the Cloud Director UI HyperPlugin.
+The UI plugins are deployed using the VMware Cloud Director UI HyperPlugin.
 
 Currently, we support concurrently two versions of the Hyper Plugin in order to be able to run 
-Angular v9 and Angular v15 plugins together on a single Cloud Director UI.
+Angular v9 and Angular v15 plugins together on a single VMware Cloud Director UI.
 
 ![Plugins deployment using HyperPlugin](../images/under-the-hood.png)
 
 
-## Cloud Director Releases, Angular and Clarity
+## VMware Cloud Director Releases, Angular and Clarity
 
 
-| Releases                  | Cloud Director 10.5.x | Cloud Director 10.4.x | Cloud Director 10.3.x |
+| Releases                  | VMware Cloud Director 10.5.x | VMware Cloud Director 10.4.x | VMware Cloud Director 10.3.x |
 |---------------------------|-----------------------|-----------------------|-----------------------|
 | Angular v15 / Clarity v15 | yes                   | -                     | -                     |
 | Angular v9 / Clarity v3   | yes                   | yes                   | yes                   |
@@ -946,7 +946,7 @@ Angular v9 and Angular v15 plugins together on a single Cloud Director UI.
 
 [See Clarity Support Policies](https://clarity.design/documentation/support)
 
-IMPORTANT: With the next major release of Cloud Director after 10.5, we will be dropping support for Angular v9.
+IMPORTANT: With the next major release of VMware Cloud Director after 10.5, we will be dropping support for Angular v9.
 
 ## Migration from Angular v9 to Angular v15
 ### Step 1 - Update dependencies
@@ -1013,8 +1013,8 @@ npm run build
 
 ### A bundle is missing in the final plugin build.
 
-When the plugin is configured to expect a bundle to be loaded for it by the Cloud Director, e.g. @angular/testing, 
-but the Cloud Director cannot provide it, then an error like the one below will be shown:
+When the plugin is configured to expect a bundle to be loaded for it by the VMware Cloud Director, e.g. @angular/testing, 
+but the VMware Cloud Director cannot provide it, then an error like the one below will be shown:
 
 ```console
 Could not load bundle SyntaxError: Unexpected token '<' at (bundle.js:...
@@ -1036,5 +1036,5 @@ Error: Failed to execute 'define' on 'CustomElementRegistry': the name "clr-icon
 
 ### Plugin is not published or uploaded
 
-In case your plugin is not visible in the Cloud Director UI and there are not any errors logged in the browser console,
+In case your plugin is not visible in the VMware Cloud Director UI and there are not any errors logged in the browser console,
 check if you have uploaded and published it or try to redo the upload and publishing steps.

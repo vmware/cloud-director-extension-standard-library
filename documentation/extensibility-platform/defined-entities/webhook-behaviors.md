@@ -1,10 +1,10 @@
 # WebHook Behaviors
 
-WebHook behaviors provide webHook functionality in the context of Cloud Director. In short, upon invocation a webHook behavior a POST request is sent to a webHook server. After receiving the server's response, the behavior invocation task is updated accordingly. The payload sent to the webHook server is configurable.
+WebHook behaviors provide webHook functionality in the context of VMware Cloud Director. In short, upon invocation a webHook behavior a POST request is sent to a webHook server. After receiving the server's response, the behavior invocation task is updated accordingly. The payload sent to the webHook server is configurable.
 
 ## Prerequisites
 
-A webHook server must be set-up to process requests from webHook behavior invocations before creating any webHook behaviors. The webHook server must support HTTPs and its SSL certificate must be trusted in the organization of the user invoking the webHook behavior in order for the connection to be successful ([how to trust a certificate in Cloud Director](https://docs.vmware.com/en/VMware-Cloud-Director/10.4/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-80B4CB1C-9353-4EB9-8557-4F6705949D0F.html)).
+A webHook server must be set-up to process requests from webHook behavior invocations before creating any webHook behaviors. The webHook server must support HTTPs and its SSL certificate must be trusted in the organization of the user invoking the webHook behavior in order for the connection to be successful ([how to trust a certificate in VMware Cloud Director](https://docs.vmware.com/en/VMware-Cloud-Director/10.4/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-80B4CB1C-9353-4EB9-8557-4F6705949D0F.html)).
 
 For testing purposes you can use [webhooks.site](https://webhook.site/). It provides a random URL which canbe used as a webHook server URL. The response sent back from webhooks.site to each request can be customized.
 
@@ -36,11 +36,11 @@ The `id` is a user-defined string. It is a required field.
 
 The `href` holds the URL of the webHook server which will be processing the webHook requests. The value must be a valid URL of `https` protocol. It is a required field.
 
-The `_internal_key` holds a shared secret string which is only known to Cloud Director and the webHook server. This shared secret will be used to generate the signature header of the request which is part of the [HMAC authentication](#authentication-of-webhook-behavior-requests). It is a required field.
+The `_internal_key` holds a shared secret string which is only known to VMware Cloud Director and the webHook server. This shared secret will be used to generate the signature header of the request which is part of the [HMAC authentication](#authentication-of-webhook-behavior-requests). It is a required field.
 
 The `template` field in the execution can be used to set-up a custom payload for the requests sent to the webHook server. More information can be found [here](#custom-request-payload).
 
-## WebHook Request Payload (Cloud Director -> WebHook Server)
+## WebHook Request Payload (VMware Cloud Director -> WebHook Server)
 
 The default payload sent to webHook servers is a JSON containing information about the actual behavior invocation (behavior information, entity information, and some metadata). However, you can also customize this payload by setting a template in the behavior definition. <a href="https://freemarker.apache.org/docs/dgui_quickstart_template.html" target="_blank">FreeMarker template engine</a> is used to render the payload from the provided template and the data model.
 
@@ -207,9 +207,9 @@ Example behavior definition with custom payload and headers:
 }
 ```
 
-## WebHook Response Payload (WebHook Server -> Cloud Director)
+## WebHook Response Payload (WebHook Server -> VMware Cloud Director)
 
-There are three possible response formats for the webHook server to send back to Cloud Director. Each one is processed differently by Cloud Director.
+There are three possible response formats for the webHook server to send back to VMware Cloud Director. Each one is processed differently by VMware Cloud Director.
 
 ### Simple Response
 
@@ -325,7 +325,7 @@ x-vcloud-digest=[SHA-512=Yt4eiT2VmUyX8wDt6wneZ10VRk1B1H2jmHP1R7YanI9hykEAjUdtg7J
 
 ### Some terms
 
-- Shared secret - this a string which is only known to Cloud Director and the webHook server (`_internal_key`). This shared secret will be used to generate the signature header
+- Shared secret - this a string which is only known to VMware Cloud Director and the webHook server (`_internal_key`). This shared secret will be used to generate the signature header
 - Signature header (`x-vcloud-signature`) - This is a custom header sent with each webHook request. It consists of three parts:
   - `algorithm` (`hmac-sha512`) - this is the algorithm used to generate the signature
   - `headers` (`host date (request-target) digest`) - this shows what is included in the base string which is signed to create the signature
@@ -338,18 +338,18 @@ x-vcloud-digest=[SHA-512=Yt4eiT2VmUyX8wDt6wneZ10VRk1B1H2jmHP1R7YanI9hykEAjUdtg7J
 
 ### How are requests authenticated by the webHook server?
 
-Each webHook request from Cloud Director can be verified by generating the signature using the shared secret and comparing it to the signature in the signature header from Cloud Director. If they match, the request is verified.
+Each webHook request from VMware Cloud Director can be verified by generating the signature using the shared secret and comparing it to the signature in the signature header from VMware Cloud Director. If they match, the request is verified.
 
 See the [Example Java code for verifying a webHook behavior request's signature header](#example-java-code-for-verifying-a-webhook-behavior-requests-signature-header) in the `Code Examples` section.
 
 ## Example Slack integration with webHook behaviors
 
-Slack has a functionality for creating incoming webHooks which can be used for posting messages to Slack channels. WebHook behaviors can be used to integrate Slack incoming webHooks with Cloud Director, allowing Cloud Director to post messages directly to a slack channel.
+Slack has a functionality for creating incoming webHooks which can be used for posting messages to Slack channels. WebHook behaviors can be used to integrate Slack incoming webHooks with VMware Cloud Director, allowing VMware Cloud Director to post messages directly to a slack channel.
 More information on how to create a Slack incoming webHook for a channel can be found [here]( https://api.slack.com/messaging/webhooks).
 
 Once a Slack webHook is configured, messages to it can be sent via a POST request to the webHook URL - `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX`. The request payload has to be of a specific format in order for it to be recognized by the Slack webHook and the `Content-Type` header must be set to `application/json`.
 
-In order to use Cloud Director's webHook behaviors to send messages to slack webHooks, the following steps must be followed:
+In order to use VMware Cloud Director's webHook behaviors to send messages to slack webHooks, the following steps must be followed:
 
 1. [Set-up incoming webHook URL in Slack](https://api.slack.com/messaging/webhooks).
 2. Create an Interface
@@ -468,7 +468,7 @@ In order to use Cloud Director's webHook behaviors to send messages to slack web
 
 5. Trust Slack server SSL certificate
 
-    In order to be able to send data to Slack, the Slack server SSL certificate must be trusted. More information on managing SSL certificates in Cloud Director can be found [here](https://docs.vmware.com/en/VMware-Cloud-Director/10.4/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-80B4CB1C-9353-4EB9-8557-4F6705949D0F.html).
+    In order to be able to send data to Slack, the Slack server SSL certificate must be trusted. More information on managing SSL certificates in VMware Cloud Director can be found [here](https://docs.vmware.com/en/VMware-Cloud-Director/10.4/VMware-Cloud-Director-Service-Provider-Admin-Portal-Guide/GUID-80B4CB1C-9353-4EB9-8557-4F6705949D0F.html).
 
 6. Create a RDE Type implementing the newly created interface
 

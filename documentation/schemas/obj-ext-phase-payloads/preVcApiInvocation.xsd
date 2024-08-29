@@ -137,7 +137,7 @@
             <xs:element name="PolicyName" type="xs:string" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        The name of the storage policy as seen in Cloud Director.
+                        The name of the storage policy as seen in VMware Cloud Director.
                     </xs:documentation>
                     <xs:documentation source="required">true</xs:documentation>
                 </xs:annotation>
@@ -251,7 +251,7 @@
             <xs:element name="EntityId" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        The ID associated with the Cloud Director logical entity corresponding to this VM. Based on the
+                        The ID associated with the VMware Cloud Director logical entity corresponding to this VM. Based on the
                         VmType, this can be the ID of a VM, a template VM, a Replication Tracking VM, or a Named Disk.
                         It can also be null for things like DRS shell VMs, which are created when vm-vm affinity rules
                         are in place.
@@ -304,7 +304,7 @@
             <xs:element name="EntityId" type="xs:string" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">
-                        The ID associated with the Cloud Director logical entity corresponding to this VM. Based on the
+                        The ID associated with the VMware Cloud Director logical entity corresponding to this VM. Based on the
                         VmType, this can be the ID of a VM, a template VM, a Replication Tracking VM, or a Named Disk.
                         It can also be null for things like DRS shell VMs, which are created when vm-vm affinity rules
                         are in place.

@@ -1,6 +1,6 @@
 # Exploring Solution Add-On Elements
 
-Elements are the smallest deployable units of a solution add-on. They are entities managed by Cloud Director or third-party systems, uniquely identified across their solution add-on and its instances. Once an element is deployed in the target system, it defines a set of properties whose values can be used by other add-on elements for their deployment activities. However, there is a strict rule - element properties can only be consumed by elements that appear after the definition of the element in its manifest.
+Elements are the smallest deployable units of a solution add-on. They are entities managed by VMware Cloud Director or third-party systems, uniquely identified across their solution add-on and its instances. Once an element is deployed in the target system, it defines a set of properties whose values can be used by other add-on elements for their deployment activities. However, there is a strict rule - element properties can only be consumed by elements that appear after the definition of the element in its manifest.
 
 Elements can have associated actions to perform pre- and post-deployment activities, allowing the add-on vendor to have certain control during the element deployment. Such actions can also be defined at the add-on level, enabling generic pre-setup or clean-up activities.
 
@@ -33,7 +33,7 @@ It is recommended to use simple names, lower-case with hyphens for vendor and na
 vendor: <add-on vendor name>
 name: <add-on name>
 version: <add-on version (N.N.N[-W])>
-vcdVersion: <minimal supported Cloud Director version of this add-on>
+vcdVersion: <minimal supported VMware Cloud Director version of this add-on>
 friendlyName: <name under which this add-on will appear in the management UI>
 description: <short description of the add-on business function visible in add-on management UI>
 ```
@@ -81,7 +81,7 @@ During the add-on instance deletion operation, elements are processed in reverse
 
 ### UI Plugin
 
-UI Plugin `type` represents a Cloud Director UI plugin. This element definition requires the `name` property to point to a project root folder `<element reference name>` where the source code of the plugin will be located, or its resulted artifact `<element reference name>/dist/plugin.zip` in case of an external build tooling is used.
+UI Plugin `type` represents a VMware Cloud Director UI plugin. This element definition requires the `name` property to point to a project root folder `<element reference name>` where the source code of the plugin will be located, or its resulted artifact `<element reference name>/dist/plugin.zip` in case of an external build tooling is used.
 
 The `type` further requires the `spec` property describing the UI Plugin visibility rules.
 
@@ -101,7 +101,7 @@ elements:
 
 ### User
 
-User `type` represents a Cloud Director User entity. The element `type` requires the `spec` property, it outlines the details required for the user realization.
+User `type` represents a VMware Cloud Director User entity. The element `type` requires the `spec` property, it outlines the details required for the user realization.
 
 ```yaml
 elements:
@@ -126,7 +126,7 @@ elements:
 
 ### Service Account
 
-Service Account `type` represents a Cloud Director Service Account entity. The element `type` requires the `spec` property, it outlines the details required for the user realization.
+Service Account `type` represents a VMware Cloud Director Service Account entity. The element `type` requires the `spec` property, it outlines the details required for the user realization.
 
 ```yaml
 elements:
@@ -143,7 +143,7 @@ elements:
 
 ### Role
 
-Role `type` represents a Cloud Director Role entity. The element `type` requires the `spec` property, it outlines the details required for the role realization.
+Role `type` represents a VMware Cloud Director Role entity. The element `type` requires the `spec` property, it outlines the details required for the role realization.
 
 ```yaml
 elements:
@@ -178,7 +178,7 @@ elements:
 
 ### Right bundle
 
-Right Bundle `type` represents a Cloud Director Right Bundle entity. The element `type` requires the `spec` property, it outlines the details required for the right bundle realization.
+Right Bundle `type` represents a VMware Cloud Director Right Bundle entity. The element `type` requires the `spec` property, it outlines the details required for the right bundle realization.
 
 ```yaml
 elements:
@@ -208,7 +208,7 @@ elements:
 
 ### Defined Entity
 
-Defined Entity `type` represents a Cloud Director Runtime Defined Entity interfaces, types and behaviors. This element definition requires the `name` property to point to a project root folder `<element reference name>` where the source code of the Defined Entity definitions will be located, or their resulted artifacts `<element reference name>/dist/types/*.json` and `<element reference name>/dist/interfaces/*.json` in case of an external build tooling is used.
+Defined Entity `type` represents a VMware Cloud Director Runtime Defined Entity interfaces, types and behaviors. This element definition requires the `name` property to point to a project root folder `<element reference name>` where the source code of the Defined Entity definitions will be located, or their resulted artifacts `<element reference name>/dist/types/*.json` and `<element reference name>/dist/interfaces/*.json` in case of an external build tooling is used.
 
 ```yaml
 elements:
@@ -218,7 +218,7 @@ elements:
 
 ### Defined Entity Instance
 
-Defined Entity Instance `type` represents a Cloud Director instance of a Defined Entity Type. The element `type` requires the `spec` property, it outlines the details required for the instance realization.
+Defined Entity Instance `type` represents a VMware Cloud Director instance of a Defined Entity Type. The element `type` requires the `spec` property, it outlines the details required for the instance realization.
 
 
 ```yaml
@@ -234,7 +234,7 @@ elements:
       name: <element reference name>
 
       # Defines what role should be able to manage this entity instance
-      accessControlRole: <cloud director role name>
+      accessControlRole: <VMware Cloud Director role name>
 
       owner:
         username: <username>
@@ -247,7 +247,7 @@ elements:
 
 ### Vapp
 
-Vapp `type` represents a Cloud Director virtual appliance. The element `type` requires the `spec` property, it outlines the details required for the vApp realization.
+Vapp `type` represents a VMware Cloud Director virtual appliance. The element `type` requires the `spec` property, it outlines the details required for the vApp realization.
 
 ```yaml
 elements:
@@ -680,7 +680,7 @@ Tasks serve as traceable entities ensuring visibility and accountability for the
 
 A task tracing object is represented by an operation identifier and a property bag. Tasks are not parallel and cannot be updated. They possess a property bag that vendors can use to store indicative information.
 
-When a task is created, it enters a "In Progress" state, visually displayed in the Cloud Director UI as an "Indeterminate Spinner." It's essential to note that this is not a progress bar and should not be used for updating progress.
+When a task is created, it enters a "In Progress" state, visually displayed in the VMware Cloud Director UI as an "Indeterminate Spinner." It's essential to note that this is not a progress bar and should not be used for updating progress.
 
 A task is automatically completed when a new task is created or when the element or action has terminated.
 
@@ -716,7 +716,7 @@ Actions can create custom transaction log records by printing the following JSON
 
 ## Logging
 
-By default, the Standard Output and Standard Error Streams from an action execution are processed by the SDK and are not forwarded into the operation logs visible from the Cloud Director user interface or CLI.
+By default, the Standard Output and Standard Error Streams from an action execution are processed by the SDK and are not forwarded into the operation logs visible from the VMware Cloud Director user interface or CLI.
 
 However, actions have the capability to expose user logs by printing the following JSON in the Standard Output or Error Streams. This enables users to receive and view specific information or logs generated during the action's execution, providing valuable insights into the operation's progress and any potential issues encountered.
 
@@ -737,9 +737,9 @@ The solution add-on operation context is loaded with implicit variables could be
     "accessToken": "eyJhbGciOiJSUzI1NiJ9...",
     "apiVersion": "37.1",
     "certificates": "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----",
-    "host": "<cloud director FQDN>",
+    "host": "<VMware Cloud Director FQDN>",
     "port": 443,
-    "productVersion": "<Cloud Director version ex. 10.4.1.XXX>",
+    "productVersion": "<VMware Cloud Director version ex. 10.4.1.XXX>",
     "session": {
       "org": {
         "id": "urn:vcloud:org:<UUID>",
@@ -870,13 +870,13 @@ Use realized element property into another element
 
 
 # What is Next?
-Continue exploring the Cloud Director Extension SDK
+Continue exploring the VMware Cloud Director Extension SDK
 
 * [Setting up the Development Environment](setup.md)
 * [Building a Simple Solution Add-On](playground.md)
 * [Understanding the Solution Add-On Lifecycle](lifecycle.md)
 * [Understanding the Solution Add-On Behavior](behavior.md)
 
-Explore the Cloud Director Extensibility Platform
+Explore the VMware Cloud Director Extensibility Platform
 
 * [Extensibility Platfrom](../extensibility-platform/extensibility-platform.md)

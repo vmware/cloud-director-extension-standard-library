@@ -6,10 +6,10 @@ Please verify the following prerequisites are met.
 - [Setting up the Development Environment](setup.md)
 - GitHub public repositories are accessible
 
-## Cloud Director Extension Standard Library
-The `vcd-ext-shell` allow vendors to use starter templates for creating solution add-ons and add-on elements. The source of the available templates is located into [Cloud Director Extension Standard Library](https://github.com/vmware/cloud-director-extension-standard-library) Git repository.
+## VMware Cloud Director Extension Standard Library
+The `vcd-ext-shell` allow vendors to use starter templates for creating solution add-ons and add-on elements. The source of the available templates is located into [VMware Cloud Director Extension Standard Library](https://github.com/vmware/cloud-director-extension-standard-library) Git repository.
 
-### Cloud Director Extension Standard Library Layout
+### VMware Cloud Director Extension Standard Library Layout
 Every branch of the repository contains two folders at the root level - `add-on` containing a solution add-on template per folder named after a use case, and `element` following the same pattern but for the add-on building blocks, the `element types`.
 
 Both `add-on` and `element/<element type>` might contain folders starting with `.`, these folders contain helper tools for building, testing and documenting an add-on or its elements.
@@ -23,9 +23,9 @@ Filesystem Layout
 - element/<element type>/.<element centric toolchain>
 ```
 
-The templates and tools are further organized by branches. The names of the branches follow `cloud-director-X.X.X` pattern and claim that all add-ons and elements templates in that branch has been validated against an environment running Cloud Director version `X.X.X`. The `main` branch contains alpha versions of the add-ons and elements for the next upcoming release.
+The templates and tools are further organized by branches. The names of the branches follow `cloud-director-X.X.X` pattern and claim that all add-ons and elements templates in that branch has been validated against an environment running VMware Cloud Director version `X.X.X`. The `main` branch contains alpha versions of the add-ons and elements for the next upcoming release.
 
-**IMPORTANT**: When a vendor used starter template from `cloud-director-X.X.X` to bootstrap his add-on with minimal version of Cloud Director `X.X.X` and receive complain from a provider running later version of Cloud Director `X.Y.Z`, the one can review directly the fix made by VMware or its partner applied on the started template by comparing the branches `cloud-director-X.X.X` with `cloud-director-X.Y.Z`, and find out what was the exact line causing the issue.
+**IMPORTANT**: When a vendor used starter template from `cloud-director-X.X.X` to bootstrap his add-on with minimal version of VMware Cloud Director `X.X.X` and receive complain from a provider running later version of VMware Cloud Director `X.Y.Z`, the one can review directly the fix made by VMware or its partner applied on the started template by comparing the branches `cloud-director-X.X.X` with `cloud-director-X.Y.Z`, and find out what was the exact line causing the issue.
 
 ```shell
 main
@@ -48,18 +48,18 @@ And build its elements and actions sources into installable artifacts.
 skeleton |> solution build
 ```
 
-Then create a solution add-on instance of `Skeleton` into your `active` cloud director environment (set via `vcd-ext-shell` / `setup`).
+Then create a solution add-on instance of `Skeleton` into your `active` VMware Cloud Director environment (set via `vcd-ext-shell` / `setup`).
 ```shell
 skeleton |> solution run create-instance --name prjpoc01 --input-provider-business-scope-property prjpoc01 --input-password We1$0me --debug
 ```
 
-Explore the installation process and review the elements created in Cloud Director.
+Explore the installation process and review the elements created in VMware Cloud Director.
 ```shell
 skeleton |> solution run get-instances --debug
 ```
 
 ```shell
-DEBUG Authenticating with Cloud Director using username and password
+DEBUG Authenticating with VMware Cloud Director using username and password
 DEBUG Looking for Solutions Add-On Instance type
 DEBUG Found existing Solutions Add-On Instance type  version=1.0.0
  NAME      READY  STATUS  SCOPE   RESOURCES
@@ -87,7 +87,7 @@ Examples of scopes of business:
 - bond to LDAP group
 - etc.
 
-The Skeleton and most of the add-ons capture user input via UI Plugin and REST or MQTT APIs into a Runtime Defined Entities which later are processed by a backend service hosted on a virtual appliance under a Solution Landing Zone. The implementation of such flow further requires a right bundle with set of management rights for the created Runtime Defined Entities, a role including these rights and a Cloud Director local account assigned with the role, used back the backend virtual appliance.
+The Skeleton and most of the add-ons capture user input via UI Plugin and REST or MQTT APIs into a Runtime Defined Entities which later are processed by a backend service hosted on a virtual appliance under a Solution Landing Zone. The implementation of such flow further requires a right bundle with set of management rights for the created Runtime Defined Entities, a role including these rights and a VMware Cloud Director local account assigned with the role, used back the backend virtual appliance.
 
 ### Skeleton Add-On Manifest
 
@@ -103,7 +103,7 @@ inputs:
   - name: password
     title: Password
     required: true
-    description: The password of the new local Cloud Director account about to be created and associated with a business scope
+    description: The password of the new local VMware Cloud Director account about to be created and associated with a business scope
     secure: true
 
     # Property visible only on delete operation
@@ -208,7 +208,7 @@ elements:
     type: defined-entity
 ```
 
-When a Runtime Defined Entity is created the Cloud Director implicitly creates set of management rights for that entity type with the following naming convection.
+When a Runtime Defined Entity is created the VMware Cloud Director implicitly creates set of management rights for that entity type with the following naming convection.
 ```shell
 - urn:vcloud:type:<entity vendor>:<entity nss>:full_access
 - urn:vcloud:type:<entity vendor>:<entity nss>:view
@@ -255,11 +255,11 @@ elements:
         - urn:vcloud:type:vmware:skeleton_database_element:admin
 ```
 
-The role will be available only in the tenant referenced by the Solution Landing Zone. Each Skeleton add-on instance creates a local Cloud Director user with the newly defined role and uses a `PostCreate` trigger to generate an API Token.
+The role will be available only in the tenant referenced by the Solution Landing Zone. Each Skeleton add-on instance creates a local VMware Cloud Director user with the newly defined role and uses a `PostCreate` trigger to generate an API Token.
 ```yaml
 elements:
   - name: cloud-director-user
-    description: User interacting with Cloud Director from backend
+    description: User interacting with VMware Cloud Director from backend
     type: user
     spec:
       username: 'sva.{{ property `provider-business-scope-property` }}'
@@ -275,7 +275,7 @@ elements:
         timeout: 30
 ```
 
-The API Token will be passed as OVF property alongside with the Cloud Director host and its endpoint certificates to an instance of the backend virtual appliance. The appliance will use the configuration to read and process the objects stored into the Runtime Defined Entities.
+The API Token will be passed as OVF property alongside with the VMware Cloud Director host and its endpoint certificates to an instance of the backend virtual appliance. The appliance will use the configuration to read and process the objects stored into the Runtime Defined Entities.
 
 ```yaml
 elements:
@@ -311,12 +311,12 @@ elements:
 
 **NOTE**: The appliance is just OVF descriptor without actual operating system. It aims to showcase the end-to-end flow.
 
-Operations are a means of carrying out day-2 actions on the add-on at a later point in time. Since operations always invoke actions, the actions will receive the latest context for the add-on. An example is changing the domain name or certificate of Cloud Director, which can be addressed by a refresh action that calls the 'actions/multipurposeaction' skeleton to update the appliance with the new Cloud Director endpoint details.
+Operations are a means of carrying out day-2 actions on the add-on at a later point in time. Since operations always invoke actions, the actions will receive the latest context for the add-on. An example is changing the domain name or certificate of VMware Cloud Director, which can be addressed by a refresh action that calls the 'actions/multipurposeaction' skeleton to update the appliance with the new VMware Cloud Director endpoint details.
 
 ```yaml
 operations:
   - name: refresh
-    description: Refresh Cloud Director endpoint and certificate
+    description: Refresh VMware Cloud Director endpoint and certificate
     inputs:
       - name: justification
         title: Justification
@@ -332,10 +332,10 @@ operations:
 ## Skeleton ISO
 An instance of Skeleton add-on can be installed and removed with the following commands.
 
-**IMPORTANT**: The `--encryption-key` argument is used mainly for development purposes. If set it will instruct the add-on operation to be executed on the machine where the ISO binary was executed. If skipped that operation will be sent to an agent in the Solution Landing Zone and all activities will be performed in the Cloud Director.
+**IMPORTANT**: The `--encryption-key` argument is used mainly for development purposes. If set it will instruct the add-on operation to be executed on the machine where the ISO binary was executed. If skipped that operation will be sent to an agent in the Solution Landing Zone and all activities will be performed in the VMware Cloud Director.
 
 ```shell
-# Inject Skeleton add-on vendor certificate in Cloud Director certificate store
+# Inject Skeleton add-on vendor certificate in VMware Cloud Director certificate store
 ./darwin.run trust \
   --accept \
   --host <CLOUD_DIRECTOR_HOST> \

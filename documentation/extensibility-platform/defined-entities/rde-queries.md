@@ -2,7 +2,7 @@
 
 Runtime Defined Entities can be queried using several REST API requests.
 
-The queries support the standart Cloud Director REST API mechanisms for paging, sorting, and filtering using the `page`, `pageSize`, `sortAsc`/`sortDesc`. and `filter` query parameters.
+The queries support the standart VMware Cloud Director REST API mechanisms for paging, sorting, and filtering using the `page`, `pageSize`, `sortAsc`/`sortDesc`. and `filter` query parameters.
 
 ## Query Entities by Type
 
@@ -105,7 +105,7 @@ For example:
 
 ## Filtering
 
-The RDE queries use the standard Cloud Director REST API filtering mechanism via the `filter` query parameter. It is possible to filter by the entity properties,
+The RDE queries use the standard VMware Cloud Director REST API filtering mechanism via the `filter` query parameter. It is possible to filter by the entity properties,
 as well as the entity content's properties. For example:
 
 Filtering by entity name:

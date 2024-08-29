@@ -6,7 +6,7 @@ It is recommended to get familiar with the concepts of [Defined Entity Types](de
 
 ## Overview
 
-Runtime Defined Entity Behaviors (or just Behaviors) are operations which execute custom logic in Cloud Director.
+Runtime Defined Entity Behaviors (or just Behaviors) are operations which execute custom logic in VMware Cloud Director.
 
 A number of behavior execution types are supported:
 
@@ -16,7 +16,7 @@ A number of behavior execution types are supported:
 - [AWS Lambda behaviors](aws-lambda-behaviors.md)
 - [No-op behaviors](no-op-behaviors.md)
 
-Behaviors can be executed on a defined entity via an API call if the user has the [necessary access permissions](#behaviors-access-control). In addition, behaviors can also be configured to be automatically executed in relation to the defined entity’s lifecycle events (PostCreate, PostUpdate, PreDelete, PostDelete). Starting with Cloud Director 10.5.1, behaviors can also be [invoked statically](#staticstandalone-behavior-invocation) without referring to a defined entity.
+Behaviors can be executed on a defined entity via an API call if the user has the [necessary access permissions](#behaviors-access-control). In addition, behaviors can also be configured to be automatically executed in relation to the defined entity’s lifecycle events (PostCreate, PostUpdate, PreDelete, PostDelete). Starting with VMware Cloud Director 10.5.1, behaviors can also be [invoked statically](#staticstandalone-behavior-invocation) without referring to a defined entity.
 
 ## General concepts
 
@@ -143,7 +143,7 @@ There are some special properties which can be set in the behavior definition `e
 
 - scope - `static`/`dynamic` - default is `dynamic`. This property sets the scope of the behavior. If set to `dynamic` the behavior must be invoked on a RDE instance. If set to `static` the behavior can be invoked both statically (without a RDE instance) and dynamically. More about static and dynamic behaviors can be found [here](#behavior-invocation).
 
-- Fields with the prefix `_internal_` are write-only. Once they are set, they cannot be obtained through a GET request on the behavior. The field value is saved in the DB in an encrypted form. It is only accessible to Cloud Director (e.g. the shared secret in webHook behaviors). These fields can be defined at the top level of the behavior's `execution` or `execution_properties` sections.
+- Fields with the prefix `_internal_` are write-only. Once they are set, they cannot be obtained through a GET request on the behavior. The field value is saved in the DB in an encrypted form. It is only accessible to VMware Cloud Director (e.g. the shared secret in webHook behaviors). These fields can be defined at the top level of the behavior's `execution` or `execution_properties` sections.
 
 ```json
 "execution": {
@@ -167,7 +167,7 @@ There are some special properties which can be set in the behavior definition `e
 }
 ```
 
-- `actAsToken` - `boolean` (default is `false`) – set to true if a Cloud Director act-as token needs to be included in the behavior invocation arguments. Depending on the type of behavior an act-as token might be needed in order to make additional API calls to Cloud Director. The token invalidates when the behavior execution completes (the behavior invocation task is completed). The token is created on behalf of the user who invokes the behavior. This property is part of the `execution_properties` section.
+- `actAsToken` - `boolean` (default is `false`) – set to true if a VMware Cloud Director act-as token needs to be included in the behavior invocation arguments. Depending on the type of behavior an act-as token might be needed in order to make additional API calls to VMware Cloud Director. The token invalidates when the behavior execution completes (the behavior invocation task is completed). The token is created on behalf of the user who invokes the behavior. This property is part of the `execution_properties` section.
 
 ```json
  "execution": {
@@ -211,7 +211,7 @@ API reference can be found [here](https://developer.broadcom.com/xapis/vmware-cl
 
 ## Behavior Invocation
 
-Behavior invocation is an asynchronous operation in Cloud Director since a behavior execution is a long running process. For each behavior invocation, a `BEHAVIOR_INVOCATION` task is created to track the execution.
+Behavior invocation is an asynchronous operation in VMware Cloud Director since a behavior execution is a long running process. For each behavior invocation, a `BEHAVIOR_INVOCATION` task is created to track the execution.
 
 Behaviors can be defined as either dynamic or static.
 
@@ -219,7 +219,7 @@ Dynamic behaviors must be invoked in the context of an RDE instance.
 
 Static (or standalone) behaviors do not need to refer to a defined entity instance in order to be invoked. However, such behaviors can be invoked in the context of a defined entity instance as well.
 
-By default, behaviors as created as dynamic. In Cloud Director 10.4.3 and Cloud Director 10.5.1+ there is the option to define a behavior as static as well.
+By default, behaviors as created as dynamic. In VMware Cloud Director 10.4.3 and VMware Cloud Director 10.5.1+ there is the option to define a behavior as static as well.
 
 ### Dynamic Behavior Invocation
 

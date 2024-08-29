@@ -83,7 +83,7 @@ Location: https://<vcd-host>/api/task/<task-id>
 ...
 ```
 
-The RDE create operation is a long-running process in Cloud Director which is traced by a task. If the RDE creation triggers a post-create hook the task returned in the `Location` header of the create RDE API call response is the behavior invocation task.
+The RDE create operation is a long-running process in VMware Cloud Director which is traced by a task. If the RDE creation triggers a post-create hook the task returned in the `Location` header of the create RDE API call response is the behavior invocation task.
 
 If the post-create behavior execution completes __successfully__, then the resolve operation is automatically invoked on the defined entity.
 
@@ -136,7 +136,7 @@ DELETE /cloudapi/1.0.0/entities/<entity-id>
 
 If the pre-delete hook execution is successful, the requested entity operation is executed (moving entity to `IN_DELETION` or deleting entity). However, if the hook execution fails, then the entity deletion is "canceled" - the entity remains unchanged.
 
-If an entity is in an `IN_DELETION` entity state before a pre-delete hook execution, the hook is not executed. Cloud Director proceeds as if the pre-delete hook execution is successful (we assume entity can be deleted).
+If an entity is in an `IN_DELETION` entity state before a pre-delete hook execution, the hook is not executed. VMware Cloud Director proceeds as if the pre-delete hook execution is successful (we assume entity can be deleted).
 
 #### Post Delete Hook Behavior
 
@@ -146,13 +146,13 @@ The post-delete hook behavior is invoked immediately before the entity is delete
 
 #### Multi-stage RDE Deletion
 
-The multi-stage RDE deletion allows RDE instances to be deleted over several stages and the deletion process can be stopped at any of these stages. This provides an opportunity for the solution backend to release and cleanup the resources that an RDE instance represents before the instance is permanently deleted from Cloud Director.
+The multi-stage RDE deletion allows RDE instances to be deleted over several stages and the deletion process can be stopped at any of these stages. This provides an opportunity for the solution backend to release and cleanup the resources that an RDE instance represents before the instance is permanently deleted from VMware Cloud Director.
 
 The multi-stage deletion can be set-up to be asynchronous or synchronous depending on they way the solution backend will get notified of an entity's deletion starting.
 
 __Asynchronous multi-stage deletion__
 
-In the async scenario, the solution backend is expected to poll the Cloud Director API for entities which are marked for deletion.
+In the async scenario, the solution backend is expected to poll the VMware Cloud Director API for entities which are marked for deletion.
 
 To put it simply, the async multi-stage deletion involves the following steps:
 

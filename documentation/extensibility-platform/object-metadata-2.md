@@ -1,6 +1,6 @@
 # Object Metadata 2.0
 
-Starting with Vmware Cloud Director 10.4, metadata is available in the `/cloudapi` REST api. It is the same concept as in the legacy `/api` space but has an improved and simplified structure and rules.
+Starting with VMware Cloud Director 10.4, metadata is available in the `/cloudapi` REST api. It is the same concept as in the legacy `/api` space but has an improved and simplified structure and rules.
 
 The following object types have metadata(expanding list):
 
