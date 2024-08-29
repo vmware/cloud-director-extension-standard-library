@@ -1,7 +1,7 @@
 # Object Extensibility
-Cloud Director object extensions are external applications that can participate in, influence, or override the logic that Cloud Director applies to workflows like vApp instantiation and placement. Their operation is transparent to system users.
+VMware Cloud Director object extensions are external applications that can participate in, influence, or override the logic that VMware Cloud Director applies to workflows like vApp instantiation and placement. Their operation is transparent to system users.
 
-A service provider uses the REST api to [register such extensions and _select_ them on certain _phases_](#extending-a-workflow) of various extensible core workflows. The extension must [implement](#implementing-an-object-extension-backend) a certain protocol and handle request/responses from/to Cloud Director.
+A service provider uses the REST api to [register such extensions and _select_ them on certain _phases_](#extending-a-workflow) of various extensible core workflows. The extension must [implement](#implementing-an-object-extension-backend) a certain protocol and handle request/responses from/to VMware Cloud Director.
 
 ## Overview
 The following is a high level diagram of the components of the object extensibility framework\
@@ -9,15 +9,15 @@ The following is a high level diagram of the components of the object extensibil
 where:
 
 * [`Object Extension`](https://developer.vmware.com/apis/vmware-cloud-director/latest/data-structures/ObjectExtension/) defines an extension backend. Based on the type, the way a backend is built varies. There are two flavours:
-  * the legacy AMQP based object extensions registered via `/api/admin/extension/object`. They are deprecated since Cloud Director 10.6.
-  * the channel object extensions registered via [`/cloudapi/1.0.0/extensions/object-extension`](https://developer.vmware.com/apis/vmware-cloud-director/latest/object-extension/). This document describes the interaction only with this kind. The first channel type that is supported since the introduction of this kind of extensions(10.5.1), is a generic RDE standalone mqtt behavior(part of the Cloud Director RDE framework).
+  * the legacy AMQP based object extensions registered via `/api/admin/extension/object`. They are deprecated since VMware Cloud Director 10.6.
+  * the channel object extensions registered via [`/cloudapi/1.0.0/extensions/object-extension`](https://developer.vmware.com/apis/vmware-cloud-director/latest/object-extension/). This document describes the interaction only with this kind. The first channel type that is supported since the introduction of this kind of extensions(10.5.1), is a generic RDE standalone mqtt behavior(part of the VMware Cloud Director RDE framework).
 * [`Selector Extension`](https://developer.vmware.com/apis/1601/doc/types/SelectorExtensionType.html) binds an object extension to a _selector type_ `AND` a set of _phases_.
-  * `Selector type` represents a context of a workflow execution(for ex. "Place VM" is running withing the context of a VDC). Each workflow may have a distinct sub-set of applicable contexts. When Cloud Director executes a workflow, it uses its applicable contexts to _select_ the `object extensions` which are bound to them.\
+  * `Selector type` represents a context of a workflow execution(for ex. "Place VM" is running withing the context of a VDC). Each workflow may have a distinct sub-set of applicable contexts. When VMware Cloud Director executes a workflow, it uses its applicable contexts to _select_ the `object extensions` which are bound to them.\
   Each type is represented by a specific api endpoint, or an urn alias. The urn alias is used on the `object extension` to narrow down the selector types to which it can be bound.\
   There are two types of selector api endpoints:
     * `/api/admin/{selector-type}/extension` - `selector extensions` registered here will have the `object extension` triggered for any selector of that type(for ex. any organisation)
     * `/api/admin/{selector-type}/{selector-id}/extension` - `selector extensions` registered here will have the `object extension` triggered for one particular selector of that type and that id(for ex. the organisation whose id==`selector-id`)
-  * `Phase` represents a lifecycle stage from one or more workflows. When executing a workflow, Cloud Director _invokes_ `object extensions` bound to that phase(**and** to the selector type context). 
+  * `Phase` represents a lifecycle stage from one or more workflows. When executing a workflow, VMware Cloud Director _invokes_ `object extensions` bound to that phase(**and** to the selector type context). 
   
 ## Extending a workflow
 An object extension can participate as a peer of the system to:
@@ -25,7 +25,7 @@ An object extension can participate as a peer of the system to:
 * change the outcome of workflows - `phase.type=blocking`; for example, it might use information provided by the system to place a VM on a specific host or assign it a specific storage profile
 * observe without changing the outcome of workflows; typically the selection will be `phase.type=async`, but `phase.type=blocking` may also be used for such cases, where the extension has to only conditionally change the outcome
 
-Only a sub-set of core workflows are extensible and have well-defined lifecycle _phases_ and applicable _selector types_. Multiple `object-extensions` at a time can be candidates for execution for a given `phase`. When Cloud Director selects the `object-extensions` based on the `phase` and the `selector types`, it then proceeds to order them based on the `selectorExtension.priority` field and filter based on the _phase cardinality_. The _direction of the ordering_(ascending or descending) is specific to the workflow and the cardinality depends on the particular `phase`. The _cardinality_ defines the applicable `phase.type` selections and the number of extensions that may be invoked:
+Only a sub-set of core workflows are extensible and have well-defined lifecycle _phases_ and applicable _selector types_. Multiple `object-extensions` at a time can be candidates for execution for a given `phase`. When VMware Cloud Director selects the `object-extensions` based on the `phase` and the `selector types`, it then proceeds to order them based on the `selectorExtension.priority` field and filter based on the _phase cardinality_. The _direction of the ordering_(ascending or descending) is specific to the workflow and the cardinality depends on the particular `phase`. The _cardinality_ defines the applicable `phase.type` selections and the number of extensions that may be invoked:
 
 * `ALLOW_ONE` - up to one extension, either `async` or `blocking`
 * `ALLOW_ONE_BLOCKING` - up to one `blocking` extension
@@ -33,7 +33,7 @@ Only a sub-set of core workflows are extensible and have well-defined lifecycle 
  
 Once the **ordered list** of extensions is determined, it then proceeds to invoke them one by one. It will wait for a response if the phase is selected as `phase.type=blocking`, or continue immediately(to the next extension, or phase, etc) if it is `async`. Each blocking extension influences the input of the next extension for the phase. The way it influences it is specific to the phase - sometimes it could be the output of the previous is the input of the next, or the output is overlayed in some way on the input.
 
-If any of the extension invocations ends in an _error_, including when a `blocking` extension deliberately triggers it(by returning a payload of type `ExtensionErrorMessage`), Cloud Director follows the following procedure:
+If any of the extension invocations ends in an _error_, including when a `blocking` extension deliberately triggers it(by returning a payload of type `ExtensionErrorMessage`), VMware Cloud Director follows the following procedure:
 
 1. It will attempt to send a message indicating that the last invocation was in error. This has two purposes:
    1. Traceability
@@ -90,13 +90,13 @@ Think of this resource as a pseudo workflow, where you can specify the `phase`, 
 
 ## Implementing an `object-extension` backend
 
-Cloud Director supports various _channels_ for the communication with the `object-extension`. Each phase has predefined request and response payload [schema](../schemas/obj-ext-phase-payloads.zip) associated with it, which Cloud Director sends, and in the case of `phase.type=blocking` selections, expects to receive. For all _channel_ types, the payloads are wrapped in [envelopes](../schemas/obj-ext-channel-msg.zip):
-* `HalfDuplexEnvelope` - used by Cloud Director when sending a request, and by the extension when sending a response
-* `ErrorMessageEnvelope` - used by Cloud Director when the last invocation ended in an error
+VMware Cloud Director supports various _channels_ for the communication with the `object-extension`. Each phase has predefined request and response payload [schema](../schemas/obj-ext-phase-payloads.zip) associated with it, which VMware Cloud Director sends, and in the case of `phase.type=blocking` selections, expects to receive. For all _channel_ types, the payloads are wrapped in [envelopes](../schemas/obj-ext-channel-msg.zip):
+* `HalfDuplexEnvelope` - used by VMware Cloud Director when sending a request, and by the extension when sending a response
+* `ErrorMessageEnvelope` - used by VMware Cloud Director when the last invocation ended in an error
 
 The envelope follows the same pattern mentioned in [message-broker.md#message-schema](message-broker.md#message-schema). This structure allows a single `object extension` to handle varying workflows/phases. The schemas of the payloads related to each particular `phase` are described in the `HalfDuplexEnvelope.payloadType` field. In this way the `object-extension` knows not only how to (de)serialize the payloads, but also how to route the requests to its internal specific handling logic for each `phase`.
 
-Alternatively, extension developers may choose to group `object extensions` to `phases` in a 1:1 relationship, meaning there is a dedicated extension for each particular phase. In this case the routing mentioned above is effectively performed by Cloud Director through the `selector extensions` configuration.
+Alternatively, extension developers may choose to group `object extensions` to `phases` in a 1:1 relationship, meaning there is a dedicated extension for each particular phase. In this case the routing mentioned above is effectively performed by VMware Cloud Director through the `selector extensions` configuration.
 
 ### Standalone mqtt RDE behavior channel
 The extension must implement the general RDE behavior invocation contract. The messages sent/received are of `type` `BEHAVIOR_INVOCATION`/`BEHAVIOR_RESPONSE`. The _envelope_ is json encoded in the `payload`(`InvocationArguments.arguments`). Once you decode it, the phase request is again json encoded in its `payload`. 

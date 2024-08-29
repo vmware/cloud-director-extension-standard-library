@@ -2,14 +2,14 @@
 
 ## Introduction
 
-The Cloud Director extensibility framework can be used in many different
+The VMware Cloud Director extensibility framework can be used in many different
 ways, for example:
 
-- Clients can add custom functionality to Cloud Director that addresses
+- Clients can add custom functionality to VMware Cloud Director that addresses
 their specific use cases
 
 - ISVs can create extensions that tightly integrate their software with
-Cloud Director
+VMware Cloud Director
 
 - Third Parties can create and distribute extensions offering new
 value-added functionality
@@ -22,7 +22,7 @@ extensions by providing a built-in state management mechanism and the
 definition of custom operation execution functionality within Cloud
 Director.
 
-Cloud Director supports several pre-defined entity types – VMs, vApps,
+VMware Cloud Director supports several pre-defined entity types – VMs, vApps,
 Networks, etc. The Runtime Defined Entities (RDE) functionality allows
 clients to define their own custom entity types with custom
 functionality.

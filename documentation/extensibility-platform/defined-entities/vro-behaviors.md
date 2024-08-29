@@ -4,7 +4,7 @@ VRO behaviors allow the integration of VRO workflows with the RDE framework. Ess
 
 ## Prerequisites
 
-In order to use VRO behaviors in Cloud Director there needs to be a [registered vRealize Orchestrator in Cloud Director](https://docs.vmware.com/en/VMware-Cloud-Director/10.5/VMware-Cloud-Director-Service-Provider-Admin-Guide/GUID-BEE4297F-8353-4DE3-8E86-DB2B511CAC77.html). The VRO workflows which will be exposed as behaviors need to be imported in Cloud Director as well.
+In order to use VRO behaviors in VMware Cloud Director there needs to be a [registered vRealize Orchestrator in VMware Cloud Director](https://docs.vmware.com/en/VMware-Cloud-Director/10.5/VMware-Cloud-Director-Service-Provider-Admin-Guide/GUID-BEE4297F-8353-4DE3-8E86-DB2B511CAC77.html). The VRO workflows which will be exposed as behaviors need to be imported in VMware Cloud Director as well.
 
 ## Behavior Definition
 
@@ -23,7 +23,7 @@ In order to use VRO behaviors in Cloud Director there needs to be a [registered 
 
 The VRO behavior's `executionType` is `VRO8Plus`.  It is a required field.
 
-The `id` field is the ID of the service item representing the workflow in Cloud Director. Only imported workflows can be used as VRO behaviors. It is a required field.
+The `id` field is the ID of the service item representing the workflow in VMware Cloud Director. Only imported workflows can be used as VRO behaviors. It is a required field.
 
 The `workflow_execution_timeout` field states how long the Behaviors Framework will wait for a VRO workflow started by a VRO behavior invocation. If the workflow execution exceeds the stated timeout the behavior execution will fail with a timeout exception. The `workflow_execution_timeout` is an optional field. More on VRO behavior execution timeout can be found [here](#execution-timeout-and-polling-rate).
 
@@ -232,11 +232,11 @@ See the [Java Class to deserialize execution result from the behavior execution 
 
 When a VRO behavior is executed, the payload which the corresponding VRO workflow receives is constructed from the behavior invovation call `arguments`.
 
-In order to receive the entity contents of the RDE instance which the behavior was invoked on, a `String` input parameter of name `entity` must be defined in the workflow. Upon the VRO behavior invocation that parameter is populated by Cloud Director with a JSON-encoded string of the entity contents before sending the payload to VRO.
+In order to receive the entity contents of the RDE instance which the behavior was invoked on, a `String` input parameter of name `entity` must be defined in the workflow. Upon the VRO behavior invocation that parameter is populated by VMware Cloud Director with a JSON-encoded string of the entity contents before sending the payload to VRO.
 
 ### Execution Timeout and Polling Rate
 
-When a VRO workflow is triggered by a VRO behavior, Cloud Director will wait for the workflow completion for a set amount of time before failing the behavior execution with a `Timeout` exception.
+When a VRO workflow is triggered by a VRO behavior, VMware Cloud Director will wait for the workflow completion for a set amount of time before failing the behavior execution with a `Timeout` exception.
 
 The amount of seconds to wait for completion before timeout can be set globally for all VRO behavior executions with the `workflow_execution_timeout` configuration property. The default is 300 seconds.
 

@@ -1,8 +1,8 @@
 # API extensibility
 
-The API extensibility framework gives providers the ability to extend the standard API included with Cloud Director through a set of well established rules that allow the registration of external systems with the platform and the association of those systems with URLs which are serviced by Cloud Director. Requests made to such URLs are routed to the corresponding external system (API extension) for processing. What is more, the API extensibility framework also allows to configure additional processing of responses with a specific content type by an external system.
+The API extensibility framework gives providers the ability to extend the standard API included with VMware Cloud Director through a set of well established rules that allow the registration of external systems with the platform and the association of those systems with URLs which are serviced by VMware Cloud Director. Requests made to such URLs are routed to the corresponding external system (API extension) for processing. What is more, the API extensibility framework also allows to configure additional processing of responses with a specific content type by an external system.
 
-Being able to extend the standard Cloud Director API opens up a lot of use cases for extension authors. The main one is making it possible for a client to access an extension (through Cloud Director) even if it is located behind a firewall. What is more, Cloud Director can act as an identity provider for extensions via the API extensibility via HTTP (transparent proxy).
+Being able to extend the standard VMware Cloud Director API opens up a lot of use cases for extension authors. The main one is making it possible for a client to access an extension (through VMware Cloud Director) even if it is located behind a firewall. What is more, VMware Cloud Director can act as an identity provider for extensions via the API extensibility via HTTP (transparent proxy).
 
 ![API extensibility Diagram 1](../images/api_extensibility_1.png)
 
@@ -11,7 +11,7 @@ We currently have two flavours of API extensibility:
 - [API extensibility via MQTT](#api-extensibility-via-mqtt)
 - [API extensibility via HTTP](#api-extensibility-via-http)
 
-Each is suitable for different use cases depending on what the extension requirements are. If simplicity is what is important, the API extensibility via HTTP/Transparent proxy is the way to go. It is suitable for integrating Cloud Director with third party products by providing easy relay to the product's API/UI. However, tenancy integration may be needed in the third-party product. If high performance is key, the API extensibility via MQTT is more suitable. It allows for fast execution but requires having a MQTT extension processing HTTP requests.
+Each is suitable for different use cases depending on what the extension requirements are. If simplicity is what is important, the API extensibility via HTTP/Transparent proxy is the way to go. It is suitable for integrating VMware Cloud Director with third party products by providing easy relay to the product's API/UI. However, tenancy integration may be needed in the third-party product. If high performance is key, the API extensibility via MQTT is more suitable. It allows for fast execution but requires having a MQTT extension processing HTTP requests.
 
 The two main concepts in the API extensibility framework are the [External System](#external-system) and the [API filter](#api-filter).
 
@@ -21,7 +21,7 @@ The two main concepts in the API extensibility framework are the [External Syste
 
 ## External System
 
-The external system represents an external to Cloud Director system which processes API extensibility requests by communicating with Cloud Director either via MQTT or HTTP. External system is the broader term. It encapsulates the more specific terms - [External Service](#external-service) (API extensibility via MQTT) and [External Endpoint](#external-endpoint) (API extensibility via HTTP).
+The external system represents an external to VMware Cloud Director system which processes API extensibility requests by communicating with VMware Cloud Director either via MQTT or HTTP. External system is the broader term. It encapsulates the more specific terms - [External Service](#external-service) (API extensibility via MQTT) and [External Endpoint](#external-endpoint) (API extensibility via HTTP).
 
 ```text
 External System = { External Service, External Endpoint }
@@ -29,7 +29,7 @@ External System = { External Service, External Endpoint }
 
 ## API Filter
 
-API filters allow external systems (external services and external endpoints) to extend the standard API included with Cloud Director with custom URLs or custom processing of request's responses.
+API filters allow external systems (external services and external endpoints) to extend the standard API included with VMware Cloud Director with custom URLs or custom processing of request's responses.
 
 The API filter entity has the following definition:
 
@@ -126,23 +126,23 @@ The following URLs will be matched by this `urlMatcher`:
 
 ### Overview
 
-As the name suggests, the API extensibility via MQTT framework allows providers to extend the Cloud Director standard API with API extensions which use **MQTT** as a form of communication with Cloud Director. We call such external systems (API extensions) which communicate with Cloud Director over MQTT **external services**.
+As the name suggests, the API extensibility via MQTT framework allows providers to extend the VMware Cloud Director standard API with API extensions which use **MQTT** as a form of communication with VMware Cloud Director. We call such external systems (API extensions) which communicate with VMware Cloud Director over MQTT **external services**.
 
-The two approaches we have for "extending the Cloud Director standard API" with custom request processing by an external service are:
+The two approaches we have for "extending the VMware Cloud Director standard API" with custom request processing by an external service are:
 
 - [Register a **custom URL**](#registering-custom-urls-to-be-serviced-by-the-external-service) to be serviced by an external service. All requests made to this URL will be routed to the external service for processing and the response will be propagated back to the caller.
 
 ![API extensibility Diagram 2](../images/api_extensibility_2.png)
 
-- [Register a **response content type**](#custom-processing-of-specific-response-content-types) for processing by an external service. All requests made to Cloud Director which result in a response with the specific content type will be routed to the external service for further processing before the response being returned back to the caller.
+- [Register a **response content type**](#custom-processing-of-specific-response-content-types) for processing by an external service. All requests made to VMware Cloud Director which result in a response with the specific content type will be routed to the external service for further processing before the response being returned back to the caller.
 
 ![API extensibility Diagram 3](../images/api_extensibility_3.png)
 
 In regards to custom processing of requests, the external service can:
 
-- modify the initial API request received by Cloud Director from the client
-- modify the response to an API request returned by Cloud Director
-- generate a completely new response message for the request, and return it to the client via Cloud Director
+- modify the initial API request received by VMware Cloud Director from the client
+- modify the response to an API request returned by VMware Cloud Director
+- generate a completely new response message for the request, and return it to the client via VMware Cloud Director
 
 ### Get started
 
@@ -161,7 +161,7 @@ If instead you wish to start with a basic example and build on top of it, skip t
 
 ### External Service
 
-Any external to Cloud Director system which needs to be able to process custom API requests via MQTT needs to be registered as an **external service** in Cloud Director.
+Any external to VMware Cloud Director system which needs to be able to process custom API requests via MQTT needs to be registered as an **external service** in VMware Cloud Director.
 
 The external service entity has the following definition:
 
@@ -184,10 +184,10 @@ The external service entity has the following definition:
 
 The vendor, name and version trio is unique for each external service.
 
-- `enabled` - true/false (a user provided field) - whether the external service is enabled or not. If the external service is not enabled, requests will not be routed to it for processing. Cloud Director acts as if the service does not exist.
+- `enabled` - true/false (a user provided field) - whether the external service is enabled or not. If the external service is not enabled, requests will not be routed to it for processing. VMware Cloud Director acts as if the service does not exist.
 - `priority` - 0-100 (a user provided field) - what is the priority of the external service when processing requests. More information on priority of external services can be found [here](#priority-of-external-services).
 - `authorizationEnabled` - true/false (a user provided field) - whether authorization is enabled for the service. More information on what authorization of external service entails can be found [here](#authorization-of-external-services).
-- `mqttTopics` - (generated by Cloud Director per external service) - contains the MQTT topics which the external service will use to communicate with Cloud Director - the `monitor` topic is the one the external service will receive messages from Cloud Director on, and the `respond` topic is the one the external service will use to send responses.
+- `mqttTopics` - (generated by VMware Cloud Director per external service) - contains the MQTT topics which the external service will use to communicate with VMware Cloud Director - the `monitor` topic is the one the external service will receive messages from VMware Cloud Director on, and the `respond` topic is the one the external service will use to send responses.
 
 #### Priority of external services
 
@@ -199,9 +199,9 @@ More than one external service can be configured to process the same requests. I
 
     The `authorizationEnabled` flag in the external service definition, as the name suggests, sets whether authorization is enabled for the service.
 
-    If authorization is enabled, there is a mechanism of Actions, ACL Rules and optionally Rights to configure which users can access custom URLs of external services. The access control of custom URLs is based on the user access to some Cloud Director resource (can be external or a core Cloud Director entity).
+    If authorization is enabled, there is a mechanism of Actions, ACL Rules and optionally Rights to configure which users can access custom URLs of external services. The access control of custom URLs is based on the user access to some VMware Cloud Director resource (can be external or a core VMware Cloud Director entity).
 
-    There are some prerequisites to make authorization work: [ResourceClasses](#resource-class), [ResourceClassActions](#resource-class-action), [AclRules](#acl-rule) and optionally [ServiceResources](#service-resource) have to be created in Cloud Director.
+    There are some prerequisites to make authorization work: [ResourceClasses](#resource-class), [ResourceClassActions](#resource-class-action), [AclRules](#acl-rule) and optionally [ServiceResources](#service-resource) have to be created in VMware Cloud Director.
     If service authorization is enabled and there isn't any of the mentioned entities created, each call to this service's URL/URLs will be always rejected as not authorized.
 
     A **Resource Class** entity represents an external entity type defined for an external service. More information can be found [here](#resource-class).
@@ -218,17 +218,17 @@ More than one external service can be configured to process the same requests. I
 
     But what does authorizing a service mean in this context? Authorizing a service means that upon making a request, the user will be verified against the request URI, request method and request content type based on the defined authorization rules (Resource Class Actions and ACL Rules).
 
-    The authorization rules are defined in the context of a Resource Class. As previously said, the Resource Class represents an external resource type in Cloud Director ([more info](#resource-class)). The mime type in the Resource Class is used in the authorization process to find the actual resource in Cloud Director, against which the authorization process will run. This resource can be both a Cloud Director core entity or an external to Cloud Director entity - so the mime type can be set to something external to Cloud Director (e.g. `Backup+xml`) or an internal Cloud Director entity type (e.g. `application/vnd.vmware.admin.organization+xml`).
+    The authorization rules are defined in the context of a Resource Class. As previously said, the Resource Class represents an external resource type in VMware Cloud Director ([more info](#resource-class)). The mime type in the Resource Class is used in the authorization process to find the actual resource in VMware Cloud Director, against which the authorization process will run. This resource can be both a VMware Cloud Director core entity or an external to VMware Cloud Director entity - so the mime type can be set to something external to VMware Cloud Director (e.g. `Backup+xml`) or an internal VMware Cloud Director entity type (e.g. `application/vnd.vmware.admin.organization+xml`).
 
     Resource Class Actions ([more info](#resource-class-action)) are created as part of the resource class. They define which HTTP methods are allowed for a custom URL (URLs).
 
-    Each Resource Class Action contains a list of ACL Rules ([more info](#acl-rule)). ACL Rules hold the actual rules for which user/org/right has access to a resource (external resource or Cloud Director core resource).
+    Each Resource Class Action contains a list of ACL Rules ([more info](#acl-rule)). ACL Rules hold the actual rules for which user/org/right has access to a resource (external resource or VMware Cloud Director core resource).
 
     So in order to configure external service authorization, you need to defined at least one Resource, one Resource Class Action and one ACL Rule.
 
 ### Link
 
-A `Link` is a Cloud Director entity which allows extension authors to configure links to external services to be returned as part of the response of native Cloud Director APIs - i.e. returning a link to an external service in the response of `GET /api/org/<org-id>`.
+A `Link` is a VMware Cloud Director entity which allows extension authors to configure links to external services to be returned as part of the response of native VMware Cloud Director APIs - i.e. returning a link to an external service in the response of `GET /api/org/<org-id>`.
 In order to find the link for creating a `Link` for an external service, you need to perform a GET on the external service and the link will be part of the response.
 
 ```text
@@ -359,15 +359,15 @@ We can see the newly created custom link is part of the response:
 
 ### Resource Class
 
-A Resource Class entity represents an external entity type defined for an external service. Resource Classes are used by Cloud Director to find the URL to the entity's representation based on the entity's URN.
+A Resource Class entity represents an external entity type defined for an external service. Resource Classes are used by VMware Cloud Director to find the URL to the entity's representation based on the entity's URN.
 
-Part of the responsibility of the external services' authors is to supply the necessary information in the Resource Class definition for the functionality to work properly. Necessary information includes mime type, url template, nid and urn pattern. These properties should be supplied for every external service entity type (or resource class). They are part of registering external services resource classes to Cloud Director:
+Part of the responsibility of the external services' authors is to supply the necessary information in the Resource Class definition for the functionality to work properly. Necessary information includes mime type, url template, nid and urn pattern. These properties should be supplied for every external service entity type (or resource class). They are part of registering external services resource classes to VMware Cloud Director:
 
 - **nid** - String - the Namespace Identifier for resources of this type, as specified in (as defined in <http://www.ietf.org/rfc/rfc2141.txt>)
 - **mimeType** - String - mime type of the service resources which are part of this resource class
 - **urnPattern** - String - should match entity's urn NSS part (as defined in <http://www.ietf.org/rfc/rfc2141.txt>). Supports `id` parameter - value is used to set the entity's id in the resulting URL.
 - **urlTemplate** - String - the value of href attribute for resources of this class.  Supports following parameters:
-  - `{baseUri}` - "Domain" part of the URL. Value set is Cloud Director REST API's baseUri.
+  - `{baseUri}` - "Domain" part of the URL. Value set is VMware Cloud Director REST API's baseUri.
   - `{resourceId}` -  Entity's id. Value set is to the `{id}` matched from the URN pattern (the UUID portion of the `id` attribute value of the resource).
 
 During the process of entity resolving and building proper entity links URN is split into 3 parts -  `urn:<nid>:<nss>`. All resource classes with the specified NID and urnPattern matching the specified URN are found. Then a URL is constructed for each of them based on the URL template and returned as links by the entity resolver. `ResourceId` value is evaluated from the `id` named pattern in URN pattern and its value is used to replace `resourceId` URL template parameter.
@@ -459,9 +459,9 @@ A Resource Class Action contains two fields:
 - `HttpMethod` - `GET`/`PUT`/`POST`/`DELETE`
 - `UrlPattern` - a named regular expression, where `(?<id>)` matches the resource identifier. `id` named group can be present or not in the `urlPattern`. If it is present it is matched with the url. `id` named group can be one at most.
 
-When a request is made to a custom URL, all external services which match the URL are found. And then for each service, Resource Class Action - says which HttpMethod is allowed for which URLs. If the Resource Class Action contains a named `id` group in the `urlPattern`, then it is checked whether the user has access to the resource with that id (can be external resource or a Cloud Director core resource). This is done by first obtaining the resource id from the URL (using the `urlPattern`) and then finding all ACL Rules in the action for this resource. If at least one of them is applicable to the user the request is authorized. If the Resource Class Action does not contain a named `id` group in the urlPattern, the request will automatically not be authorized.
+When a request is made to a custom URL, all external services which match the URL are found. And then for each service, Resource Class Action - says which HttpMethod is allowed for which URLs. If the Resource Class Action contains a named `id` group in the `urlPattern`, then it is checked whether the user has access to the resource with that id (can be external resource or a VMware Cloud Director core resource). This is done by first obtaining the resource id from the URL (using the `urlPattern`) and then finding all ACL Rules in the action for this resource. If at least one of them is applicable to the user the request is authorized. If the Resource Class Action does not contain a named `id` group in the urlPattern, the request will automatically not be authorized.
 
-To put it in short, a Resource Class Action says in general which HTTP methods are allowed for a certain URL. An ACL Rule holds the actual allow rules per resource - which user/org/right has access to the resource (external resource or Cloud Director core resource).
+To put it in short, a Resource Class Action says in general which HTTP methods are allowed for a certain URL. An ACL Rule holds the actual allow rules per resource - which user/org/right has access to the resource (external resource or VMware Cloud Director core resource).
 
 Examples for a valid Resource Class Action's URL pattern:
 
@@ -512,7 +512,7 @@ Response:
 
 #### ACL Rule
 
-Each ACL Rule belongs to a Resource Class Action. The ACL Rules are allow rules, they hold information about which user/org/right has access to the resource (external resource or Cloud Director core resource).
+Each ACL Rule belongs to a Resource Class Action. The ACL Rules are allow rules, they hold information about which user/org/right has access to the resource (external resource or VMware Cloud Director core resource).
 An ACL Rule has the following properties:
 
 1. `ServiceResourceAccess` (optional)
@@ -536,12 +536,12 @@ An ACL Rule has the following properties:
 
 1. `PrincipalAccess` (required)
 
-    The `PrincipalAccess` property tells us which specific user of the organization or Cloud Director right this ACL rule applies to.
+    The `PrincipalAccess` property tells us which specific user of the organization or VMware Cloud Director right this ACL rule applies to.
 
     - Access - can be `Shared` or`Entity`
       - Value `Shared` means that the action is authorized for all users in the organization (specified by OrganizationAccess).
-      - Value `Entity` means that the action is authorized for only one specific user or Cloud Director right and a reference to that user or right must be provided in the Entity property.
-    - Entity - a reference to a specific user or specific Cloud Director right (right can be predefined or custom). The value is used only when Access is set to `Entity`.
+      - Value `Entity` means that the action is authorized for only one specific user or VMware Cloud Director right and a reference to that user or right must be provided in the Entity property.
+    - Entity - a reference to a specific user or specific VMware Cloud Director right (right can be predefined or custom). The value is used only when Access is set to `Entity`.
 
 In order to find the link for creating an ACL Rule for a Resource Class Action, you need to perform a GET on the resource class action and the link will be part of the response.
 
@@ -602,7 +602,7 @@ A **Service Resource** represents a resource exposed by a service. Each Service 
 The Service Resource has the following properties:
 
 1. ExternalObjectId - String - a unique identifier for this resource (e.g. 123-456).
-2. Organization - an entity reference to a Cloud Director organization which this resource belongs to.
+2. Organization - an entity reference to a VMware Cloud Director organization which this resource belongs to.
 
 Example API call for creating a Service Resource:
 
@@ -640,13 +640,13 @@ Response:
 
 ### Right
 
-Extensions can create and manage rights that are meaningful for them. The extension is responsible for managing its rights, Cloud Director just supplies uniform APIs for adding, tracking and updating them.
+Extensions can create and manage rights that are meaningful for them. The extension is responsible for managing its rights, VMware Cloud Director just supplies uniform APIs for adding, tracking and updating them.
 
 The Right entity has the following fields:
 
 1. `Name` - String - the name of the right. In the case of a custom right a prefix that is added to the name that is supplied during creation and that is the namespace of the extension service that created the right. So if we have a Right that we want to add with the name of `customRight` and it is added in the context of an extension service with the namespace `com.sth.sthelse` the result for the name of the right will be `{com.sth.sthelse}:customRight`. This is the unique identifier of the right.
 2. `Type` - String - content type of the REST API resource - always `application/vnd.vmware.vcloud.admin.right+xml`
-3. `ServiceNamespace` - String - the namespace of the service this right is registered through. Should not be `com.vmware.vcloud` because this is reserved for vCloud Director and custom rihts cannot claim to be internal ones. This is readonly.
+3. `ServiceNamespace` - String - the namespace of the service this right is registered through. Should not be `com.vmware.vcloud` because this is reserved for vVMware Cloud Director and custom rihts cannot claim to be internal ones. This is readonly.
 4. `Category` - String - the category of the right. It could be any string. The category is not bound to the namespace in order for some clients to be able to organize the rights in their own choosing.
 5. `Description` - String - a description of the right
 6. `BundleKey` - String
@@ -711,7 +711,7 @@ The API definition entity has the following properties:
 
 1. `Description` - String - value is anything meaningful to the specific use case
 2. `EntryPoint` - String - an entry point to reach the external service (via a custom URL)
-    - a `{baseUri}` parameter is supported. When Get-ing the API definition this parameter will be replaced with Cloud Director's actual base URI.
+    - a `{baseUri}` parameter is supported. When Get-ing the API definition this parameter will be replaced with VMware Cloud Director's actual base URI.
 3. `ApiVendor` - String - value is anything meaningful to the specific use case
 4. `Namespace` - String - value is anything meaningful to the specific use case
 5. `SupportedApiVersions` - a collection of Version objects.
@@ -802,7 +802,7 @@ http://www.vmware.com/vcloud/v1.5 http://10.23.6.94/api/v1.5/schema/master.xsd">
 
 #### Registering a new external service
 
-The first thing you need to do to build an API extension is to register the extension in Cloud Director. By creating a new external service Cloud Director will create exclusive MQTT topics for your extension to use during MQTT communication.
+The first thing you need to do to build an API extension is to register the extension in VMware Cloud Director. By creating a new external service VMware Cloud Director will create exclusive MQTT topics for your extension to use during MQTT communication.
 
 Registering an external service is done with the following API call ([more info](#external-service)):
 
@@ -838,7 +838,7 @@ Response:
 
 #### Obtaining an extension access token
 
-We need to do one more thing to be able to connect to the external service MQTT topics - we need a way for our MQTT client to authenticate with Cloud Director for MQTT communication. The way to do this is by creating an long live token for the external service, which the MQTT client will use for authentication when connecting:
+We need to do one more thing to be able to connect to the external service MQTT topics - we need a way for our MQTT client to authenticate with VMware Cloud Director for MQTT communication. The way to do this is by creating an long live token for the external service, which the MQTT client will use for authentication when connecting:
 
 ```json
 Request:
@@ -898,7 +898,7 @@ See [Accessing the Messaging Bus over MQTT](#example-accessing-the-messaging-bus
     }
     ```
 
-    MQTT message from Cloud Director to external service can be deserialized to [MqttVCDMessage.java](api-extensibility.md#mqttvcdmessagejava), which is shown in the `Code Examples` section.
+    MQTT message from VMware Cloud Director to external service can be deserialized to [MqttVCDMessage.java](api-extensibility.md#mqttvcdmessagejava), which is shown in the `Code Examples` section.
 
     The `httpRequest` byte array can be deserialized to [Payload.java](#payloadjava), which is also shown in the `Code Examples` section:
 
@@ -963,11 +963,11 @@ public class MqttRemoteServerResponseMessage {
 
 ```
 <!-- Blacklisted headers: x-vcloud-authorization, Authorization, Set-Cookie,  -->
-<!-- // Vary - remove from list. Will be re-added by response filter per Cloud Director policy -->
+<!-- // Vary - remove from list. Will be re-added by response filter per VMware Cloud Director policy -->
 
 #### Registering custom URLs to be serviced by the external service
 
-Now that we have registered an external service and connected our MQTT client, we can create custom URLs in Cloud Director to be serviced by this external service. To put it in other words, we need to create a rule in Cloud Director for which requests will be proxied to the external service for processing. And the way to do that is to create an API filter in Cloud Director.
+Now that we have registered an external service and connected our MQTT client, we can create custom URLs in VMware Cloud Director to be serviced by this external service. To put it in other words, we need to create a rule in VMware Cloud Director for which requests will be proxied to the external service for processing. And the way to do that is to create an API filter in VMware Cloud Director.
 
 Creating an API filter is done with the following API call ([more info](#api-filter)):
 
@@ -991,7 +991,7 @@ And now since we have set the external service to enabled, you can start sending
 
 #### Custom processing of specific response content types
 
-An external service can also be configured to do additional processing of the response that Cloud Director returns to all requests which have a specific `Content-Type` of the response. Again, to do this, we need to create a rule in Cloud Director telling which responses get processed by which external services by creating an API filter:
+An external service can also be configured to do additional processing of the response that VMware Cloud Director returns to all requests which have a specific `Content-Type` of the response. Again, to do this, we need to create a rule in VMware Cloud Director telling which responses get processed by which external services by creating an API filter:
 
 ```json
 POST /cloudapi/1.0.0/apiFilters
@@ -1006,19 +1006,19 @@ POST /cloudapi/1.0.0/apiFilters
 
 ```
 
-And now since we have set the external service to enabled, all HTTP responses coming from Cloud Director with `Content-Type: application/vnd.vmware.admin.organization+xml;version=38.0` will be forwarded to your external service for further processing.
+And now since we have set the external service to enabled, all HTTP responses coming from VMware Cloud Director with `Content-Type: application/vnd.vmware.admin.organization+xml;version=38.0` will be forwarded to your external service for further processing.
 
 #### Setting up authorization of external service custom URL requests
 
-The external service, which we registered in the previous steps, has authorization disabled. This means that any Cloud Director user can access the custom URLs serviced by the external service. However, you can limit who can access these URLs. But before we enabled the external service authorisation, we need to set up the rules for it.
+The external service, which we registered in the previous steps, has authorization disabled. This means that any VMware Cloud Director user can access the custom URLs serviced by the external service. However, you can limit who can access these URLs. But before we enabled the external service authorisation, we need to set up the rules for it.
 
-The quickest way to configure external service authorisation, is to create an External Service Resource and at least one External Service Action in it with at least one ACL Rule. The External Service Action holds information about what HTTP method is allowed to be used when requesting a certain URL (URL matching a URL pattern). The ACL Rule holds information about which user/org has the right to invoke the action, or which Cloud Director Right implies the right to invoke the action.
+The quickest way to configure external service authorisation, is to create an External Service Resource and at least one External Service Action in it with at least one ACL Rule. The External Service Action holds information about what HTTP method is allowed to be used when requesting a certain URL (URL matching a URL pattern). The ACL Rule holds information about which user/org has the right to invoke the action, or which VMware Cloud Director Right implies the right to invoke the action.
 
-The first example for setting up authorization is with using a core Cloud Director object to base the authorization on. We will use the organization.
+The first example for setting up authorization is with using a core VMware Cloud Director object to base the authorization on. We will use the organization.
 
 1. Register custom rights for the external service (optional)
 
-    This is an optional step - you can create custom rights in Cloud Director for a specific external service.
+    This is an optional step - you can create custom rights in VMware Cloud Director for a specific external service.
 
     Let's create a Custom Right:
 
@@ -1110,7 +1110,7 @@ And now a user who holds the newly created `TestExtensionRight` right can make t
 GET /api/org/a93c9db9-7471-3192-8d09-a8f7eeda85f9/currentTime
 ```
 
-Where the id in the URL is an id of a Cloud Director org.
+Where the id in the URL is an id of a VMware Cloud Director org.
 
 Now let's see an example of how to set-up authorization based on a custom service resource.
 
@@ -1200,9 +1200,9 @@ GET /api/customResource1/123-456-ab/getResource
 
 ### HTTP Extensibility Overview
 
-As the name suggests, the API extensibility via HTTP framework uses **HTTP** as a form of communication between Cloud Director and the external systems. We call such external systems which communicate with Cloud Director over HTTP [External Endpoints](#external-endpoint).
+As the name suggests, the API extensibility via HTTP framework uses **HTTP** as a form of communication between VMware Cloud Director and the external systems. We call such external systems which communicate with VMware Cloud Director over HTTP [External Endpoints](#external-endpoint).
 
-"Extending the Cloud Director standard API" with custom request processing by an external endpoint can be achieved by [Registering a **custom URL**](#registering-custom-urls-to-be-serviced-by-the-external-endpoint) to be serviced by an external endpoint. All requests made to this URL will be routed to the external endpoint for processing and the response will be propagated back to the caller.
+"Extending the VMware Cloud Director standard API" with custom request processing by an external endpoint can be achieved by [Registering a **custom URL**](#registering-custom-urls-to-be-serviced-by-the-external-endpoint) to be serviced by an external endpoint. All requests made to this URL will be routed to the external endpoint for processing and the response will be propagated back to the caller.
 
 ### Get started with HTTP Extensibility
 
@@ -1216,7 +1216,7 @@ If instead you wish to start with the basic example, skip to [here](#building-an
 
 ### External Endpoint
 
-Any external to Cloud Director system which needs to be able to process custom API requests via HTTP needs to be registered as an **external endpoint** in Cloud Director.
+Any external to VMware Cloud Director system which needs to be able to process custom API requests via HTTP needs to be registered as an **external endpoint** in VMware Cloud Director.
 
 The external endpoint entity has the following definition:
 
@@ -1233,25 +1233,25 @@ The external endpoint entity has the following definition:
 The vendor, name and version trio is unique for each external endpoint.
 
 - **enabled** - true/false (a user provided field) - whether the external endpoint is enabled or not
-- **rootUrl** - String - the external endpoint which requests will be redirected to. The rootUrl must be a valid URL of https protocol. In order for Cloud Director to be able to connect to the external endpoint its server certificate has to be trusted in Cloud Director's system organization.
+- **rootUrl** - String - the external endpoint which requests will be redirected to. The rootUrl must be a valid URL of https protocol. In order for VMware Cloud Director to be able to connect to the external endpoint its server certificate has to be trusted in VMware Cloud Director's system organization.
 
 #### Enabled vs disabled external endpoints
 
-If the external endpoint is not enabled, requests will not be routed to it for processing. Cloud Director acts as if the endpoint does not exist. An external endpoint must be disabled before being deleted.
+If the external endpoint is not enabled, requests will not be routed to it for processing. VMware Cloud Director acts as if the endpoint does not exist. An external endpoint must be disabled before being deleted.
 
 ### Authorization of custom URL requests
 
-Requests made to custom URL requests in Cloud Director which proxy requests to an external endpoint can be made by any valid Cloud Director user.
+Requests made to custom URL requests in VMware Cloud Director which proxy requests to an external endpoint can be made by any valid VMware Cloud Director user.
 
-Requests made to `/ext-api` based custom URLs will use the `Authorization` header of the request to authenticate the user in Cloud Director.
+Requests made to `/ext-api` based custom URLs will use the `Authorization` header of the request to authenticate the user in VMware Cloud Director.
 
-Requests made to `/ext-ui` based custom URLs will use the `vcloud_jwt` Cookie of the request to authenticate the user in Cloud Director.
+Requests made to `/ext-ui` based custom URLs will use the `vcloud_jwt` Cookie of the request to authenticate the user in VMware Cloud Director.
 
 ### Building an API extension via HTTP (HTTP Transparent Proxy)
 
 #### Registering a new external endpoint
 
-The first thing you need to do to build an API extension via HTTP is to register the extension in Cloud Director by registering an external endpoint.
+The first thing you need to do to build an API extension via HTTP is to register the extension in VMware Cloud Director by registering an external endpoint.
 
 Registering an external endpoint is done with the following API call ([more info](#external-endpoint)):
 
@@ -1286,7 +1286,7 @@ Response:
 
 #### Registering custom URLs to be serviced by the external endpoint
 
-Now that we have registered an external endpoint, we can create custom URLs in Cloud Director to be serviced by this external endpoint. To put it in other words, we need to create a rule in Cloud Director for which requests will be proxied to the external endpoint for processing. And the way to do that is to create an API filter in Cloud Director.
+Now that we have registered an external endpoint, we can create custom URLs in VMware Cloud Director to be serviced by this external endpoint. To put it in other words, we need to create a rule in VMware Cloud Director for which requests will be proxied to the external endpoint for processing. And the way to do that is to create an API filter in VMware Cloud Director.
 
 Creating an API filter is done with the following API call ([more info](#api-filter)):
 
@@ -1308,10 +1308,10 @@ POST /cloudapi/1.0.0/apiFilters
 
 The above created API filter says that all requests which have a URL with prefix `/ext-api/custom/` will be redirected to the external endpoint with id `urn:vcloud:extensionEndpoint:vmware:endpointName:1.0.0`. If we use the example above with urlPattern `/custom/.*`:
 
-Request to Cloud Director:
+Request to VMware Cloud Director:
 
 ```text
-POST https://<Cloud Director-host>/ext-api/custom/createObject/test123?param1=param1
+POST https://<VMware Cloud Director-host>/ext-api/custom/createObject/test123?param1=param1
 ```
 
 Request to external endpoint:
@@ -1327,8 +1327,8 @@ After creating an External Endpoint (enabled) and an API filter, the setup for s
 Example with the above configurations:
 
 ```json
-Request to Cloud Director:
-POST https://<Cloud Director-host>/ext-api/test/123?param1=param1
+Request to VMware Cloud Director:
+POST https://<VMware Cloud Director-host>/ext-api/test/123?param1=param1
 Headers:
 ...
 Authorization: Bearer ...

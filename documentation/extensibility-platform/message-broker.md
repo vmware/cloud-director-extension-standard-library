@@ -1,4 +1,4 @@
-Cloud Director uses a traditional message broker to support many of the extensibility platform capabilities. Starting from version 10.2, a message broker comes pre-bundled with the product. The protocol used for communication is [mqtt3.1.1](https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html).
+VMware Cloud Director uses a traditional message broker to support many of the extensibility platform capabilities. Starting from version 10.2, a message broker comes pre-bundled with the product. The protocol used for communication is [mqtt3.1.1](https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html).
 > This page is still under development
 # Establishing a connection
 * web socket at `{vcd.host}/messaging/mqtt`
@@ -13,7 +13,7 @@ Cloud Director uses a traditional message broker to support many of the extensib
   * `clean start=false` is not supported, because the broker does not keep any persisted state, meaning on crash or restart any durable session will be forgotten
   * default message expiration is 5 minutes(unless the broker holding the message is stopped before then)
 * cannot be used as a generic broker
-  * messages flow from Cloud Director outward(notifications), or
+  * messages flow from VMware Cloud Director outward(notifications), or
   * request/response on strictly defined topics(extension services)
 * authentication
   * extension services -> user=extension service triplet, pass=extension token(get from RESTapi `/cloudapi/1.0.0/tokens`, `type=EXTENSION`)
@@ -40,6 +40,6 @@ Cloud Director uses a traditional message broker to support many of the extensib
 
 ## Best practices
 * mission critical applications integrating _notifications_ should have a mechanism to periodically check for missed events and should not solely rely on `QoS`(or `clean start`)
-  * extension developers must find balance between the frequency of the check and the `QoS` level that is used; the higher the `QoS` the less frequent the check may need to be; for most situations `QoS=1` should be good enough, unless the check is very expensive to make; `QoS=2` may be used as last resort, as that is very taxing on the broker and may lower the overall performance of Cloud Director itself
+  * extension developers must find balance between the frequency of the check and the `QoS` level that is used; the higher the `QoS` the less frequent the check may need to be; for most situations `QoS=1` should be good enough, unless the check is very expensive to make; `QoS=2` may be used as last resort, as that is very taxing on the broker and may lower the overall performance of VMware Cloud Director itself
 * `QoS` should be viewed as levels of guarantee that a message transfer between broker and client will succeed, but it does not directly guarantee a message transfer between a `publisher` and a `subscriber`
 * applications may need to implement additional logic to cope with duplicated messages for `QoS=1` (at least once)

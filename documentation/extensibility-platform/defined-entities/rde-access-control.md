@@ -63,7 +63,7 @@ Membership ACLs are used to grant access to entities such as user, organization 
 }
 ```
 
-Right ACLs refer to a specific right in Cloud Director. They are used to associate a type-specific right with an ACL.
+Right ACLs refer to a specific right in VMware Cloud Director. They are used to associate a type-specific right with an ACL.
 
 #### Access Levels
 
@@ -269,9 +269,9 @@ The following matrix shows what rights/ACLs a user needs to have in order to hav
 
 ### The Tenancy Barrier and Defined Entities
 
-Cloud Director is a multi-tenant platform which enables cloud service providers to host multiple independent organizations within a single instance of the platform, ensuring resource isolation, self-service provisioning, and tailored access control for each tenant.
+VMware Cloud Director is a multi-tenant platform which enables cloud service providers to host multiple independent organizations within a single instance of the platform, ensuring resource isolation, self-service provisioning, and tailored access control for each tenant.
 
-The Defined Entities Framework also adheres to the multi-tenancy principles. Each defined entity is created within a specific organization in Cloud Director - either the provider organization (System) or a tenant organization. Defined entities cannot "cross" the tenancy barrier - a defined entity created in tenant A cannot be shared with tenant B and vice versa. Only defined entities created in the System organization can be shared with other tenant organizations. More than one tenant organization can have access to the same System defined entity.
+The Defined Entities Framework also adheres to the multi-tenancy principles. Each defined entity is created within a specific organization in VMware Cloud Director - either the provider organization (System) or a tenant organization. Defined entities cannot "cross" the tenancy barrier - a defined entity created in tenant A cannot be shared with tenant B and vice versa. Only defined entities created in the System organization can be shared with other tenant organizations. More than one tenant organization can have access to the same System defined entity.
 
 A provider admin can execute RDE operations in the context of a tenant organization by adding the `X-VMWARE-VCLOUD-TENANT-CONTEXT` header to such HTTP requests.
 
@@ -385,7 +385,7 @@ PUT /cloudapi/1.0.0/entities/<entity-id>
 
 #### Operating in Tenant Context
 
-There are use cases where a provider user wants to make API calls to Cloud Director from the context of a tenant organization. For example, granting ACLs for a defined entity to a tenant organization in the API must be made from the context of that tenant organization.
+There are use cases where a provider user wants to make API calls to VMware Cloud Director from the context of a tenant organization. For example, granting ACLs for a defined entity to a tenant organization in the API must be made from the context of that tenant organization.
 
 This is done by adding a `X-VMWARE-VCLOUD-TENANT-CONTEXT` header to the API request containg the ID of the organization which context you wish to operate in.
 
@@ -620,7 +620,7 @@ The way to remove a secure field from a defined entity instance is to execute a 
 
 ## Examples
 
-The examples below assume there is a tenant organization named `Tenant1` created in the Cloud Director instance.
+The examples below assume there is a tenant organization named `Tenant1` created in the VMware Cloud Director instance.
 
 Let's create a RDE type to use for the examples.
 

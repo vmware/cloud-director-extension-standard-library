@@ -1,10 +1,10 @@
 # MQTT Behaviors
 
-MQTT behaviors in Cloud Director are based on MQTT API extensions (in the context of [API extensibility](../api-extensibility.md)). Invocation of a MQTT behavior is another way to trigger a MQTT extension (send a message to the extension for processing). When invoked MQTT behaviors essentially post a message to an extension topic and listen for a response to that message.
+MQTT behaviors in VMware Cloud Director are based on MQTT API extensions (in the context of [API extensibility](../api-extensibility.md)). Invocation of a MQTT behavior is another way to trigger a MQTT extension (send a message to the extension for processing). When invoked MQTT behaviors essentially post a message to an extension topic and listen for a response to that message.
 
 ## Prerequisites
 
-In order to create a MQTT behavior an MQTT API extension must be registered in Cloud Director first.
+In order to create a MQTT behavior an MQTT API extension must be registered in VMware Cloud Director first.
 
 Please familiarize yourself with [MQTT API extensibility](../api-extensibility.md) and how to register such an extension.
 
@@ -37,9 +37,9 @@ The `invocation_timeout` field is used to specify a timeout in seconds for the r
 
 ## MQTT Behavior Message Format
 
-### Cloud Director to Extension
+### VMware Cloud Director to Extension
 
-Messages from Cloud Director to Extension are sent on the extension's monitor topic:
+Messages from VMware Cloud Director to Extension are sent on the extension's monitor topic:
 
 ```text
 topic/extension/<vendor>/<name>/<version>/ext
@@ -100,9 +100,9 @@ The payload holds the invocation arguments from the MQTT behavior invocation:
 
 See the [Java Class to deserialize a payload to InvocationArguments](#java-class-to-deserialize-a-payload-to-invocationarguments) in the `Code Examples` section.
 
-### Extension to Cloud Director
+### Extension to VMware Cloud Director
 
-Response messages from Cloud Director to extension must be sent on the extension's respond topic:
+Response messages from VMware Cloud Director to extension must be sent on the extension's respond topic:
 
 ```text
 topic/extension/<vendor>/<name>/<version>/vcd
@@ -124,13 +124,13 @@ The messages must have the following format:
 
 See the [Java Class representing a response MQTT message](#java-class-representing-a-response-mqtt-message) in the `Code Examples` section.
 
-There are two types of responses an extension can send back to Cloud Director - a simple response and a task update response.
+There are two types of responses an extension can send back to VMware Cloud Director - a simple response and a task update response.
 
 The simple response (`ResponseContentType.PLAIN_TEXT`) completes the behavior invocation task successfully and uses the payload string as the task result.
 
 The task update response (`ResponseContentType.TASK`) allows for updating not only the behavior invocation task's `result`, but also the task's `status`, `details`, `operation`, `error`, `progress`. The payload must represent a valid JSON representation of `TaskType` with the task properties that need to be modified. The headers must contain a `Content-Type` header with the value of `application/vnd.vmware.vcloud.task+json`.
 
-Multiple task update responses can be sent back to Cloud Director. This allows the task progress to be updated continuously, for example. The last task update must complete the task. Once the task is completed, later task updates regarding this task are ignored.
+Multiple task update responses can be sent back to VMware Cloud Director. This allows the task progress to be updated continuously, for example. The last task update must complete the task. Once the task is completed, later task updates regarding this task are ignored.
 
 Example success task update payload:
 

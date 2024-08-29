@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: Contains the schemas of the messages that are to be exchanged between Cloud Director and channel extensions
+  description: Contains the schemas of the messages that are to be exchanged between VMware Cloud Director and channel extensions
   title: Object Extensibility Messages
   version: "1.0"
 paths:
@@ -45,7 +45,7 @@ definitions:
             type: string
             description: The expected type of the returned payload
   ErrorMessageEnvelope:
-    description: Sent only by Cloud Director when the last exchange failed. The payload is that of the original message which failed.
+    description: Sent only by VMware Cloud Director when the last exchange failed. The payload is that of the original message which failed.
     allOf:
       - $ref: '#/definitions/MessageEnvelope'
       - type: object

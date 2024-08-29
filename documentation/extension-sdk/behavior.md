@@ -4,11 +4,11 @@ This section is dedicated to the role of solution add-on vendors and aims to pro
 
 ## Foundation
 
-A solution add-on is generated using the Cloud Director Extension SDK and packaged as a UDF (Universal Data Format) ISO. It can be installed in Cloud Director through the Solutions Landing Zone user interface or via the embedded CLI installer within the ISO. The installation process is considered complete once the add-on card and ISO become available in Cloud Director.
+A solution add-on is generated using the VMware Cloud Director Extension SDK and packaged as a UDF (Universal Data Format) ISO. It can be installed in VMware Cloud Director through the Solutions Landing Zone user interface or via the embedded CLI installer within the ISO. The installation process is considered complete once the add-on card and ISO become available in VMware Cloud Director.
 
 ## Operations
 
-Once a solution add-on and its ISO are available in Cloud Director, a provider can begin managing instances by utilizing add-on operations, which include both the SDK built-in and custom vendor operations. These operations are available at the add-on level and are handled by the SDK for both the add-on and add-on element.
+Once a solution add-on and its ISO are available in VMware Cloud Director, a provider can begin managing instances by utilizing add-on operations, which include both the SDK built-in and custom vendor operations. These operations are available at the add-on level and are handled by the SDK for both the add-on and add-on element.
 
 When a user executes an add-on operation, it initiates the following sequence of events:
 
@@ -102,7 +102,7 @@ The list of events per operation in execution priority order is as follows:
 
 An action as a CLI executable run as a child process associated with an add-on or add-on element event and bound to a blocking task. Actions receive their input from Standard Input Stream and return the control back via Standard Output and Error streams, and the OS process exit code.
 
-In order to ensure the portability of the add-on, the vendor must supply statically compiled executables of Linux, Windows, and Mac for every action. Note that, the typical cloud provider may use the Cloud Director user interface for installation that uses Linux-based runtime environment for Cloud Director.
+In order to ensure the portability of the add-on, the vendor must supply statically compiled executables of Linux, Windows, and Mac for every action. Note that, the typical cloud provider may use the VMware Cloud Director user interface for installation that uses Linux-based runtime environment for VMware Cloud Director.
 
 A common practice is to create a single executable and configure it as a trigger in multiple places within the add-on manifest. By leveraging the input context, which includes elements, operations, and events, the action can switch and handle the specific execution flow accordingly. This approach streamlines the management of actions and facilitates a more efficient and versatile add-on design.
 
@@ -114,7 +114,7 @@ Read more about the use of actions and events in [Triggers](elements.md#trigger)
 
 ## Single-Instance Add-On
 
-A Single-Instance Add-On is intended to be installed as a singleton, ensuring that each element it contains exists as a single copy. This straightforward version of an add-on is designed to hold elements that are either immutable or do not require multiple instances. Examples of such elements include UI Plugins, Runtime Defined Entities, Roles, Rights, Right Bundles, Users, and even vApps. The primary goal of this flavor of an add-on is to provide simplicity and efficiency for scenarios where only one instance of each element is sufficient for the add-on's functionality within the Cloud Director environment.
+A Single-Instance Add-On is intended to be installed as a singleton, ensuring that each element it contains exists as a single copy. This straightforward version of an add-on is designed to hold elements that are either immutable or do not require multiple instances. Examples of such elements include UI Plugins, Runtime Defined Entities, Roles, Rights, Right Bundles, Users, and even vApps. The primary goal of this flavor of an add-on is to provide simplicity and efficiency for scenarios where only one instance of each element is sufficient for the add-on's functionality within the VMware Cloud Director environment.
 
 ## Multi-Instance Add-On
 
@@ -153,7 +153,7 @@ To avoid such collisions, it is crucial for vendors to manage element specificat
 
 **Note:** This type of add-on should only be used when the vendor expects a significant number of backend instances, and all of them need to share mutable elements like role or rights. For other use cases, Single-Instance or Multi-Instance add-ons can serve the purpose.
 
-A Multi-Instance Add-On with Shared Elements is designed for solutions that require a combination of singleton elements and multi-instance elements to achieve specific goals. While the Cloud Director Extension SDK does not directly support this type of add-on, it outlines a strategy for achieving the desired outcome by splitting responsibilities between the two add-on types. The shared elements are placed in the Single-Instance Add-On, while all other elements are incorporated into the Multi-Instance Add-On.
+A Multi-Instance Add-On with Shared Elements is designed for solutions that require a combination of singleton elements and multi-instance elements to achieve specific goals. While the VMware Cloud Director Extension SDK does not directly support this type of add-on, it outlines a strategy for achieving the desired outcome by splitting responsibilities between the two add-on types. The shared elements are placed in the Single-Instance Add-On, while all other elements are incorporated into the Multi-Instance Add-On.
 
 Benefits:
 - Facilitates atomic upgrades by maintaining a single instance of the UI plugin, Runtime Defined Entities, Global Roles, and Rights.
@@ -201,7 +201,7 @@ If a failure occurs during the upgrade process, and a rollback operation is exec
 
 It's important to note that in this rollback flow, all elements are processed in reverse order, and all events are also performed in reverse order, with post-events preceding pre-events.
 
-**Important:** If the add-on defines custom actions that perform any type of create, alter, or update operations in Cloud Director or third-party systems, it is crucial for these actions to implement a proper rollback flow when called as part of the overall rollback operation. The SDK provides tools to help vendors handle these situations through actions context and [Transaction Log](elements.md#transaction-log).
+**Important:** If the add-on defines custom actions that perform any type of create, alter, or update operations in VMware Cloud Director or third-party systems, it is crucial for these actions to implement a proper rollback flow when called as part of the overall rollback operation. The SDK provides tools to help vendors handle these situations through actions context and [Transaction Log](elements.md#transaction-log).
 
 The upgrade rollback flow ensures a reliable and efficient process for reverting to the previous version, mitigating any encountered issues and restoring the add-on to its previous state with precision and accuracy.
 
